@@ -1,6 +1,7 @@
 # pvetools
 pve tools script.Including install samba and config set zfs max ram etc.
-``
+
+```
 echo "deb https://mirrors.ustc.edu.cn/debian/ $sver main contrib non-free                                                                              |~                                       
 deb-src https://mirrors.ustc.edu.cn/debian/ $sver main contrib non-free                                                                                        |~                                       
 deb https://mirrors.ustc.edu.cn/debian/ $sver-updates main contrib non-free                                                                                    |~                                       
