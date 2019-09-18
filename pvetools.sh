@@ -276,9 +276,14 @@ b | B )
     done
     while [ `grep "path \= ${x}$" /etc/samba/smb.conf|wc -l` > 0 ]
     do
-        echo "Path exist!Input again:"
-        echo "路径已存在，重新输入:"
+        echo "Path exist!Input again([q]back):"
+        echo "路径已存在，重新输入([q]返回菜单):"
         read x
+        case $x in
+            q )
+                chSamba
+                ;;
+        esac
     done
     echo -e "\033[31mInput share name:\033[0m"
     echo -e "\033[31m输入共享名称:\033[0m"
@@ -288,6 +293,11 @@ b | B )
         echo "Name already exist!Input again:"
         echo "名称已存在，重新输入:"
         read n 
+        case $x in
+            q )
+                chSamba
+                ;;
+        esac
     done
     if [ `grep "${x}" /etc/samba/smb.conf|wc -l` > 0 ];then
         cat << EOF >> /etc/samba/smb.conf
