@@ -232,7 +232,7 @@ else
     echo -e "\033[32m[a] \033[31m安装配置samba并配置好samba用户.\033[0m"
     echo -e "\033[32m[b] \033[31m添加共享文件夹.\033[0m"
     echo -e "\033[32m[c] \033[31m删除共享文件夹.\033[0m"
-    echo -e "\033[32m[back] \033[31m返回主菜单.\033[0m"
+    echo -e "\033[32m[q] \033[31m返回主菜单.\033[0m"
 fi
 read x
 case "$x" in
@@ -361,7 +361,7 @@ c )
     chSamba
     ;;
 
-back )
+q )
     main
     ;;
 * )
