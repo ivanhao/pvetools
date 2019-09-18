@@ -285,7 +285,7 @@ b | B )
                 ;;
         esac
     done
-    n=`grep -o "[a-zA-Z0-9.-]..$" $x`
+    n=`echo $x|grep -o "[a-zA-Z0-9.-]..$"`
     while [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` != 0 ]
     do
         echo -e "\033[31mInput share name:\033[0m"
