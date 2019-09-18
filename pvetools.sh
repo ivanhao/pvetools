@@ -315,6 +315,7 @@ b | B )
 EOF
         echo "Configed!"
         echo "配置成功!"
+        service smbd restart
     else
         echo "Already configed！"
         echo "已经配置过了！"
