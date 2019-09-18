@@ -1,5 +1,6 @@
 #!/bin/bash
 #修改debian的镜像源地址：
+
 echo "deb https://mirrors.ustc.edu.cn/debian/ stretch main contrib non-free
 deb-src https://mirrors.ustc.edu.cn/debian/ stretch main contrib non-free
 deb https://mirrors.ustc.edu.cn/debian/ stretch-updates main contrib non-free
