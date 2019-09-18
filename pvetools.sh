@@ -283,6 +283,7 @@ b | B )
                 chSamba
                 ;;
         esac
+    done
     while [ `grep "path \= ${x}$" /etc/samba/smb.conf|wc -l` != 0 ]
     do
         echo "Path exist!Input again([q]back):"
@@ -291,6 +292,7 @@ b | B )
         case $x in
             q )
                 chSamba
+                ;;
         esac
     done
     n=`echo $x|grep -o "[a-zA-Z0-9.-]*$"`
@@ -307,6 +309,7 @@ b | B )
             case $n in
                 q )
                     chSamba
+                    ;;
             esac
         done
     done
