@@ -274,6 +274,12 @@ b | B )
         echo "路径不存在，重新输入:"
         read x
     done
+    while [ `grep "path \= ${x}$" /etc/samba/smb.conf|wc -l` > 0 ];then
+    do
+        echo "Path exist!Input again:"
+        echo "路径已存在，重新输入:"
+        read x
+    done
     echo -e "\033[31mInput share name:\033[0m"
     echo -e "\033[31m输入共享名称:\033[0m"
     read n
