@@ -299,7 +299,7 @@ b | B )
                 ;;
         esac
     done
-    if [ `grep "${x}" /etc/samba/smb.conf|wc -l` > 0 ];then
+    if [ `grep "${x}" /etc/samba/smb.conf|wc -l` != 0 ];then
         cat << EOF >> /etc/samba/smb.conf
 [$n]
    comment = All 
