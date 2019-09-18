@@ -224,12 +224,14 @@ clear
 if [ $L = "en" ];then
     echo -e "\033[31mConfig samba:\033[0m"
     echo -e "\033[32m[a] \033[31mInstall samba and config user.\033[0m"
-    echo -e "\033[32m[b] \033[31mConfig folder to share.\033[0m"
+    echo -e "\033[32m[b] \033[31mAdd folder to share.\033[0m"
+    echo -e "\033[32m[C] \033[31mDelete folder to share.\033[0m"
     echo -e "\033[32m[back] \033[31mMain menu.\033[0m"
 else
     echo -e "\033[31m配置samba:\033[0m"
     echo -e "\033[32m[a] \033[31m安装配置samba并配置好samba用户.\033[0m"
-    echo -e "\033[32m[b] \033[31m配置共享文件夹.\033[0m"
+    echo -e "\033[32m[b] \033[31m添加共享文件夹.\033[0m"
+    echo -e "\033[32m[c] \033[31m删除共享文件夹.\033[0m"
     echo -e "\033[32m[back] \033[31m返回主菜单.\033[0m"
 fi
 read x
@@ -265,6 +267,9 @@ a | A )
     chSamba
     ;;
 b | B )
+    echo -e "\033[31mExist share folders:\033[0m"
+    echo -e "\033[31m已有的共享目录:\033[0m"
+    echo "`grep "^\[[0-9a-zA-Z.-]*\]$" /etc/samba/smb.conf|awk 'NR>3{print $0}'`"
     echo -e "\033[31mInput share folder path:\033[0m"
     echo -e "\033[31m输入共享文件夹的路径:\033[0m"
     read x
@@ -285,7 +290,7 @@ b | B )
                 ;;
         esac
     done
-    n=`echo $x|grep -o "[a-zA-Z0-9.-]..$"`
+    n=`echo $x|grep -o "[a-zA-Z0-9.-]*$"`
     while [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` != 0 ]
     do
         echo -e "\033[31mInput share name:\033[0m"
@@ -323,6 +328,34 @@ EOF
     sleep 2
     chSamba
     ;;
+c )
+    echo -e "\033[31mExist share folders:\033[0m"
+    echo -e "\033[31m已有的共享目录:\033[0m"
+    echo "`grep "^\[[0-9a-zA-Z.-]*\]$" /etc/samba/smb.conf|awk 'NR>3{print $0}'`"
+    echo -e "\033[31mInput share name:\033[0m"
+    echo -e "\033[31m输入共享名称:\033[0m"
+    read n
+    while [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` = 0 ]
+    do
+        echo "Name not exist!Input again([q]back):"
+        echo "名称不存在，重新输入([q]返回菜单):"
+        read n 
+        case $n in
+            q )
+                chSamba
+                ;;
+        esac
+    done
+    if [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` != 0 ];then
+
+        echo "Configed!"
+        echo "配置成功!"
+        service smbd restart
+    fi
+    sleep 2
+    chSamba
+    ;;
+
 back )
     main
     ;;
