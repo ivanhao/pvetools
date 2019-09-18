@@ -352,7 +352,8 @@ c )
         esac
     done
     if [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` != 0 ];then
-        sed '/\[${n}\]/,/0700/d' /etc/samba/smb.conf -i echo "Configed!"
+        sed "/\[${n}\]/,/0700/d" /etc/samba/smb.conf -i 
+        echo "Configed!"
         echo "配置成功!"
         service smbd restart
     fi
