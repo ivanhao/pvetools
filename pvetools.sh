@@ -293,7 +293,7 @@ b | B )
         echo "Name already exist!Input again([q]back):"
         echo "名称已存在，重新输入([q]返回菜单):"
         read n 
-        case $x in
+        case $n in
             q )
                 chSamba
                 ;;
