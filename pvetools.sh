@@ -288,7 +288,7 @@ b | B )
     echo -e "\033[31mInput share name:\033[0m"
     echo -e "\033[31m输入共享名称:\033[0m"
     read n
-    while [ `grep "${n}" /etc/samba/smb.conf|wc -l` != 0 ]
+    while [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` != 0 ]
     do
         echo "Name already exist!Input again([q]back):"
         echo "名称已存在，重新输入([q]返回菜单):"
