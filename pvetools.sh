@@ -270,8 +270,8 @@ b | B )
     read x
     while [ ! -d $x ]
     do
-        echo "Path not exist!Input again:"
-        echo "路径不存在，重新输入:"
+        echo "Path not exist!Input again([q]back):"
+        echo "路径不存在，重新输入([q]返回菜单):"
         read x
     done
     while [ `grep "path \= ${x}$" /etc/samba/smb.conf|wc -l` > 0 ]
@@ -290,8 +290,8 @@ b | B )
     read n
     while [ `grep "${n}" /etc/samba/smb.conf|wc -l` != 0 ]
     do
-        echo "Name already exist!Input again:"
-        echo "名称已存在，重新输入:"
+        echo "Name already exist!Input again([q]back):"
+        echo "名称已存在，重新输入([q]返回菜单):"
         read n 
         case $x in
             q )
