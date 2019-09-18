@@ -274,7 +274,7 @@ b | B )
         echo "路径不存在，重新输入:"
         read x
     done
-    while [ `grep "path \= ${x}$" /etc/samba/smb.conf|wc -l` > 0 ];then
+    while [ `grep "path \= ${x}$" /etc/samba/smb.conf|wc -l` > 0 ]
     do
         echo "Path exist!Input again:"
         echo "路径已存在，重新输入:"
