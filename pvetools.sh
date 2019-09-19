@@ -520,6 +520,15 @@ if [ ! -f /root/hdspindown/spindownall ];then
             echo -e "\033[31mInput number of .bake to auto spindown:\033[0m"
             echo -e "\033[31m输入硬盘自动休眠的检测时间，周期为分钟,输入5为5分钟:\033[0m"
             read x
+            while [ 1 = 1 ]
+            do
+                if [ `echo "$x"|grep "[0-9]*"|wc -l` = 0 ];then
+                    echo -e "\033[31m输入格式错误:\033[0m"
+                    echo -e "\033[31m输入硬盘自动休眠的检测时间，周期为分钟,输入5为5分钟:\033[0m"
+                else
+                    break
+                fi
+            done
             cat << EOF >> /etc/crontab
 */$x * * * * root /root/hdspindown/spindownall
 EOF
