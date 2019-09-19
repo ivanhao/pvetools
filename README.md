@@ -47,7 +47,7 @@ pvetools
 只有以下界面需要用tab键选成红框的内容,其他的一律无脑回车即可。
 ![mail](./mail.png)
 
-####无脑方式说明：
+#### 无脑方式说明：
 
 无脑方式基本不需要你输入内容，除了配置你的邮件地址，邮箱要按上面配置邮件说明中的"Internet Site"
 
@@ -58,7 +58,7 @@ pvetools
 
 ### install
 
-#####for english user:
+##### for english user:
 
 ```
 export LC_ALL=en_US.UTF-8
