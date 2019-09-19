@@ -319,9 +319,10 @@ b | B )
    comment = All 
    browseable = yes
    path = $x
-   guest ok = yes
+   guest ok = no
    read only = no
    create mask = 0700
+   directory mask = 0700
 ;  $n end
 EOF
         echo "Configed!"
