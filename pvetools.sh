@@ -293,7 +293,7 @@ a | A )
             read m
             while [ 1 = 1 ]
             do
-                if [ `echo $m|grep "^[0-9a-zA-Z.-@]*$"|wc -l` = 0 ];then
+                if [[ `echo $m|grep "^[0-9a-zA-Z.-@]*$"|wc -l` = 0 ]] && [[ $m = "" ]];then
                     echo -e "\033[31mWrong format,input again:\033[0m"
                     echo -e "\033[31m密码格式不对，请重新输入:\033[0m"
                     read m
@@ -533,9 +533,9 @@ if [ ! -f /root/hdspindown/spindownall ];then
             read x
             while [ 1 = 1 ]
             do
-                if [ `echo "$x"|grep "[0-9]*"|wc -l` = 0 ];then
-                    echo -e "\033[31m输入格式错误:\033[0m"
-                    echo -e "\033[31m输入硬盘自动休眠的检测时间，周期为分钟,输入5为5分钟:\033[0m"
+                if [[ `echo "$x"|grep "[0-9]*"|wc -l` = 0 ]] && [[ $x = "" ]];then
+                    echo -e "\033[31m输入格式错误,请重新输入:\033[0m"
+                    read x
                 else
                     break
                 fi
@@ -581,9 +581,27 @@ if [ `grep "intel_pstate=disable" /etc/default/grub|wc -l` = 0 ];then
             cpufreq-info
             echo "Input MAX_SPEED:"
             echo "输入最大频率:";read x
+            while [ 1 = 1 ]
+            do
+                if [[ `echo "$x"|grep "[0-9]*"|wc -l` = 0 ]] && [[ $x = "" ]];then
+                    echo -e "\033[31m输入格式错误,请重新输入:\033[0m"
+                    read x
+                else
+                    break
+                fi
+            done
             mx=$x
             echo "Input MIN_SPEED:"
             echo "输入最小频率:";read x
+            while [ 1 = 1 ]
+            do
+                if [[ `echo "$x"|grep "[0-9]*"|wc -l` = 0 ]] && [[ $x = "" ]];then
+                    echo -e "\033[31m输入格式错误,请重新输入:\033[0m"
+                    read x
+                else
+                    break
+                fi
+            done
             mi=$x
             cat << EOF > /etc/default/cpufrequtils
 ENABLE="true"
@@ -610,6 +628,15 @@ fi
 }
 
 chSubs(){
+    clear
+    case $L in
+        en )
+            echo -e "\033[31mRemove subscribe notice.\033[0m"
+            ;;
+        zh )
+            echo -e "\033[31m去除订阅提示.\033[0m"
+            ;;
+    esac
     if [ `grep "data.status !== 'Active'" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js|wc -l` = 1 ];then
         sed -i "s/data.status !== 'Active'/data.status/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
         echo "Remove success!"
