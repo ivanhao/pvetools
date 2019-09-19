@@ -1,4 +1,9 @@
 #!/bin/bash
+#############--proxmox tools--###############
+#  Author : 龙天ivan                        #
+#  Version: V1.0                            #
+#############################################
+
 if [ `export|grep 'LC_ALL'|wc -l` = 0 ];then
     if [ `grep "LC_ALL" /etc/profile|wc -l` = 0 ];then
         echo "export LC_ALL=en_US.UTF-8" >> /etc/profile
