@@ -133,6 +133,10 @@ esac
 
 chMail(){
 #set mailutils to send mail
+if [ -f /etc/mailname ];then
+    echo -e "\033[31mIt seems you have already configed it before.\033[0m"
+    echo -e "\033[31m亲你好像已经配置过这个了.\033[0m"
+fi
 echo -e "\033[31mWill you want to config mailutils & postfix to send notification?(Y/N):\033[0m"
 echo -e "\033[31m是否配置mailutils和postfix来发送邮件通知?(Y/N):\033[0m"
 read x
@@ -215,6 +219,12 @@ if [ ! -f /etc/modprobe.d/zfs.conf ] || [ `grep "zfs_arc_max" /etc/modprobe.d/zf
         echo "Please comfirm!"
         sleep 1
     esac
+else
+    echo -e "\033[31mIt seems you have already configed it before.\033[0m"
+    echo -e "\033[31m亲你好像已经配置过这个了.\033[0m"
+    sleep 2
+    read x
+    main
 fi
 }
 
@@ -375,22 +385,24 @@ esac
 
 chVim(){
 #config vim
-if [ ! -f /root/.vimrc ] || [ `cat /root/.vimrc|wc -l` = 0 ];then
-    喁喁kk
-    if [ $L = "en" ];then
-        echo -e "\033[31mInstall vim and config:\033[0m"
-        echo -e "\033[32m[a] \033[31mInstall vim & simply config display.\033[0m"
-        echo -e "\033[32m[b] \033[31mInstall vim & config 'vim-for-server'(https://github.com/wklken/vim-for-server).\033[0m"
-    else
-        echo -e "\033[31m安装配置VIM:\033[0m"
-        echo -e "\033[32m[a] \033[31m安装VIM并简单配置，如配色行号等，基本是vim原味儿.\033[0m"
-        echo -e "\033[32m[b] \033[31m安装VIM并配置'vim-for-server'(https://github.com/wklken/vim-for-server).\033[0m"
-    fi
-    read x
-    case "$x" in 
+if [ $L = "en" ];then
+    echo -e "\033[31mInstall vim and config:\033[0m"
+    echo -e "\033[32m[a] \033[31mInstall vim & simply config display.\033[0m"
+    echo -e "\033[32m[b] \033[31mInstall vim & config 'vim-for-server'(https://github.com/wklken/vim-for-server).\033[0m"
+else
+    echo -e "\033[31m安装配置VIM:\033[0m"
+    echo -e "\033[32m[a] \033[31m安装VIM并简单配置，如配色行号等，基本是vim原味儿.\033[0m"
+    echo -e "\033[32m[b] \033[31m安装VIM并配置'vim-for-server'(https://github.com/wklken/vim-for-server).\033[0m"
+fi
+read x
+case "$x" in 
     a | A  )
-        apt -y install vim
-        cat << EOF > /root/.vimrc
+        if [ ! -f /root/.vimrc ] || [ `cat /root/.vimrc|wc -l` = 0 ];then
+            apt -y install vim
+        else
+            cp ~/.vimrc ~/.vimrc.bak
+        fi
+        cat << EOF > ~/.vimrc
 set number
 set showcmd
 set incsearch
@@ -446,7 +458,6 @@ EOF
         echo "Please comfirm!"
         sleep 1
 esac
-fi
 }
 
 chSpindown(){
