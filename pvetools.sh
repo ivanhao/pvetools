@@ -301,10 +301,10 @@ a | A )
                     break
                 fi
             done
-            echo -e "$pass/n$pass"|smbpasswd -a admin
+            echo -e "$pass\n$pass"|smbpasswd -a admin
             service smbd restart
             echo -e "\033[31m已成功配置好samba，请记好samba用户admin的密码!\033[0m"
-            sleep 2
+            sleep 3
             ;;
         n | no )
             ;;
