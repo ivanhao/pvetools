@@ -585,12 +585,11 @@ chSubs(){
         sed -i "s/data.status !== 'Active'/data.status/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
         echo "Remove success!"
         echo "去除成功!"
-        sleep 2
     else
         echo "You already removed,nothing to do." 
         echo "已经去除过了，不需要再去除。"
-        sleep 2
    fi
+    sleep 2
 }
 chSmartd(){
   hds=`lsblk|grep "^[s,h]d[a-z]"|awk '{print $1}'`
@@ -625,16 +624,16 @@ chNestedV(){
                 if [ `cat /sys/module/kvm_intel/parameters/nested` = 'Y' ];then
                     echo "options kvm_intel nested=1" >> /etc/modprobe.d/modprobe.conf
                     echo "Nested ok."
+                    echo "你已经开启嵌套虚拟化."
                 else
                     echo "Your system can not open nested."
                     echo "您的系统不支持嵌套虚拟化."
                 fi
-                sleep 2
             else
                 echo "You already enabled nested virtualization."
                 echo "你已经开启过嵌套虚拟化."
-                sleep 2
             fi
+            sleep 2
             if [ ! $1 ];then
                 chNestedV
             fi
@@ -721,10 +720,22 @@ a | A )
     chMail wn
 #    chZfs wn
     chVim wn
-    chCpu wn
+#    chCpu wn
     chSpindown wn
     chNestedV wn
     chSubs wn
+    echo "Config complete!Back to main menu 5s later."
+    echo "已经完成配置！5秒后回主界面"
+    echo "5"
+    sleep 1
+    echo "4"
+    sleep 1
+    echo "3"
+    sleep 1
+    echo "2"
+    sleep 1
+    echo "1"
+    sleep 1
     main
     ;;
 b | B )
