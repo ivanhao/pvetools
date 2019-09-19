@@ -19,14 +19,14 @@ if [ $L = "en" ];then
     echo -e "\033[32m[b] \033[31mChange to ustc.edu.cn.\033[0m"
     echo -e "\033[32m[c] \033[31mDisable enterprise.\033[0m"
     echo -e "\033[32m[d] \033[31mUndo Change.\033[0m"
-    echo -e "\033[32m[back] \033[31mMain menu.\033[0m"
+    echo -e "\033[32m[q] \033[31mMain menu.\033[0m"
 else
     echo -e "\033[31m配置apt镜像源:\033[0m"
     echo -e "\033[32m[a] \033[31m无脑模式.\033[0m"
     echo -e "\033[32m[b] \033[31m更换为国内ustc.edu.cn源.\033[0m"
     echo -e "\033[32m[c] \033[31m关闭企业更新源.\033[0m"
     echo -e "\033[32m[d] \033[31m还原配置.\033[0m"
-    echo -e "\033[32m[back] \033[31m返回主菜单.\033[0m"
+    echo -e "\033[32m[q] \033[31m返回主菜单.\033[0m"
 fi
 read x 
 case "$x" in
