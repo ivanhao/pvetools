@@ -5,7 +5,7 @@ for english user,please look the end of readme.
 
 
 ### 安装
-#####中国地区用户:
+#####中国用户:
 ```
 sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
 cp /etc/apt/sources.list /etc/apt/sources.list.init
