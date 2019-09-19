@@ -322,6 +322,7 @@ b | B )
    guest ok = yes
    read only = no
    create mask = 0700
+;  $n end
 EOF
         echo "Configed!"
         echo "配置成功!"
@@ -352,7 +353,7 @@ c )
         esac
     done
     if [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` != 0 ];then
-        sed "/\[${n}\]/,/0700/d" /etc/samba/smb.conf -i 
+        sed "/\[${n}\]/,/${n} end/d" /etc/samba/smb.conf -i 
         echo "Configed!"
         echo "配置成功!"
         service smbd restart
