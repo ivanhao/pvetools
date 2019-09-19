@@ -643,7 +643,7 @@ chSubs(){
             ;;
     esac
     if [ `grep "data.status !== 'Active'" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js|wc -l` = 1 ];then
-        sed -i "s/data.status !== 'Active'/data.status/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+        sed -i.bak "s/data.status !== 'Active'/false/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
         echo "Remove success!"
         echo "去除成功!"
     else
