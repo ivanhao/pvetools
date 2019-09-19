@@ -522,6 +522,7 @@ MIN_SPEED="$mi"
 EOF
             echo -e " \033[31m cpufrequtils need to reboot to apply! Please reboot.  \033[0m"
             echo -e " \033[31m cpufrequtils 安装好后需要重启系统，请稍后重启.  \033[0m"
+            sleep 2
         fi
         ;;
     n | no )
@@ -530,6 +531,10 @@ EOF
         echo "Please confirm!"
         sleep 1
     esac
+else
+    echo -e "\033[31mIt seems you have already configed it before.\033[0m"
+    echo -e "\033[31m亲你好像已经配置过这个了.\033[0m"
+    sleep 2
 fi
 }
 
