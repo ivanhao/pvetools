@@ -6,6 +6,7 @@ for english user,please look the end of readme.
 
 ### 安装
 #####中国用户:
+> 需要用root账号来运行
 把下面整段复制粘贴到终端中回车即可。
 ```
 export LC_ALL=en_US.UTF-8
@@ -25,7 +26,10 @@ apt update && apt -y install git && git clone https://github.com/ivanhao/pvetool
 ```
 ###主界面
 
+#### 如果这个脚本帮到你了，麻烦点一下右上角的star小星星^_^
 
+## 如果觉得好的请捐赠一下，自愿捐赠五毛一块的你也没啥损失，我也不会发大财，但是是对我的一种鼓励^_^
+![pay](./pay.jpg)
 
 ### install
 #####for english user:
