@@ -28,9 +28,10 @@ else
     echo -e "\033[32m[d] \033[31m还原配置.\033[0m"
     echo -e "\033[32m[q] \033[31m返回主菜单.\033[0m"
 fi
-read x 
 if [ $1 ];then
     x=a
+else
+    read x 
 fi
 case "$x" in
 a | A )
@@ -146,9 +147,10 @@ if [ -f /etc/mailname ];then
 fi
 echo -e "\033[31mWill you want to config mailutils & postfix to send notification?(Y/N):\033[0m"
 echo -e "\033[31m是否配置mailutils和postfix来发送邮件通知?(Y/N):\033[0m"
-read x
 if [ $1 ];then
     x=a
+else
+    read x 
 fi
 case "$x" in 
     y | yes | a )
@@ -193,9 +195,10 @@ chZfs(){
 if [ ! -f /etc/modprobe.d/zfs.conf ] || [ `grep "zfs_arc_max" /etc/modprobe.d/zfs.conf|wc -l` = 0 ];then
     echo -e "\033[31mset max zfs ram 4(G) or 8(G) etc, just enter number or n?(number/n) \033[0m"
     echo -e "\033[31m设置最大zfs内存（zfs_arc_max),比如4G或8G等, 只需要输入纯数字即可，比如4G输入4?(number/n) \033[0m"
-    read x
     if [ $1 ];then
         x=a
+    else
+        read x 
     fi
     case "$x" in
     n | no )
@@ -221,9 +224,10 @@ if [ ! -f /etc/modprobe.d/zfs.conf ] || [ `grep "zfs_arc_max" /etc/modprobe.d/zf
     #zfs-zed
     echo -e "\033[31mInstall zfs-zed to get email notification of zfs scrub?(Y/n):\033[0m"
     echo -e "\033[31m安装zfs-zed来发送zfs scrub的结果提醒邮件?(Y/n):\033[0m"
-    read zed
     if [ $1 ];then
         zed=a
+    else
+        read zed
     fi
     case "$zed" in 
     y | yes | a )
@@ -264,18 +268,20 @@ else
     echo -e "\033[32m[c] \033[31m删除共享文件夹.\033[0m"
     echo -e "\033[32m[q] \033[31m返回主菜单.\033[0m"
 fi
-read x
 if [ $1 ];then
     x=a
+else
+    read x
 fi
 case "$x" in
 a | A )
     if [ `grep samba /etc/group|wc -l` = 0 ];then
         echo -e "\033[31mset samba and admin user for samba?(Y/n):\033[0m"
         echo -e "\033[31m安装samba并配置admin为samba用户?(Y/n):\033[0m"
-        read x
         if [ $1 ];then
             x=a
+        else
+            read x
         fi
         case "$x" in 
         y | yes | a )
@@ -422,9 +428,10 @@ else
     echo -e "\033[32m[a] \033[31m安装VIM并简单配置，如配色行号等，基本是vim原味儿.\033[0m"
     echo -e "\033[32m[b] \033[31m安装VIM并配置'vim-for-server'(https://github.com/wklken/vim-for-server).\033[0m"
 fi
-read x
 if [ $1 ];then
     x=a
+else
+    read x
 fi
 case "$x" in 
     a | A  )
@@ -496,9 +503,10 @@ chSpindown(){
 if [ ! -f /root/hdspindown/spindownall ];then
     echo -e "\033[31mConfig hard drives to auto pindown?(Y/n):\033[0m"
     echo -e "\033[31m配置硬盘自动休眠?(Y/n):\033[0m"
-    read x
     if [ $1 ];then
         x=a
+    else
+        read x
     fi
     case "$x" in 
     y | yes | a )
@@ -539,9 +547,10 @@ chCpu(){
 #setup for cpufreq
 if [ `grep "intel_pstate=disable" /etc/default/grub|wc -l` = 0 ];then
     echo -e "\033[31mInstall cpufrequtils to save power?(Y/n):\033[0m"
-    read x
     if [ $1 ];then
         x=a
+    else
+        read x
     fi
     case "$x" in 
     y | yes | a )
@@ -609,9 +618,10 @@ chNestedV(){
             echo -e "\033[32m[q] \033[31m返回主菜单.\033[0m"
             ;;
     esac
-    read x
     if [ $1 ];then
         x=a
+    else
+        read x
     fi
     case "$x" in
         a )
