@@ -290,7 +290,18 @@ a | A )
             useradd -g samba -M -s /sbin/nologin admin
             echo -e "\033[31mPlease input samba user admin's password:\033[0m"
             echo -e "\033[31m请输入samba用户admin的密码:\033[0m"
-            smbpasswd -a admin
+            read m
+            while [ 1 = 1 ]
+            do
+                if [ echo $m|grep "[0-9a-zA-Z.-@]*"|wc -l` = 0 ];then
+                    echo -e "\033[31mWrong format,input again:\033[0m"
+                    echo -e "\033[31m密码格式不对，请重新输入:\033[0m"
+                    read m
+                else
+                    break
+                fi
+            done
+            echo -e "$pass/n$pass"|smbpasswd -a admin
             service smbd restart
             echo -e "\033[31m已成功配置好samba，请记好samba用户admin的密码!\033[0m"
             sleep 2
