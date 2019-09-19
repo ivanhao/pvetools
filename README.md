@@ -6,6 +6,7 @@ for english user,please look the end of readme.
 
 ### 安装
 #####中国用户:
+把下面整段复制粘贴到终端中回车即可。
 ```
 export LC_ALL=en_US.UTF-8
 sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
