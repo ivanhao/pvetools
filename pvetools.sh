@@ -30,7 +30,7 @@ else
 fi
 read x 
 case "$x" in
-a | A  )
+a | A | "" )
     if [ `grep "ustc.edu.cn" /etc/apt/sources.list|wc -l` = 0 ];then
         sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
         cp /etc/apt/sources.list /etc/apt/sources.list.bak
@@ -249,7 +249,7 @@ else
 fi
 read x
 case "$x" in
-a | A )
+a | A | "" )
     if [ `grep samba /etc/group|wc -l` = 0 ];then
         echo -e "\033[31mset samba and admin user for samba?(Y/n):\033[0m"
         echo -e "\033[31m安装samba并配置admin为samba用户?(Y/n):\033[0m"
