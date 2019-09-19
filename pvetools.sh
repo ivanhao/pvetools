@@ -691,7 +691,7 @@ a | A )
     chSource wn
     chSamba wn
     chMail wn
-    chZfs wn
+#    chZfs wn
     chVim wn
     chCpu wn
     chSpindown wn
