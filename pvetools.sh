@@ -33,10 +33,10 @@ case "$x" in
 a | A )
     if [ `grep "ustc.edu.cn" /etc/apt/sources.list|wc -l` = 0 ];then
         sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
-        cp /etc/apt/sources.list /etc/apt/sources.list.init
-        cp /etc/apt/sources.list.d/pve-no-sub.list /etc/apt/sources.list.d/pve-no-sub.list.init
-        cp /etc/apt/sources.list.d/pve-enterprise.list /etc/apt/sources.list.d/pve-enterprise.list.init
-        cp /etc/apt/sources.list.d/ceph.list /etc/apt/sources.list.d/ceph.list.init
+        cp /etc/apt/sources.list /etc/apt/sources.list.bak
+        cp /etc/apt/sources.list.d/pve-no-sub.list /etc/apt/sources.list.d/pve-no-sub.list.bak
+        cp /etc/apt/sources.list.d/pve-enterprise.list /etc/apt/sources.list.d/pve-enterprise.list.bak
+        cp /etc/apt/sources.list.d/ceph.list /etc/apt/sources.list.d/ceph.list.bak
         echo "deb https://mirrors.ustc.edu.cn/debian/ $sver main contrib non-free
 deb-src https://mirrors.ustc.edu.cn/debian/ $sver main contrib non-free
 deb https://mirrors.ustc.edu.cn/debian/ $sver-updates main contrib non-free
@@ -66,6 +66,8 @@ deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib 
     ;;
 b | B  )
     if [ `grep "ustc.edu.cn" /etc/apt/sources.list|wc -l` = 0 ];then
+        cp /etc/apt/sources.list /etc/apt/sources.list.bak
+        cp /etc/apt/sources.list.d/ceph.list /etc/apt/sources.list.d/ceph.list.bak
         sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
         echo "deb https://mirrors.ustc.edu.cn/debian/ $sver main contrib non-free
 deb-src https://mirrors.ustc.edu.cn/debian/ $sver main contrib non-free
@@ -112,10 +114,10 @@ c | C  )
     chSource
     ;;
 d | D )
-    cp /etc/apt/sources.list.init /etc/apt/sources.list
-    cp /etc/apt/sources.list.d/pve-no-sub.list.init /etc/apt/sources.list.d/pve-no-sub.list
-    cp /etc/apt/sources.list.d/pve-enterprise.list.init /etc/apt/sources.list.d/pve-enterprise.list
-    cp /etc/apt/sources.list.d/ceph.list.init /etc/apt/sources.list.d/ceph.list
+    cp /etc/apt/sources.list.bak /etc/apt/sources.list
+    cp /etc/apt/sources.list.d/pve-no-sub.list.bak /etc/apt/sources.list.d/pve-no-sub.list
+    cp /etc/apt/sources.list.d/pve-enterprise.list.bak /etc/apt/sources.list.d/pve-enterprise.list
+    cp /etc/apt/sources.list.d/ceph.list.bak /etc/apt/sources.list.d/ceph.list
     echo "Change apt source success!"
     echo "更换软件源成功。"
     sleep 2
@@ -190,7 +192,7 @@ if [ ! -f /etc/modprobe.d/zfs.conf ] || [ `grep "zfs_arc_max" /etc/modprobe.d/zf
     * )
         if [[ "$x" =~ ^[1-9]+$ ]]; then
             echo "options zfs zfs_arc_max=$[$x*1024*1024*1024]">/etc/modprobe.d/zfs.conf
-            update-initramfs -u
+            update.bakramfs -u
             echo -e "\033[31mConfig complete!you should reboot later.\033[0m"
             echo -e "\033[31m配置完成，一会儿最好重启一下系统亲。\033[0m"
         else
@@ -223,7 +225,6 @@ else
     echo -e "\033[31mIt seems you have already configed it before.\033[0m"
     echo -e "\033[31m亲你好像已经配置过这个了.\033[0m"
     sleep 2
-    read x
     main
 fi
 }
@@ -475,14 +476,14 @@ if [ ! -f /root/hdspindown/spindownall ];then
         chmod +x *.sh
         ./spindownall
         if [ `grep "spindownall" /etc/crontab|wc -l` = 0 ];then
-            echo -e "\033[31mInput number of minite to auto spindown:\033[0m"
+            echo -e "\033[31mInput number of .bake to auto spindown:\033[0m"
             echo -e "\033[31m输入硬盘自动休眠的检测时间，周期为分钟,输入5为5分钟:\033[0m"
             read x
             cat << EOF >> /etc/crontab
 */$x * * * * root /root/hdspindown/spindownall
 EOF
             service cron reload
-            echo -e "\033[31mConfig every $x minite to check disks and auto spindown:\033[0m"
+            echo -e "\033[31mConfig every $x .bake to check disks and auto spindown:\033[0m"
             echo -e "\033[31m已为亲配置好硬盘每$x分钟自动检测硬盘和休眠.\033[0m"
             sleep 2
         fi
@@ -493,6 +494,11 @@ EOF
         echo "Please comfirm!"
         sleep 1
     esac
+else
+    echo -e "\033[31mIt seems you have already configed it before.\033[0m"
+    echo -e "\033[31m亲你好像已经配置过这个了.\033[0m"
+    sleep 2
+    main
 fi
 }
 
@@ -560,12 +566,12 @@ chNestedV(){
         en )
             echo -e "\033[32m[1] \033[31mEnable nested\033[0m"
             echo -e "\033[32m[2] \033[31mSet vm to nested.\033[0m"
-            echo -e "\033[32m[3] \033[31mback to main menu.\033[0m"
+            echo -e "\033[32m[q] \033[31mback to main menu.\033[0m"
             ;;
         zh )
             echo -e "\033[32m[1] \033[31m开启嵌套虚拟化。\033[0m"
             echo -e "\033[32m[2] \033[31m开启某个虚拟机的嵌套虚拟化.\033[0m"
-            echo -e "\033[32m[3] \033[31m返回主菜单.\033[0m"
+            echo -e "\033[32m[q] \033[31m返回主菜单.\033[0m"
             ;;
     esac
     read n
@@ -619,7 +625,7 @@ chNestedV(){
                 chNestedV
             fi
             ;;
-        3 )
+        q )
             main
             ;;
         * )
@@ -647,7 +653,7 @@ if [ $L = "en" ];then
   echo -e "\033[32m[k] \033[31mConfig enable Nested virtualization.\033[0m"
   echo -e "\033[32m[l] \033[31mRemove subscribe notice.\033[0m"
   echo -e "\033[32m[lang] Change Language.\033[0m"
-  echo -e "\033[32m[exit] Quit.\033[0m"
+  echo -e "\033[32m[exit|q] Quit.\033[0m"
   echo -e "\033[32mInput:\033[0m"
 else
   echo -e "\033[32m请输入序号选择相应的配置:\033[0m"
@@ -664,7 +670,7 @@ else
   echo -e "\033[32m[k] \033[31m配置开启嵌套虚拟化.\033[0m(100%)"
   echo -e "\033[32m[l] \033[31m去除订阅提示.\033[0m(100%)"
   echo -e "\033[32m[lang] Change Language.\033[0m"
-  echo -e "\033[32m[exit] 退出\033[0m"
+  echo -e "\033[32m[exit|q] 退出\033[0m"
   echo -e "\033[32mInput:\033[0m"
 fi
 read i
@@ -702,10 +708,12 @@ h | H )
     ;;
 i | I )
     echo "not support yet."
+    sleep 2
     main
     ;;
 j | J )
     echo "not support yet."
+    sleep 2
     main
     ;;
 k | K )
