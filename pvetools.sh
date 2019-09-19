@@ -293,7 +293,7 @@ a | A )
             read m
             while [ 1 = 1 ]
             do
-                if [ echo $m|grep "[0-9a-zA-Z.-@]*"|wc -l` = 0 ];then
+                if [ `echo $m|grep "^[0-9a-zA-Z.-@]*$"|wc -l` = 0 ];then
                     echo -e "\033[31mWrong format,input again:\033[0m"
                     echo -e "\033[31m密码格式不对，请重新输入:\033[0m"
                     read m

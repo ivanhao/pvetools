@@ -22,10 +22,18 @@ deb https://mirrors.ustc.edu.cn/debian/ $sver-backports main contrib non-free
 deb-src https://mirrors.ustc.edu.cn/debian/ $sver-backports main contrib non-free
 deb https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-free
 deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-free" > /etc/apt/sources.list
-apt update && apt -y install git && git clone https://github.com/ivanhao/pvetools.git && cd pvetools && ./pvetools.sh
+apt update && apt -y install git && git clone https://github.com/ivanhao/pvetools.git \
+&& cd pvetools && cp ./pvetools.sh /usr/bin/pvetools && pvetools
 &&
 ```
+###运行
+在shell中输入
+`
+pvetools
+`
+
 ###主界面
+
 
 #### 如果这个脚本帮到你了，麻烦点一下右上角的star小星星^_^
 
