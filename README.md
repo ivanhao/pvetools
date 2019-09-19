@@ -33,7 +33,11 @@ pvetools
 `
 
 ###主界面
+![main](./main.png)
 
+
+
+![mail](./mail.png)
 
 #### 如果这个脚本帮到你了，麻烦点一下右上角的star小星星^_^
 
