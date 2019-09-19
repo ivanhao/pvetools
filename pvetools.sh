@@ -538,7 +538,7 @@ if [ ! -f /root/hdspindown/spindownall ];then
             read x
             while [ 1 = 1 ]
             do
-                if [[ `echo "$x"|grep "[0-9]*"|wc -l` = 0 ]] && [[ $x = "" ]];then
+                if [[ `echo "$x"|grep "[0-9]*"|wc -l` = 0 ]] || [[ $x = "" ]];then
                     echo -e "\033[31m输入格式错误,请重新输入:\033[0m"
                     read x
                 else
@@ -588,7 +588,7 @@ if [ `grep "intel_pstate=disable" /etc/default/grub|wc -l` = 0 ];then
             echo "输入最大频率:";read x
             while [ 1 = 1 ]
             do
-                if [[ `echo "$x"|grep "[0-9]*"|wc -l` = 0 ]] && [[ $x = "" ]];then
+                if [[ `echo "$x"|grep "[0-9]*"|wc -l` = 0 ]] || [[ $x = "" ]];then
                     echo -e "\033[31m输入格式错误,请重新输入:\033[0m"
                     read x
                 else
@@ -600,7 +600,7 @@ if [ `grep "intel_pstate=disable" /etc/default/grub|wc -l` = 0 ];then
             echo "输入最小频率:";read x
             while [ 1 = 1 ]
             do
-                if [[ `echo "$x"|grep "[0-9]*"|wc -l` = 0 ]] && [[ $x = "" ]];then
+                if [[ `echo "$x"|grep "[0-9]*"|wc -l` = 0 ]] || [[ $x = "" ]];then
                     echo -e "\033[31m输入格式错误,请重新输入:\033[0m"
                     read x
                 else
