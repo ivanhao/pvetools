@@ -173,6 +173,9 @@ case "$x" in
         echo "This is a mail test." |mail -s "mail test" root
         echo -e "\033[31mConfig complete and send test email to you.\033[0m"
         echo -e "\033[31m已经配置好并发送了测试邮件.\033[0m"
+        if [ ! $1 ];then
+            main
+        fi
         ;;
     n | no )
         ;;
@@ -227,7 +230,9 @@ else
     echo -e "\033[31mIt seems you have already configed it before.\033[0m"
     echo -e "\033[31m亲你好像已经配置过这个了.\033[0m"
     sleep 2
-    main
+    if [ ! $1 ];then
+        main
+    fi
 fi
 }
 
@@ -248,8 +253,11 @@ else
     echo -e "\033[32m[q] \033[31m返回主菜单.\033[0m"
 fi
 read x
+if [ $1 ];then
+    x=a
+fi
 case "$x" in
-a | A | "" )
+a | A )
     if [ `grep samba /etc/group|wc -l` = 0 ];then
         echo -e "\033[31mset samba and admin user for samba?(Y/n):\033[0m"
         echo -e "\033[31m安装samba并配置admin为samba用户?(Y/n):\033[0m"
@@ -277,7 +285,9 @@ a | A | "" )
         echo -e "\033[31m已配置过samba，没什么可做的!\033[0m"
         sleep 2
     fi
-    chSamba
+    if [ ! $1 ];then
+        chSamba
+    fi
     ;;
 b | B )
     echo -e "\033[31mExist share folders:\033[0m"
