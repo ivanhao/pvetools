@@ -148,10 +148,10 @@ if [ -f /etc/mailname ];then
 fi
 echo -e "\033[31mWill you want to config mailutils & postfix to send notification?(Y/N):\033[0m"
 echo -e "\033[31m是否配置mailutils和postfix来发送邮件通知?(Y/N):\033[0m"
-echo "$1: "$1
+echo "1: "$1
 if [ $1 ];then
     echo "c: "$c
-    if [ $c = "1" ];then
+    if [ $c == "1" ];then
         x=n
     else
         x=a
