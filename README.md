@@ -7,11 +7,10 @@ for english user,please look the end of readme.
 ### 安装
 #####中国用户:
 ```
+export LC_ALL=en_US.UTF-8
 sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
 cp /etc/apt/sources.list /etc/apt/sources.list.bak
-cp /etc/apt/sources.list.d/pve-no-sub.list /etc/apt/sources.list.d/pve-no-sub.list.bak
-cp /etc/apt/sources.list.d/pve-enterprise.list /etc/apt/sources.list.d/pve-enterprise.list.bak
-cp /etc/apt/sources.list.d/ceph.list /etc/apt/sources.list.d/ceph.list.bak
+mv /etc/apt/sources.list.d/pve-enterprise.list /etc/apt/sources.list.d/pve-enterprise.list.bak
 echo "deb https://mirrors.ustc.edu.cn/debian/ $sver main contrib non-free
 deb-src https://mirrors.ustc.edu.cn/debian/ $sver main contrib non-free
 deb https://mirrors.ustc.edu.cn/debian/ $sver-updates main contrib non-free
@@ -20,10 +19,7 @@ deb https://mirrors.ustc.edu.cn/debian/ $sver-backports main contrib non-free
 deb-src https://mirrors.ustc.edu.cn/debian/ $sver-backports main contrib non-free
 deb https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-free
 deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-free" > /etc/apt/sources.list
-apt update
-apt -y install git 
-git clone https://github.com/ivanhao/pvetools.git
-cd pvetools && ./pvetools.sh
+apt update && apt -y install git && git clone https://github.com/ivanhao/pvetools.git && cd pvetools && ./pvetools.sh
 &&
 ```
 ###主界面
