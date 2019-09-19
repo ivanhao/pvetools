@@ -30,7 +30,7 @@ else
 fi
 read x 
 case "$x" in
-a | A )
+a | A  )
     if [ `grep "ustc.edu.cn" /etc/apt/sources.list|wc -l` = 0 ];then
         sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
         cp /etc/apt/sources.list /etc/apt/sources.list.bak
@@ -62,7 +62,9 @@ deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib 
         echo -e "\033[31m已经更换apt源为 ustc.edu.cn，没什么可做的。\033[0m"
     fi
     sleep 2
-    chSource
+    if [ ! $1 ];then
+        chSource
+    fi
     ;;
 b | B  )
     if [ `grep "ustc.edu.cn" /etc/apt/sources.list|wc -l` = 0 ];then
@@ -123,7 +125,7 @@ d | D )
     sleep 2
     chSource
     ;;
-back )
+q )
     main
     ;;
 * )
@@ -676,15 +678,15 @@ fi
 read i
 case "$i" in 
 a | A )
-    chSource
-    chSamba
-    chMail
-    chZfs
-    chVim
-    chCpu
-    chSpindown
-    chNestedV
-    chSubs
+    chSource wn
+    chSamba wn
+    chMail wn
+    chZfs wn
+    chVim wn
+    chCpu wn
+    chSpindown wn
+    chNestedV wn
+    chSubs wn
     main
     ;;
 b | B )
