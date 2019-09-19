@@ -152,7 +152,7 @@ case "$x" in
             echo "Please input!"
             read qqmail
         else
-            while 1
+            while [ 1 =1 ]
             do
                 if [ `echo $qqmail|grep "^[a-zA-Z0-9_-]*@[A-Za-z_-]*\.[a-zA-Z_-]*$"` ];then
                     break

@@ -29,10 +29,8 @@ apt update && apt -y install git && git clone https://github.com/ivanhao/pvetool
 ### install
 #####for english user:
 ```
-apt update
-apt -y install git 
-git clone https://github.com/ivanhao/pvetools.git
-cd pvetools && ./pvetools.sh
+export LC_ALL=en_US.UTF-8
+apt update && apt -y install git && git clone https://github.com/ivanhao/pvetools.git && cd pvetools && ./pvetools.sh
 &&
 ```
 
