@@ -156,21 +156,16 @@ case "$x" in
         echo -e "\033[31mInput email adress:\033[0m"
         echo -e "\033[31m输入邮箱地址:\033[0m"
         read qqmail
-        if [ ! "$qqmail" ];then
-            echo "Please input!"
-            read qqmail
-        else
-            while [ 1 = 1 ]
-            do
-                if [ `echo $qqmail|grep "^[a-zA-Z0-9_-]*@[A-Za-z_-]*\.[a-zA-Z_-]*$"` ];then
+        while [ 1 = 1 ]
+        do
+            if [ `echo $qqmail|grep "^[a-zA-Z0-9_-]*@[A-Za-z_-]*\.[a-zA-Z_-]*$"` ];then
                     break
-                else
-                    echo "Wrong email format,input xxxx@qq.com for example.retry:"
-                    echo "错误的邮箱格式，请输入类似xxxx@qq.com并重试:"
-                    read qqmail
-                fi
-            done
-        fi
+            else
+                echo "Wrong email format,input xxxx@qq.com for example.retry:"
+                echo "错误的邮箱格式，请输入类似xxxx@qq.com并重试:"
+                read qqmail
+            fi
+        done
         echo "pve.local" > /etc/mailname
         sed -i -e "/root:/d" /etc/aliases
         echo "root: $qqmail">>/etc/aliases
