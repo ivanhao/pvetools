@@ -676,6 +676,15 @@ fi
 read i
 case "$i" in 
 a | A )
+    chSource
+    chSamba
+    chMail
+    chZfs
+    chVim
+    chCpu
+    chSpindown
+    chNestedV
+    chSubs
     main
     ;;
 b | B )
