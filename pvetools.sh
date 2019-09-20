@@ -835,7 +835,7 @@ EOF
         done
         #--configs end--
         h=`sensors|awk 'END{print NR}'`
-        let h=$h*9.5+300
+        let h=$h*9+320
         n=`sed '/widget.pveNodeStatus/,/height/=' $js -n|sed -n '$p'`
         sed -i ''$n'c \ \ \ \ height:\ '$h',' $js 
         n=`sed '/pveversion/,/\}/=' $js -n|sed -n '$p'`
