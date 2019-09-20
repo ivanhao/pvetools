@@ -60,11 +60,11 @@ deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib 
         sed -i 's|deb|#deb|' /etc/apt/sources.list.d/pve-enterprise.list
         #修改 ceph镜像更新源
         echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/ceph-luminous $sver main" > /etc/apt/sources.list.d/ceph.list
-        echo "Done!"
+        echo "apt source has been changed successfully!"
         echo "更换软件源成功."
         apt-get update
         apt-get -y install net-tools
-        echo "Done!"
+        echo "apt source has been changed successfully!"
         echo "更换软件源成功."
     else
         echo -e "\033[31mAlready changed apt source to ustc.edu.cn.\033[0m"
@@ -90,11 +90,11 @@ deb https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-
 deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-free" > /etc/apt/sources.list
         #修改 ceph镜像更新源
         echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/ceph-luminous $sver main" > /etc/apt/sources.list.d/ceph.list
-        echo "Done!"
+        echo "apt source has been changed successfully!"
         echo "更换软件源成功."
         apt-get update
         apt-get -y install net-tools
-        echo "Done!"
+        echo "apt source has been changed successfully!"
         echo "更换软件源成功."
     else
         echo -e "\033[31mAlready changed apt source to ustc.edu.cn.\033[0m"
@@ -109,16 +109,16 @@ c | C  )
         #修改pve 5.x 更新源地址为 no subscription，不使用企业更新源
         echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/pve/ $sver pve-no-subscription" > /etc/apt/sources.list.d/pve-no-sub.list
     else
-        echo "Done!."
+        echo "apt source has been changed successfully!"
         echo "配置成功."
     fi
     if [ `grep "^deb" /etc/apt/sources.list.d/pve-enterprise.list` > 0 ];then
         #关闭pve 5.x企业更新源
         sed -i 's|deb|#deb|' /etc/apt/sources.list.d/pve-enterprise.list
-        echo "Done!"
+        echo "apt source has been changed successfully!"
         echo "更换软件源成功."
     else
-        echo "Done!."
+        echo "apt source has been changed successfully!"
         echo "配置成功."
     fi
     sleep 2 
@@ -129,7 +129,7 @@ d | D )
     cp /etc/apt/sources.list.d/pve-no-sub.list.bak /etc/apt/sources.list.d/pve-no-sub.list
     cp /etc/apt/sources.list.d/pve-enterprise.list.bak /etc/apt/sources.list.d/pve-enterprise.list
     cp /etc/apt/sources.list.d/ceph.list.bak /etc/apt/sources.list.d/ceph.list
-    echo "Done!"
+    echo "apt source has been changed successfully!"
     echo "更换软件源成功."
     sleep 2
     chSource
