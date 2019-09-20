@@ -742,6 +742,8 @@ chSensors(){
 #安装lm-sensors并配置在界面上显示
 #for i in `sed -n '/Chip drivers/,/\#----cut here/p' /tmp/sensors|sed '/Chip /d'|sed '/cut/d'`;do modprobe $i;done
 clear
+echo -e "\033[31m安装配置lm-sensors并配置web界面显示温度.\033[0m"
+echo -e "\033[31mInstall lm-sensors and config web interface to display sensors data.\033[0m"
 js='/usr/share/pve-manager/js/pvemanagerlib.js'
 pm='/usr/share/perl5/PVE/API2/Nodes.pm'
 sh='/usr/bin/s.sh'
