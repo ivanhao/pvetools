@@ -888,6 +888,7 @@ if [ $L = "en" ];then
   echo -e "\033[32m[j] \033[31mConfig web interface to display sensors data.\033[0m"
   echo -e "\033[32m[k] \033[31mConfig enable Nested virtualization.\033[0m"
   echo -e "\033[32m[l] \033[31mRemove subscribe notice.\033[0m"
+  echo -e "\033[32m[u] Upgrade this script to new version.\033[0m"
   echo -e "\033[32m[lang] Change Language.\033[0m"
   echo -e "\033[32m[exit|q] Quit.\033[0m"
   echo -e "\033[32mInput:\033[0m"
@@ -903,9 +904,10 @@ else
   echo -e "\033[32m[g] \033[31m安装配置CPU省电.\033[0m(100%)"
   echo -e "\033[32m[h] \033[31m安装配置硬盘休眠.\033[0m(100%)"
   echo -e "\033[32m[i] \033[31m配置PCI硬件直通.\033[0m(0%)"
-  echo -e "\033[32m[j] \033[31m配置pve的web界面显示传感器温度.\033[0m(10%)"
+  echo -e "\033[32m[j] \033[31m配置pve的web界面显示传感器温度.\033[0m(100%)"
   echo -e "\033[32m[k] \033[31m配置开启嵌套虚拟化.\033[0m(100%)"
   echo -e "\033[32m[l] \033[31m去除订阅提示.\033[0m(100%)"
+  echo -e "\033[32m[u] \033[31m升级脚本到最新版本.\033[0m"
   echo -e "\033[32m[lang] Change Language.\033[0m"
   echo -e "\033[32m[exit|q] 退出\033[0m"
   echo -e "\033[32mInput:\033[0m"
@@ -985,6 +987,12 @@ l | L )
     main
     ;;
 
+u )
+    git pull \
+    && echo "done!" \
+    && sleep 3 \
+    && pvetools
+    ;;
 lang )
     if [ $L = "zh" ];then
         L="en"
@@ -1003,5 +1011,9 @@ exit | quit | q )
 esac
 }
 #----------------------functions--end------------------#
-L="zh"
+if [ `export|grep "zh_CN"|wc -l` = 0 ];then
+    L="en"
+else
+    L="zh"
+fi
 main
