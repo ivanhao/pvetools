@@ -801,7 +801,7 @@ EOF
         #--create the configs--
         d=`sensors|grep '^[a-zA-Z0-9].[[:print:]]*:.\s*\S*[0-9].\s*[A-Z].' -o|sed 's/:\ */:/g'|sed 's/\ C\ /C/g'|sed 's/\ V\ /V/g'|sed 's/\ RP/RPM/g'|sed 's/\ //g'|awk -F ":" '{print $1}'`
         if [ -f ./p1 ];then rm ./p1;fi
-        cat << EOF > ./p1
+        cat << EOF >> ./p1
         ,{
             xtype: 'box',
             colspan: 2,
@@ -817,7 +817,7 @@ EOF
 EOF
         for i in $d
         do
-        cat << EOF > ./p1
+        cat << EOF >> ./p1
         ,{
             itemId: '$i',
             colspan: 1,
@@ -833,7 +833,7 @@ EOF
     }
 EOF
         done
-        cat << EOF > .p2
+        cat << EOF >> .p2
 $res->{tdata} = `/usr/bin/s.sh`;
 EOF
         #--configs end--
