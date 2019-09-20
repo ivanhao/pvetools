@@ -168,7 +168,7 @@ case "$x" in
         echo -e "\033[31mInput email adress:\033[0m"
         echo -e "\033[31m输入邮箱地址:\033[0m"
         read qqmail
-        while [ 1 = 1 ]
+        while [ true ]
         do
             if [ `echo $qqmail|grep "^[a-zA-Z0-9_-]*@[A-Za-z_-]*\.[a-zA-Z_-]*$"` ];then
                     break
@@ -214,7 +214,7 @@ if [ ! -f /etc/modprobe.d/zfs.conf ] || [ `grep "zfs_arc_max" /etc/modprobe.d/zf
     n | no )
         ;;
     * )
-        while [ 1 = 1 ]
+        while [ true ]
         do
             if [[ "$x" =~ ^[1-9]+$ ]]; then
                 echo "options zfs zfs_arc_max=$[$x*1024*1024*1024]">/etc/modprobe.d/zfs.conf
@@ -301,7 +301,7 @@ a | A )
             echo -e "\033[31mPlease input samba user admin's password:\033[0m"
             echo -e "\033[31m请输入samba用户admin的密码:\033[0m"
             read m
-            while [ 1 = 1 ]
+            while [ true ]
             do
                 if [[ ! `echo $m|grep "^[0-9a-zA-Z.-@]*$"` ]] || [[ $m = '^M' ]];then
                     echo -e "\033[31mWrong format,input again:\033[0m"
@@ -541,7 +541,7 @@ if [ ! -f /root/hdspindown/spindownall ];then
             echo -e "\033[31mInput number of .bake to auto spindown:\033[0m"
             echo -e "\033[31m输入硬盘自动休眠的检测时间，周期为分钟,输入5为5分钟:\033[0m"
             read x
-            while [ 1 = 1 ]
+            while [ true ]
             do
                 if [[ `echo "$x"|grep "[0-9]*"|wc -l` = 0 ]] || [[ $x = "" ]];then
                     echo -e "\033[31m输入格式错误,请重新输入:\033[0m"
@@ -591,7 +591,7 @@ if [ `grep "intel_pstate=disable" /etc/default/grub|wc -l` = 0 ];then
             cpufreq-info
             echo "Input MAX_SPEED:"
             echo "输入最大频率:";read x
-            while [ 1 = 1 ]
+            while [ true ]
             do
                 if [[ `echo "$x"|grep "[0-9]*"|wc -l` = 0 ]] || [[ $x = "" ]];then
                     echo -e "\033[31m输入格式错误,请重新输入:\033[0m"
@@ -603,7 +603,7 @@ if [ `grep "intel_pstate=disable" /etc/default/grub|wc -l` = 0 ];then
             mx=$x
             echo "Input MIN_SPEED:"
             echo "输入最小频率:";read x
-            while [ 1 = 1 ]
+            while [ true ]
             do
                 if [[ `echo "$x"|grep "[0-9]*"|wc -l` = 0 ]] || [[ $x = "" ]];then
                     echo -e "\033[31m输入格式错误,请重新输入:\033[0m"
