@@ -64,7 +64,8 @@ pvetools
 
 ```
 export LC_ALL=en_US.UTF-8
-apt update && apt -y install git && git clone https://github.com/ivanhao/pvetools.git && cd pvetools && ./pvetools.sh
+apt update && apt -y install git && git clone https://github.com/ivanhao/pvetools.git \
+&& cd pvetools && ln -s `pwd`/pvetools.sh /usr/bin/pvetools && pvetools
 ```
 
 
