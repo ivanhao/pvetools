@@ -835,7 +835,7 @@ EOF
         }
 EOF
         done
-        cat << EOF >> .p2
+        cat << EOF >> ./p2
 \$res\-\>\{tdata\} \= \`\/usr\/bin\/s.sh\`\;
 EOF
         #--configs end--
