@@ -27,7 +27,6 @@ deb https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-
 deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-free" > /etc/apt/sources.list
 apt update && apt -y install git && git clone https://github.com/ivanhao/pvetools.git \
 && cd pvetools && cp ./pvetools.sh /usr/bin/pvetools && pvetools
-&&
 ```
 
 ### 运行
@@ -66,7 +65,6 @@ pvetools
 ```
 export LC_ALL=en_US.UTF-8
 apt update && apt -y install git && git clone https://github.com/ivanhao/pvetools.git && cd pvetools && ./pvetools.sh
-&&
 ```
 
 
