@@ -2,3 +2,4 @@
 ->{tdata} = ;
 ->{tdata} = ;
 ->{tdata} = ;
+->{tdata} = {"Vcore":"+0.80V","in1":"+1.01V","AVCC":"+3.31V","in4":"+1.02V","in5":"+0.98V","in6":"+1.06V","3VSB":"+3.31V","Vbat":"+3.28V","fan1":"707RPM","fan2":"0RPM","fan3":"0RPM","SYSTIN":"+54.0C","CPUTIN":"+55.0C","AUXTIN":"+123.0C","PECIAgent0":"+66.0C","PCH_CHIP_CPU_MAX_TEMP":"+72.0C","PECIAgent1":"+0.0C","PCH_CHIP_TEMP":"+0.0C","temp1":"+27.8C","temp2":"+29.8C","Packageid0":"+66.0C","Core0":"+66.0C","Core1":"+64.0C"};

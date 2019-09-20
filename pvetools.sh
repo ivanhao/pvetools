@@ -795,7 +795,6 @@ do
         cp $js $js.backup
         cp $pm $pm.backup
         cat << EOF > /usr/bin/s.sh
-\#\!\/bin\/bash
 r=\`sensors|grep '^[a-zA-Z0-9].[[:print:]]*:.\s*\S*[0-9].\s*[A-Z].' -o|sed 's/:\ */:/g'|sed 's/:/":"/g'|sed 's/^/"/g' |sed 's/$/",/g'|sed 's/\ C\ /C/g'|sed 's/\ V\ /V/g'|sed 's/\ RP/RPM/g'|sed 's/\ //g'|awk 'BEGIN{ORS=""}{print \$0}'|sed 's/,$//g'|sed 's/°C/C/g'\`
 r="{"\$r"}"
 echo \$r
