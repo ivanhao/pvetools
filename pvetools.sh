@@ -832,11 +832,11 @@ EOF
             s = d['$i'];
             return s;
             }
-    }
+        }
 EOF
         done
         cat << EOF >> .p2
-\$res\-\>\{tdata\} \= \`\/usr\/bin\/s.sh\`;
+\$res\-\>\{tdata\} \= \`\/usr\/bin\/s.sh\`\;
 EOF
         #--configs end--
         h=`sensors|awk 'END{print NR}'`
