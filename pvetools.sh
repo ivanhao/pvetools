@@ -785,6 +785,11 @@ while [ true ]
 do
     echo "您的系统是：$pve, 您将安装sensors界面, 是否继续?(y/n)"
     echo -n "Your OS：$pve, you will install sensors interface, continue?(y/n)"
+    if [ `/usr/bin/pveversion|awk -F'/' 'NR==1{print $2}'|awk -F'.' '{print $1}'` != "5" ];then
+        echo -e "\033[31mPve 6.x not support websites display change yet.You can use sensors command.\033[0m"
+        echo -e "\033[31mPve 6.x暂不支持网页配置显示，请使用sensors命令.\033[0m"
+        sensors
+    fi
     if [ $1 ];then
         x=a
     else
