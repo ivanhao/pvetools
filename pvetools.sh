@@ -60,14 +60,14 @@ deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib 
         sed -i 's|deb|#deb|' /etc/apt/sources.list.d/pve-enterprise.list
         #修改 ceph镜像更新源
         echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/ceph-luminous $sver main" > /etc/apt/sources.list.d/ceph.list
-        echo "Change apt source success!"
+        echo "Done!"
         echo "更换软件源成功."
         apt-get update
         apt-get -y install net-tools
-        echo "Change apt source success!"
+        echo "Done!"
         echo "更换软件源成功."
     else
-        echo -e "\033[31mAlready changed APT source to ustc.edu.cn.\033[0m"
+        echo -e "\033[31mAlready changed apt source to ustc.edu.cn.\033[0m"
         echo -e "\033[31m已经更换apt源为 ustc.edu.cn，没什么可做的.\033[0m"
     fi
     sleep 2
@@ -90,14 +90,14 @@ deb https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-
 deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-free" > /etc/apt/sources.list
         #修改 ceph镜像更新源
         echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/ceph-luminous $sver main" > /etc/apt/sources.list.d/ceph.list
-        echo "Change apt source success!"
+        echo "Done!"
         echo "更换软件源成功."
         apt-get update
         apt-get -y install net-tools
-        echo "Change apt source success!"
+        echo "Done!"
         echo "更换软件源成功."
     else
-        echo -e "\033[31mAlready changed APT source to ustc.edu.cn.\033[0m"
+        echo -e "\033[31mAlready changed apt source to ustc.edu.cn.\033[0m"
         echo -e "\033[31m已经更换apt源为 ustc.edu.cn，没什么可做的.\033[0m"
     fi
     sleep 2
@@ -109,16 +109,16 @@ c | C  )
         #修改pve 5.x 更新源地址为 no subscription，不使用企业更新源
         echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/pve/ $sver pve-no-subscription" > /etc/apt/sources.list.d/pve-no-sub.list
     else
-        echo "success."
+        echo "Done!."
         echo "配置成功."
     fi
     if [ `grep "^deb" /etc/apt/sources.list.d/pve-enterprise.list` > 0 ];then
         #关闭pve 5.x企业更新源
         sed -i 's|deb|#deb|' /etc/apt/sources.list.d/pve-enterprise.list
-        echo "Change apt source success!"
+        echo "Done!"
         echo "更换软件源成功."
     else
-        echo "success."
+        echo "Done!."
         echo "配置成功."
     fi
     sleep 2 
@@ -129,7 +129,7 @@ d | D )
     cp /etc/apt/sources.list.d/pve-no-sub.list.bak /etc/apt/sources.list.d/pve-no-sub.list
     cp /etc/apt/sources.list.d/pve-enterprise.list.bak /etc/apt/sources.list.d/pve-enterprise.list
     cp /etc/apt/sources.list.d/ceph.list.bak /etc/apt/sources.list.d/ceph.list
-    echo "Change apt source success!"
+    echo "Done!"
     echo "更换软件源成功."
     sleep 2
     chSource
@@ -173,7 +173,7 @@ case "$x" in
             if [ `echo $qqmail|grep "^[a-zA-Z0-9_-]*@[A-Za-z_-]*\.[a-zA-Z_-]*$"` ];then
                     break
             else
-                echo "Wrong email format,input xxxx@qq.com for example.retry:"
+                echo "Wrong email format!!!   input xxxx@qq.com for example.retry:"
                 echo "错误的邮箱格式，请输入类似xxxx@qq.com并重试:"
                 read qqmail
             fi
@@ -304,8 +304,8 @@ a | A )
             while [ true ]
             do
                 if [[ ! `echo $m|grep "^[0-9a-zA-Z.-@]*$"` ]] || [[ $m = '^M' ]];then
-                    echo -e "\033[31mWrong format,input again:\033[0m"
-                    echo -e "\033[31m密码格式不对，请重新输入:\033[0m"
+                    echo -e "\033[31mWrong format!!!   input again:\033[0m"
+                    echo -e "\033[31m密码格式不对!!! 请重新输入:\033[0m"
                     read m
                 else
                     break
@@ -649,7 +649,7 @@ chSubs(){
     esac
     if [ `grep "data.status !== 'Active'" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js|wc -l` = 1 ];then
         sed -i.bak "s/data.status !== 'Active'/false/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
-        echo "Remove success!"
+        echo "Done!!"
         echo "去除成功!"
     else
         echo "You already removed." 
