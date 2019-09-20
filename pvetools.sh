@@ -800,7 +800,7 @@ EOF
         chmod +x /usr/bin/s.sh
         #--create the configs--
         d=`sensors|grep '^[a-zA-Z0-9].[[:print:]]*:.\s*\S*[0-9].\s*[A-Z].' -o|sed 's/:\ */:/g'|sed 's/\ C\ /C/g'|sed 's/\ V\ /V/g'|sed 's/\ RP/RPM/g'|sed 's/\ //g'|awk -F ":" '{print $1}'`
-        rm ./p1
+        if [ -f ./p1 ];then rm ./p1;fi
         cat << EOF > ./p1
         ,{
             xtype: 'box',
@@ -833,6 +833,9 @@ EOF
     }
 EOF
         done
+        cat << EOF > .p2
+$res->{tdata} = `/usr/bin/s.sh`;
+EOF
         #--configs end--
         h=`sensors|awk 'END{print NR}'`
         let h=$h*9+320
@@ -842,12 +845,13 @@ EOF
         sed -i ''$n' r ./p1' $js
         n=`sed '/pveversion/,/version_text/=' $pm -n|sed -n '$p'`
         sed -i ''$n' r ./p2' $pm
-        rm ./p1 ./p2
+        if [ -f ./p1 ];then rm ./p1;fi
+        if [ -f ./p2 ];then rm ./p2;fi
         systemctl restart pveproxy
 
         echo "如果没有意外，安装完成! 浏览器打开界面刷新看一下概要界面!"
         echo "Installation Complete! Go to websites and refresh to enjoy!"
-        sleep 2
+        sleep 5
         main
         ;;
     n | no )
