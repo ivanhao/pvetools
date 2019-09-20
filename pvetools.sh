@@ -61,14 +61,14 @@ deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib 
         #修改 ceph镜像更新源
         echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/ceph-luminous $sver main" > /etc/apt/sources.list.d/ceph.list
         echo "Change apt source success!"
-        echo "更换软件源成功。"
+        echo "更换软件源成功."
         apt-get update
         apt-get -y install net-tools
         echo "Change apt source success!"
-        echo "更换软件源成功。"
+        echo "更换软件源成功."
     else
-        echo -e "\033[31mAlready changed APT source to ustc.edu.cn,nothing to do.\033[0m"
-        echo -e "\033[31m已经更换apt源为 ustc.edu.cn，没什么可做的。\033[0m"
+        echo -e "\033[31mAlready changed APT source to ustc.edu.cn.\033[0m"
+        echo -e "\033[31m已经更换apt源为 ustc.edu.cn，没什么可做的.\033[0m"
     fi
     sleep 2
     if [ ! $1 ];then
@@ -91,14 +91,14 @@ deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib 
         #修改 ceph镜像更新源
         echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/ceph-luminous $sver main" > /etc/apt/sources.list.d/ceph.list
         echo "Change apt source success!"
-        echo "更换软件源成功。"
+        echo "更换软件源成功."
         apt-get update
         apt-get -y install net-tools
         echo "Change apt source success!"
-        echo "更换软件源成功。"
+        echo "更换软件源成功."
     else
-        echo -e "\033[31mAlready changed APT source to ustc.edu.cn,nothing to do.\033[0m"
-        echo -e "\033[31m已经更换apt源为 ustc.edu.cn，没什么可做的。\033[0m"
+        echo -e "\033[31mAlready changed APT source to ustc.edu.cn.\033[0m"
+        echo -e "\033[31m已经更换apt源为 ustc.edu.cn，没什么可做的.\033[0m"
     fi
     sleep 2
     chSource
@@ -116,7 +116,7 @@ c | C  )
         #关闭pve 5.x企业更新源
         sed -i 's|deb|#deb|' /etc/apt/sources.list.d/pve-enterprise.list
         echo "Change apt source success!"
-        echo "更换软件源成功。"
+        echo "更换软件源成功."
     else
         echo "success."
         echo "配置成功."
@@ -130,7 +130,7 @@ d | D )
     cp /etc/apt/sources.list.d/pve-enterprise.list.bak /etc/apt/sources.list.d/pve-enterprise.list
     cp /etc/apt/sources.list.d/ceph.list.bak /etc/apt/sources.list.d/ceph.list
     echo "Change apt source success!"
-    echo "更换软件源成功。"
+    echo "更换软件源成功."
     sleep 2
     chSource
     ;;
@@ -148,7 +148,7 @@ chMail(){
 #set mailutils to send mail
 if [ -f /etc/mailname ];then
     echo -e "\033[31mIt seems you have already configed it before.\033[0m"
-    echo -e "\033[31m亲你好像已经配置过这个了.\033[0m"
+    echo -e "\033[31m您好像已经配置过这个了.\033[0m"
     c="ok"
 fi
 echo -e "\033[31mWill you want to config mailutils & postfix to send notification?(Y/N):\033[0m"
@@ -220,7 +220,7 @@ if [ ! -f /etc/modprobe.d/zfs.conf ] || [ `grep "zfs_arc_max" /etc/modprobe.d/zf
                 echo "options zfs zfs_arc_max=$[$x*1024*1024*1024]">/etc/modprobe.d/zfs.conf
                 update.bakramfs -u
                 echo -e "\033[31mConfig complete!you should reboot later.\033[0m"
-                echo -e "\033[31m配置完成，一会儿最好重启一下系统亲。\033[0m"
+                echo -e "\033[31m配置完成，一会儿最好重启一下系统亲.\033[0m"
             else
                 echo "Please comfirm!"
                 sleep 2
@@ -254,7 +254,7 @@ if [ ! -f /etc/modprobe.d/zfs.conf ] || [ `grep "zfs_arc_max" /etc/modprobe.d/zf
     esac
 else
     echo -e "\033[31mIt seems you have already configed it before.\033[0m"
-    echo -e "\033[31m亲你好像已经配置过这个了.\033[0m"
+    echo -e "\033[31m您好像已经配置过这个了.\033[0m"
     sleep 2
     if [ ! $1 ];then
         main
@@ -323,7 +323,7 @@ a | A )
             sleep 2
         esac
     else
-        echo -e "\033[31mAlready configed samba,nothing to do.\033[0m"
+        echo -e "\033[31mAlready configed samba.\033[0m"
         echo -e "\033[31m已配置过samba，没什么可做的!\033[0m"
         sleep 2
     fi
@@ -567,7 +567,7 @@ EOF
     esac
 else
     echo -e "\033[31mIt seems you have already configed it before.\033[0m"
-    echo -e "\033[31m亲你好像已经配置过这个了.\033[0m"
+    echo -e "\033[31m您好像已经配置过这个了.\033[0m"
     sleep 2
     main
 fi
@@ -632,7 +632,7 @@ EOF
     esac
 else
     echo -e "\033[31mIt seems you have already configed it before.\033[0m"
-    echo -e "\033[31m亲你好像已经配置过这个了.\033[0m"
+    echo -e "\033[31m您好像已经配置过这个了.\033[0m"
     sleep 2
 fi
 }
@@ -652,8 +652,8 @@ chSubs(){
         echo "Remove success!"
         echo "去除成功!"
     else
-        echo "You already removed,nothing to do." 
-        echo "已经去除过了，不需要再去除。"
+        echo "You already removed." 
+        echo "已经去除过了，不需要再去除."
    fi
     sleep 2
 }
@@ -670,7 +670,7 @@ chNestedV(){
             echo -e "\033[32m[q] \033[31mback to main menu.\033[0m"
             ;;
         zh )
-            echo -e "\033[32m[a] \033[31m开启嵌套虚拟化。\033[0m"
+            echo -e "\033[32m[a] \033[31m开启嵌套虚拟化.\033[0m"
             echo -e "\033[32m[b] \033[31m开启某个虚拟机的嵌套虚拟化.\033[0m"
             echo -e "\033[32m[q] \033[31m返回主菜单.\033[0m"
             ;;
@@ -719,7 +719,7 @@ chNestedV(){
                         echo "args: -cpu +vmx" >> /etc/pve/qemu-server/$vmid.conf
                     else
                         echo "You already seted.Nothing to do."
-                        echo "您的虚拟机已经开启过嵌套虚拟化支持，没什么需要做的."
+                        echo "您的虚拟机已经开启过嵌套虚拟化支持."
                     fi
                 fi
                 sleep 2
@@ -738,10 +738,133 @@ chNestedV(){
             chNestedV
     esac
 }
+chSensors(){
+#安装lm-sensors并配置在界面上显示
+#for i in `sed -n '/Chip drivers/,/\#----cut here/p' /tmp/sensors|sed '/Chip /d'|sed '/cut/d'`;do modprobe $i;done
+clear
+js='/usr/share/pve-manager/js/pvemanagerlib.js'
+pm='/usr/share/perl5/PVE/API2/Nodes.pm'
+sh='/usr/bin/s.sh'
+
+OS=`/usr/bin/pveversion|awk -F'-' 'NR==1{print $1}'`
+ver=`/usr/bin/pveversion|awk -F'/' 'NR==1{print $2}'|awk -F'-' '{print $1}'`
+pve=$OS$ver
+if [ "$OS" != "pve" ];then
+    echo "您的系统不是Proxmox VE, 无法安装!"
+    echo "Your OS is not Proxmox VE!"
+    sleep 2
+    main
+fi
+if [[ ! -f "$js" || ! -f "$pm" ]];then
+    echo "您的Proxmox VE版本不支持此方式！"
+    echo "Your Proxmox VE's version is not supported,Now quit!"
+    sleep 2
+    main
+fi
+if [[ -f "$js.backup" && -f "$sh" ]];then
+    echo "您已经安装过本软件，请不要重复安装！"
+    echo "You already installed,Now quit!"
+    sleep 2
+    main
+fi
+if [ ! -f "/usr/bin/sensors" ];then
+    echo "您还没有安装lm-sensors.将会自动进行安装配置："
+    echo "you have not installed lm-sensors, auto install now."
+    apt -y install lm-sensors
+    sensors-detect --auto > /tmp/sensors
+    for i in `sed -n '/Chip drivers/,/\#----cut here/p' /tmp/sensors|sed '/Chip /d'|sed '/cut/d'`;do modprobe $i;done
+    rm /tmp/sensors
+    sensors
+    echo -e "\033[31mInstall complete,if everything ok ,it's showed sensors.\033[0m"
+    echo -e "\033[31m安装配置成功，如果没有意外，上面已经显示sensors.\033[0m"
+fi
+sleep 2
+while [ true ]
+do
+    echo "您的系统是：$pve, 您将安装sensors界面, 是否继续?(y/n)"
+    echo -n "Your OS：$pve, you will install sensors interface, continue?(y/n)"
+    if [ $1 ];then
+        x=a
+    else
+        read x
+    fi
+    case "$x" in
+    y | yes | a )
+        cp $js $js.backup
+        cp $pm $pm.backup
+        cat << EOF > /usr/bin/s.sh
+r=`sensors|grep '^[a-zA-Z0-9].[[:print:]]*:.\s*\S*[0-9].\s*[A-Z].' -o|sed 's/:\ */:/g'|sed 's/:/":"/g'|sed 's/^/"/g' |sed 's/$/",/g'|sed 's/\ C\ /C/g'|sed 's/\ V\ /V/g'|sed 's/\ RP/RPM/g'|sed 's/\ //g'|awk 'BEGIN{ORS=""}{print $0}'|sed 's/,$//g'|sed 's/°C/C/g'`
+r="{"$r"}"
+echo $r;
+EOF
+        chmod +x /usr/bin/s.sh
+        #--create the configs--
+        d=`sensors|grep '^[a-zA-Z0-9].[[:print:]]*:.\s*\S*[0-9].\s*[A-Z].' -o|sed 's/:\ */:/g'|sed 's/\ C\ /C/g'|sed 's/\ V\ /V/g'|sed 's/\ RP/RPM/g'|sed 's/\ //g'|awk -F ":" '{print $1}'`
+        rm ./p1
+        cat << EOF > ./p1
+        ,{
+            xtype: 'box',
+            colspan: 2,
+	    title: gettext('Sensors Data:'),
+            padding: '0 0 20 0'
+        }
+        ,{
+            itemId: 'Sensors',
+            colspan: 2,
+            printBar: false,
+            title: gettext('Sensors Data:')
+        }
+EOF
+        for i in $d
+        do
+        cat << EOF > ./p1
+        ,{
+            itemId: '$i',
+            colspan: 1,
+            printBar: false,
+            title: gettext('$i'),
+            textField: 'tdata',
+            renderer:function(value){
+            var d = JSON.parse(value);
+            var s = "";
+            s = d['$i'];
+            return s;
+            }
+    }
+EOF
+        done
+        #--configs end--
+        h=`sensors|awk 'END{print NR}'`
+        let h=$h*9.5+300
+        n=`sed '/widget.pveNodeStatus/,/height/=' $js -n|sed -n '$p'`
+        sed -i ''$n'c \ \ \ \ height:\ '$h',' $js 
+        n=`sed '/pveversion/,/\}/=' $js -n|sed -n '$p'`
+        sed -i ''$n' r ./p1' $js
+        n=`sed '/pveversion/,/version_text/=' $pm -n|sed -n '$p'`
+        sed -i ''$n' r ./p2' $pm
+        rm ./p1 ./p2
+        systemctl restart pveproxy
+
+        echo "如果没有意外，安装完成! 浏览器打开界面刷新看一下概要界面!"
+        echo "Installation Complete! Go to websites and refresh to enjoy!"
+        sleep 2
+        main
+        ;;
+    n | no )
+        sleep 2
+        main
+        ;;
+    * )
+        echo "Please input y/n to comfirm!"
+        sleep 2
+        chSensors
+esac
+done
+}
 #----------------------functions--end------------------#
 
 
-#--------------------------main-------------------------#
+#--------------------------function-main-------------------------#
 main(){
 clear
 if [ $L = "en" ];then
@@ -791,8 +914,9 @@ a | A )
     chSpindown wn
     chNestedV wn
     chSubs wn
+    chSensors wn
     echo "Config complete!Back to main menu 5s later."
-    echo "已经完成配置！5秒后回主界面"
+    echo "已经完成配置！5秒后返回主界面"
     echo "5"
     sleep 1
     echo "4"
@@ -839,7 +963,7 @@ i | I )
     main
     ;;
 j | J )
-    echo "not support yet."
+    chSensors
     sleep 2
     main
     ;;
