@@ -28,6 +28,13 @@ deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib 
 apt update && apt -y install git && git clone https://github.com/ivanhao/pvetools.git \
 && cd pvetools && ln -s `pwd`/pvetools.sh /usr/bin/pvetools && pvetools
 ```
+### 卸载
+1. 运行
+```
+rm /usr/bin/pvetools
+```
+2. 删除下载的pvetools目录
+
 
 ### 运行
 
@@ -67,6 +74,13 @@ export LC_ALL=en_US.UTF-8
 apt update && apt -y install git && git clone https://github.com/ivanhao/pvetools.git \
 && cd pvetools && ln -s `pwd`/pvetools.sh /usr/bin/pvetools && pvetools
 ```
+
+### Uninstall 
+1. Run:
+```
+rm /usr/bin/pvetools
+```
+2. delete pvetools folder
 
 
 
