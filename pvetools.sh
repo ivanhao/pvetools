@@ -750,10 +750,11 @@ sh='/usr/bin/s.sh'
 
 OS=`/usr/bin/pveversion|awk -F'-' 'NR==1{print $1}'`
 ver=`/usr/bin/pveversion|awk -F'/' 'NR==1{print $2}'|awk -F'-' '{print $1}'`
+bver=`/usr/bin/pveversion|awk -F'/' 'NR==1{print $2}'|awk -F'.' '{print $1}'`
 pve=$OS$ver
-if [ "$OS" != "pve" ];then
-    echo "您的系统不是Proxmox VE, 无法安装!"
-    echo "Your OS is not Proxmox VE!"
+if [[ "$OS" != "pve" && "$bver" != "5"]];then
+    echo "您的系统不是Proxmox VE 5, 无法安装!"
+    echo "Your OS is not Proxmox VE 5!"
     sleep 2
     main
 fi
