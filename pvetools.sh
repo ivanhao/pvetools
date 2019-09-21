@@ -43,6 +43,20 @@ a | A )
     if [ `grep "ustc.edu.cn" /etc/apt/sources.list|wc -l` = 0 ];then
         #sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
         sver=`cat /etc/debian_version |awk -F"." '{print $1}'`
+        case "$sver" in
+            "9" )
+                sver="stretch"
+                ,,
+            "8" )
+                sver="jessie"
+                ,,
+            "7" )
+                sver="wheezy"
+                ,,
+            "6" )
+                sver="squeeze"
+                ,,
+        esac
         cp /etc/apt/sources.list /etc/apt/sources.list.bak
         cp /etc/apt/sources.list.d/pve-no-sub.list /etc/apt/sources.list.d/pve-no-sub.list.bak
         cp /etc/apt/sources.list.d/pve-enterprise.list /etc/apt/sources.list.d/pve-enterprise.list.bak
