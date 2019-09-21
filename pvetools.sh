@@ -41,7 +41,22 @@ fi
 case "$x" in
 a | A )
     if [ `grep "ustc.edu.cn" /etc/apt/sources.list|wc -l` = 0 ];then
-        sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
+        #sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
+        sver=`cat /etc/debian_version |awk -F"." '{print $1}'`
+        case "$sver" in
+            "9" )
+                sver="stretch"
+                ,,
+            "8" )
+                sver="jessie"
+                ,,
+            "7" )
+                sver="wheezy"
+                ,,
+            "6" )
+                sver="squeeze"
+                ,,
+        esac
         cp /etc/apt/sources.list /etc/apt/sources.list.bak
         cp /etc/apt/sources.list.d/pve-no-sub.list /etc/apt/sources.list.d/pve-no-sub.list.bak
         cp /etc/apt/sources.list.d/pve-enterprise.list /etc/apt/sources.list.d/pve-enterprise.list.bak
@@ -750,10 +765,11 @@ sh='/usr/bin/s.sh'
 
 OS=`/usr/bin/pveversion|awk -F'-' 'NR==1{print $1}'`
 ver=`/usr/bin/pveversion|awk -F'/' 'NR==1{print $2}'|awk -F'-' '{print $1}'`
+bver=`/usr/bin/pveversion|awk -F'/' 'NR==1{print $2}'|awk -F'.' '{print $1}'`
 pve=$OS$ver
-if [ "$OS" != "pve" ];then
-    echo "您的系统不是Proxmox VE, 无法安装!"
-    echo "Your OS is not Proxmox VE!"
+if [[ "$OS" != "pve" && "$bver" != "5"]];then
+    echo "您的系统不是Proxmox VE 5, 无法安装!"
+    echo "Your OS is not Proxmox VE 5!"
     sleep 2
     main
 fi
