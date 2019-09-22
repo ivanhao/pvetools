@@ -767,7 +767,7 @@ OS=`/usr/bin/pveversion|awk -F'-' 'NR==1{print $1}'`
 ver=`/usr/bin/pveversion|awk -F'/' 'NR==1{print $2}'|awk -F'-' '{print $1}'`
 bver=`/usr/bin/pveversion|awk -F'/' 'NR==1{print $2}'|awk -F'.' '{print $1}'`
 pve=$OS$ver
-if [[ "$OS" != "pve" && "$bver" != "5"]];then
+if [[ "$OS" != "pve" && "$bver" != "5" ]];then
     echo "您的系统不是Proxmox VE 5, 无法安装!"
     echo "Your OS is not Proxmox VE 5!"
     sleep 2
@@ -894,11 +894,7 @@ done
 #--------------------------function-main-------------------------#
 main(){
 clear
-if [ `export|grep "zh_CN"|wc -l` = 0 ];then
-    L="en"
-else
-    L="zh"
-fi
+
 if [ $L = "en" ];then
   echo -e "\033[32mVersion : 1.1\033[0m"
   echo -e "\033[32mPlease input to choose:\033[0m"
@@ -1037,4 +1033,9 @@ exit | quit | q )
 esac
 }
 #----------------------functions--end------------------#
+if [ `export|grep "zh_CN"|wc -l` = 0 ];then
+    L="en"
+else
+    L="zh"
+fi
 main
