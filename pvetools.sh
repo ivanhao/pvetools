@@ -38,25 +38,25 @@ if [ $1 ];then
 else
     read x 
 fi
+sver=`cat /etc/debian_version |awk -F"." '{print $1}'`
+case "$sver" in
+    9 )
+        sver="stretch"
+        ;;
+    8 )
+        sver="jessie"
+        ;;
+    7 )
+        sver="wheezy"
+        ;;
+    6 )
+        sver="squeeze"
+esac
+
 case "$x" in
 a | A )
     if [ `grep "ustc.edu.cn" /etc/apt/sources.list|wc -l` = 0 ];then
         #sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
-        sver=`cat /etc/debian_version |awk -F"." '{print $1}'`
-        case "$sver" in
-            "9" )
-                sver="stretch"
-                ,,
-            "8" )
-                sver="jessie"
-                ,,
-            "7" )
-                sver="wheezy"
-                ,,
-            "6" )
-                sver="squeeze"
-                ,,
-        esac
         cp /etc/apt/sources.list /etc/apt/sources.list.bak
         cp /etc/apt/sources.list.d/pve-no-sub.list /etc/apt/sources.list.d/pve-no-sub.list.bak
         cp /etc/apt/sources.list.d/pve-enterprise.list /etc/apt/sources.list.d/pve-enterprise.list.bak
@@ -94,7 +94,7 @@ b | B  )
     if [ `grep "ustc.edu.cn" /etc/apt/sources.list|wc -l` = 0 ];then
         cp /etc/apt/sources.list /etc/apt/sources.list.bak
         cp /etc/apt/sources.list.d/ceph.list /etc/apt/sources.list.d/ceph.list.bak
-        sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
+        #sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
         echo "deb https://mirrors.ustc.edu.cn/debian/ $sver main contrib non-free
 deb-src https://mirrors.ustc.edu.cn/debian/ $sver main contrib non-free
 deb https://mirrors.ustc.edu.cn/debian/ $sver-updates main contrib non-free
@@ -119,7 +119,7 @@ deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib 
     chSource
     ;;
 c | C  )
-    sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
+    #sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
     if [ -f /etc/apt/sources.list.d/pve-no-sub.list ];then
         #修改pve 5.x 更新源地址为 no subscription，不使用企业更新源
         echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/pve/ $sver pve-no-subscription" > /etc/apt/sources.list.d/pve-no-sub.list
@@ -894,6 +894,11 @@ done
 #--------------------------function-main-------------------------#
 main(){
 clear
+if [ `export|grep "zh_CN"|wc -l` = 0 ];then
+    L="en"
+else
+    L="zh"
+fi
 if [ $L = "en" ];then
   echo -e "\033[32mVersion : 1.1\033[0m"
   echo -e "\033[32mPlease input to choose:\033[0m"
@@ -1032,9 +1037,4 @@ exit | quit | q )
 esac
 }
 #----------------------functions--end------------------#
-if [ `export|grep "zh_CN"|wc -l` = 0 ];then
-    L="en"
-else
-    L="zh"
-fi
 main
