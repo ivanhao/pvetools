@@ -1,6 +1,7 @@
 #!/bin/bash
 #############--proxmox tools--###############
-#  Author : 龙天ivan                         #
+#  Author : 龙天ivan                        #
+#  Mail: ivanhao1984@qq.com                 #
 #  Version: V1.0                            #
 #############################################
 
