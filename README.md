@@ -14,20 +14,16 @@ for english user,please look the end of readme.
 把下面整段复制粘贴到终端中回车即可。
 ```
 export LC_ALL=en_US.UTF-8
-sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
-cp /etc/apt/sources.list /etc/apt/sources.list.bak
-mv /etc/apt/sources.list.d/pve-enterprise.list /etc/apt/sources.list.d/pve-enterprise.list.bak
-echo "deb https://mirrors.ustc.edu.cn/debian/ $sver main contrib non-free
-deb-src https://mirrors.ustc.edu.cn/debian/ $sver main contrib non-free
-deb https://mirrors.ustc.edu.cn/debian/ $sver-updates main contrib non-free
-deb-src https://mirrors.ustc.edu.cn/debian/ $sver-updates main contrib non-free
-deb https://mirrors.ustc.edu.cn/debian/ $sver-backports main contrib non-free
-deb-src https://mirrors.ustc.edu.cn/debian/ $sver-backports main contrib non-free
-deb https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-free
-deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-free" > /etc/apt/sources.list
 apt update && apt -y install git && git clone https://github.com/ivanhao/pvetools.git \
-&& cd pvetools && ln -s `pwd`/pvetools.sh /usr/bin/pvetools && pvetools
+&& cd pvetools && rm /usr/bin/pvetools && ln -s `pwd`/pvetools.sh /usr/bin/pvetools && pvetools
 ```
+### 卸载
+1. 运行
+```
+rm /usr/bin/pvetools
+```
+2. 删除下载的pvetools目录
+
 
 ### 运行
 
@@ -65,8 +61,16 @@ pvetools
 ```
 export LC_ALL=en_US.UTF-8
 apt update && apt -y install git && git clone https://github.com/ivanhao/pvetools.git \
-&& cd pvetools && ln -s `pwd`/pvetools.sh /usr/bin/pvetools && pvetools
+&& cd pvetools && rm /usr/bin/pvetools && ln -s `pwd`/pvetools.sh /usr/bin/pvetools && pvetools
+
 ```
+
+### Uninstall 
+1. Run:
+```
+rm /usr/bin/pvetools
+```
+2. delete pvetools folder
 
 
 
