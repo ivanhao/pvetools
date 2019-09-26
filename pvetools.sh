@@ -1050,7 +1050,7 @@ u )
     git pull \
     && echo "done!" \
     && sleep 3 \
-    && pvetools
+    && ./pvetools.sh
     ;;
 lang )
     if [ $L = "zh" ];then
