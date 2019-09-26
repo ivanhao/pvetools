@@ -699,7 +699,7 @@ chNestedV(){
     case "$x" in
         a )
             if [ `cat /sys/module/kvm_intel/parameters/nested` = 'N' ];then
-                for i in `qm list|awk 'NR>2{print $1}'`;do
+                for i in `qm list|awk 'NR>1{print $1}'`;do
                     qm stop $i
                 done
                 modprobe -r kvm_intel  
