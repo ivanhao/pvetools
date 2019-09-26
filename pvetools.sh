@@ -760,46 +760,63 @@ chSensors(){
 clear
 echo -e "\033[31m安装配置lm-sensors并配置web界面显示温度。\033[0m"
 echo -e "\033[31mInstall lm-sensors and config web interface to display sensors data.\033[0m"
-js='/usr/share/pve-manager/js/pvemanagerlib.js'
-pm='/usr/share/perl5/PVE/API2/Nodes.pm'
-sh='/usr/bin/s.sh'
+case $L in
+    en )
+        echo -e "\033[32m[a] \033[31mInstall\033[0m"
+        echo -e "\033[32m[b] \033[31mUninstall\033[0m"
+        echo -e "\033[32m[q] \033[31mback to main menu.\033[0m"
+        ;;
+    zh )
+        echo -e "\033[32m[a] \033[31m安装\033[0m"
+        echo -e "\033[32m[b] \033[31m卸载\033[0m"
+        echo -e "\033[32m[q] \033[31m返回主菜单\033[0m"
+        ;;
+esac
+if [ $1 ];then
+    x=a
+else
+    read x
+fi
+case "$x" in
+    a )
+    js='/usr/share/pve-manager/js/pvemanagerlib.js'
+    pm='/usr/share/perl5/PVE/API2/Nodes.pm'
+    sh='/usr/bin/s.sh'
+    OS=`/usr/bin/pveversion|awk -F'-' 'NR==1{print $1}'`
+    ver=`/usr/bin/pveversion|awk -F'/' 'NR==1{print $2}'|awk -F'-' '{print $1}'`
+    bver=`/usr/bin/pveversion|awk -F'/' 'NR==1{print $2}'|awk -F'.' '{print $1}'`
+    pve=$OS$ver
+    if [[ "$OS" != "pve" && "$bver" != "5" ]];then
+        echo "您的系统不是Proxmox VE 5, 无法安装!"
+        echo "Your OS is not Proxmox VE 5!"
+        sleep 2
+        main
+    fi
+    if [[ ! -f "$js" || ! -f "$pm" ]];then
+        echo "您的Proxmox VE版本不支持此方式！"
+        echo "Your Proxmox VE's version is not supported,Now quit!"
+        sleep 2
+        main
+    fi
+    if [[ -f "$js.backup" && -f "$sh" ]];then
+        echo "您已经安装过本软件，请不要重复安装！"
+        echo "You already installed,Now quit!"
+        sleep 3
+        chSensors
+    fi
+    if [ ! -f "/usr/bin/sensors" ];then
+        echo "您还没有安装lm-sensors，将会自动进行安装配置："
+        echo "you have not installed lm-sensors, auto install now."
+        apt -y install lm-sensors
+        sensors-detect --auto > /tmp/sensors
+        for i in `sed -n '/Chip drivers/,/\#----cut here/p' /tmp/sensors|sed '/Chip /d'|sed '/cut/d'`;do modprobe $i;done
+        rm /tmp/sensors
+        sensors
+        echo -e "\033[31mInstall complete,if everything ok ,it's showed sensors.\033[0m"
+        echo -e "\033[31m安装配置成功，如果没有意外，上面已经显示sensors。\033[0m"
+    fi
+    sleep 2
 
-OS=`/usr/bin/pveversion|awk -F'-' 'NR==1{print $1}'`
-ver=`/usr/bin/pveversion|awk -F'/' 'NR==1{print $2}'|awk -F'-' '{print $1}'`
-bver=`/usr/bin/pveversion|awk -F'/' 'NR==1{print $2}'|awk -F'.' '{print $1}'`
-pve=$OS$ver
-if [[ "$OS" != "pve" && "$bver" != "5" ]];then
-    echo "您的系统不是Proxmox VE 5, 无法安装!"
-    echo "Your OS is not Proxmox VE 5!"
-    sleep 2
-    main
-fi
-if [[ ! -f "$js" || ! -f "$pm" ]];then
-    echo "您的Proxmox VE版本不支持此方式！"
-    echo "Your Proxmox VE's version is not supported,Now quit!"
-    sleep 2
-    main
-fi
-if [[ -f "$js.backup" && -f "$sh" ]];then
-    echo "您已经安装过本软件，请不要重复安装！"
-    echo "You already installed,Now quit!"
-    sleep 2
-    main
-fi
-if [ ! -f "/usr/bin/sensors" ];then
-    echo "您还没有安装lm-sensors，将会自动进行安装配置："
-    echo "you have not installed lm-sensors, auto install now."
-    apt -y install lm-sensors
-    sensors-detect --auto > /tmp/sensors
-    for i in `sed -n '/Chip drivers/,/\#----cut here/p' /tmp/sensors|sed '/Chip /d'|sed '/cut/d'`;do modprobe $i;done
-    rm /tmp/sensors
-    sensors
-    echo -e "\033[31mInstall complete,if everything ok ,it's showed sensors.\033[0m"
-    echo -e "\033[31m安装配置成功，如果没有意外，上面已经显示sensors。\033[0m"
-fi
-sleep 2
-while [ true ]
-do
     echo "您的系统是：$pve, 您将安装sensors界面，是否继续？(y/n)"
     echo -n "Your OS：$pve, you will install sensors interface, continue?(y/n)"
     if [ `/usr/bin/pveversion|awk -F'/' 'NR==1{print $2}'|awk -F'.' '{print $1}'` != "5" ];then
@@ -858,7 +875,7 @@ EOF
 EOF
         done
         cat << EOF >> ./p2
-\$res\-\>\{tdata\} \= \`\/usr\/bin\/s.sh\`\;
+\$res->{tdata} = \`/usr/bin/s.sh\`;
 EOF
         #--configs end--
         h=`sensors|awk 'END{print NR}'`
@@ -886,8 +903,27 @@ EOF
         echo "Please input y/n to comfirm!"
         sleep 2
         chSensors
+    esac
+    ;;
+    b )
+        js='/usr/share/pve-manager/js/pvemanagerlib.js'
+        pm='/usr/share/perl5/PVE/API2/Nodes.pm'
+        if [[ ! -f $js.backup && ! -f /usr/bin/sensors ]];then
+            echo -e "\033[32mNo sensors found.\033[0m"
+            echo -e "\033[32m没有检测到安装，不需要卸载。\033[0m"
+        else
+            mv $js.backup $js
+            mv $pm.backup $pm
+            apt -y remove lm-sensors
+            echo "Uninstall complete."
+            echo "卸载成功。"
+            sleep 3
+            chSensors
+        fi
+        ;;
+    q )
+        main
 esac
-done
 }
 #----------------------functions--end------------------#
 
