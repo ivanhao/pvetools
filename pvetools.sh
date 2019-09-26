@@ -41,6 +41,9 @@ else
 fi
 sver=`cat /etc/debian_version |awk -F"." '{print $1}'`
 case "$sver" in
+    10 )
+        sver="buster"
+        ;;
     9 )
         sver="stretch"
         ;;
