@@ -12,11 +12,11 @@ for english user,please look the end of readme.
 
 > 需要用root账号来运行
 
-把下面整段复制粘贴到终端中回车即可。
+在终端中按行分别执行以下内容：
 ```
 export LC_ALL=en_US.UTF-8
-apt update && apt -y install git && git clone https://github.com/ivanhao/pvetools.git && \
-cd pvetools && \
+apt update && apt -y install git && git clone https://github.com/ivanhao/pvetools.git
+cd pvetools
 ./pvetools.sh
 ```
 ### 卸载
@@ -59,8 +59,8 @@ cd pvetools && \
 
 ```
 export LC_ALL=en_US.UTF-8
-apt update && apt -y install git && git clone https://github.com/ivanhao/pvetools.git && \
-cd pvetools && \
+apt update && apt -y install git && git clone https://github.com/ivanhao/pvetools.git
+cd pvetools
 ./pvetools.sh
 ```
 
