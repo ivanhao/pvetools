@@ -186,7 +186,7 @@ case "$x" in
         read qqmail
         while [ true ]
         do
-            if [ `echo $qqmail|grep "^[a-zA-Z0-9_-]*@[A-Za-z_-]*\.[a-zA-Z_-]*$"` ];then
+            if [ `echo $qqmail|grep "^[a-zA-Z0-9_-.]*@[A-Za-z_-.]*\.[a-zA-Z_-.]*$"` ];then
                     break
             else
                 echo "Wrong email format!!!   input xxxx@qq.com for example.retry:"
