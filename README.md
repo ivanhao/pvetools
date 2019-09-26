@@ -14,23 +14,21 @@ for english user,please look the end of readme.
 把下面整段复制粘贴到终端中回车即可。
 ```
 export LC_ALL=en_US.UTF-8
-apt update && apt -y install git && git clone https://github.com/ivanhao/pvetools.git \
-&& cd pvetools && rm /usr/bin/pvetools && ln -s `pwd`/pvetools.sh /usr/bin/pvetools && pvetools
+apt update && apt -y install git && git clone https://github.com/ivanhao/pvetools.git && \
+cd pvetools && \
+./pvetools.sh
 ```
 ### 卸载
-1. 运行
-```
-rm /usr/bin/pvetools
-```
-2. 删除下载的pvetools目录
+1. 删除下载的pvetools目录
 
 
 ### 运行
 
-在shell中输入
+在shell中进入pvetools目录，输入
 `
-pvetools
+./pvetools.sh
 `
+* 如果提示没有权限，输入`chmod +x ./*.sh`
 
 ### 主界面
 
@@ -60,17 +58,13 @@ pvetools
 
 ```
 export LC_ALL=en_US.UTF-8
-apt update && apt -y install git && git clone https://github.com/ivanhao/pvetools.git \
-&& cd pvetools && rm /usr/bin/pvetools && ln -s `pwd`/pvetools.sh /usr/bin/pvetools && pvetools
-
+apt update && apt -y install git && git clone https://github.com/ivanhao/pvetools.git && \
+cd pvetools && \
+./pvetools.sh
 ```
 
 ### Uninstall 
-1. Run:
-```
-rm /usr/bin/pvetools
-```
-2. delete pvetools folder
+1. delete pvetools folder
 
 
 
