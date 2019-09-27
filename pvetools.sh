@@ -139,7 +139,7 @@ c | C  )
         echo "apt source has been changed successfully!"
         echo "软件源已更换成功！"
     fi
-    if [ `grep "^deb" /etc/apt/sources.list.d/pve-enterprise.list` > 0 ];then
+    if [ `grep "^deb" /etc/apt/sources.list.d/pve-enterprise.list` -gt 0 ];then
         #关闭pve 5.x企业订阅更新源
         sed -i 's|deb|#deb|' /etc/apt/sources.list.d/pve-enterprise.list
         echo "apt source has been changed successfully!"
