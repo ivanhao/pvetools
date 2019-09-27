@@ -198,7 +198,7 @@ case "$x" in
         read qqmail
         while [ true ]
         do
-            if [ `echo $qqmail|grep "^[a-zA-Z0-9_-.]*@[A-Za-z_-.]*\.[a-zA-Z_-.]*$"` ];then
+            if [ `echo $qqmail|grep '^[a-zA-Z0-9\_\-\.]*\@[A-Za-z\_\-\.]*\.[a-zA-Z\_\-\.]*$'` ];then
                     break
             else
                 echo "Wrong email format!!!   input xxxx@qq.com for example.retry:"
@@ -247,7 +247,7 @@ if [ ! -f /etc/modprobe.d/zfs.conf ] || [ `grep "zfs_arc_max" /etc/modprobe.d/zf
         do
             if [[ "$x" =~ ^[1-9]+$ ]]; then
                 echo "options zfs zfs_arc_max=$[$x*1024*1024*1024]">/etc/modprobe.d/zfs.conf
-                update.bakramfs -u
+                update-initramfs -u
                 echo -e "\033[31mConfig complete!you should reboot later.\033[0m"
                 echo -e "\033[31m配置完成，一会儿最好重启一下系统。\033[0m"
             else
@@ -813,13 +813,20 @@ case "$x" in
     js='/usr/share/pve-manager/js/pvemanagerlib.js'
     pm='/usr/share/perl5/PVE/API2/Nodes.pm'
     sh='/usr/bin/s.sh'
-    OS=`/usr/bin/pveversion|awk -F'-' 'NR==1{print $1}'`
-    ver=`/usr/bin/pveversion|awk -F'/' 'NR==1{print $2}'|awk -F'-' '{print $1}'`
-    bver=`/usr/bin/pveversion|awk -F'/' 'NR==1{print $2}'|awk -F'.' '{print $1}'`
+    ppv=`/usr/bin/pveversion`
+    OS=`echo $ppv|awk -F'-' 'NR==1{print $1}'`
+    ver=`echo $ppv|awk -F'/' 'NR==1{print $2}'|awk -F'-' '{print $1}'`
+    bver=`echo $ppv|awk -F'/' 'NR==1{print $2}'|awk -F'.' '{print $1}'`
     pve=$OS$ver
-    if [[ "$OS" != "pve" && "$bver" != "5" ]];then
-        echo "您的系统不是Proxmox VE 5, 无法安装!"
-        echo "Your OS is not Proxmox VE 5!"
+    if [[ "$OS" != "pve" ]];then
+        echo "您的系统不是Proxmox VE, 无法安装!"
+        echo "Your OS is not Proxmox VE!"
+        if [[ "$bver" != "5" || "$bver" != "6" ]];then
+            echo "您的系统版本无法安装!"
+            echo "Your Proxmox VE version can not install!"
+            sleep 2
+            main
+        fi
         sleep 2
         main
     fi
@@ -839,22 +846,30 @@ case "$x" in
         echo "您还没有安装lm-sensors，将会自动进行安装配置："
         echo "you have not installed lm-sensors, auto install now."
         apt -y install lm-sensors
-        sensors-detect --auto > /tmp/sensors
-        for i in `sed -n '/Chip drivers/,/\#----cut here/p' /tmp/sensors|sed '/Chip /d'|sed '/cut/d'`;do modprobe $i;done
-        rm /tmp/sensors
+    fi
+    sensors-detect --auto > /tmp/sensors
+    drivers=`sed -n '/Chip drivers/,/\#----cut here/p' /tmp/sensors|sed '/Chip /d'|sed '/cut/d'`
+    if [ `echo $drivers|wc -w` = 0 ];then
+        echo -e "\033[31mSensors driver not found.\033[0m"
+        echo -e "\033[31m没有找到任何驱动，似乎你的系统不支持。\033[0m"
+        sleep 3
+        chSensors
+    else
+        for i in $drivers;do modprobe $i;done
         sensors
         echo -e "\033[31mInstall complete,if everything ok ,it's showed sensors.\033[0m"
         echo -e "\033[31m安装配置成功，如果没有意外，上面已经显示sensors。\033[0m"
     fi
-    sleep 2
-
+    rm /tmp/sensors
     echo "您的系统是：$pve, 您将安装sensors界面，是否继续？(y/n)"
     echo -n "Your OS：$pve, you will install sensors interface, continue?(y/n)"
-    if [ `/usr/bin/pveversion|awk -F'/' 'NR==1{print $2}'|awk -F'.' '{print $1}'` != "5" ];then
-        echo -e "\033[31mPve 6.x not support websites display change yet.You can use sensors command.\033[0m"
-        echo -e "\033[31mPve 6.x暂不支持网页配置显示，请使用sensors命令.\033[0m"
-        sensors
-    fi
+    #if [ `/usr/bin/pveversion|awk -F'/' 'NR==1{print $2}'|awk -F'.' '{print $1}'` != "5" ];then
+    #    echo ""
+    #    echo -e "\033[31mPve 6.x not support websites display change yet.You can use sensors command.\033[0m"
+    #    echo -e "\033[31mPve 6.x暂不支持网页配置显示，请使用sensors命令.\033[0m"
+    #    sleep 3
+    #    chSensors
+    #fi
     if [ $1 ];then
         x=a
     else
@@ -910,7 +925,11 @@ EOF
 EOF
         #--configs end--
         h=`sensors|awk 'END{print NR}'`
-        let h=$h*9+320
+        if [ $h = 0 ];then
+            h=400
+        else
+            let h=$h*9+320
+        fi
         n=`sed '/widget.pveNodeStatus/,/height/=' $js -n|sed -n '$p'`
        sed -i ''$n'c \ \ \ \ height:\ '$h',' $js 
         n=`sed '/pveversion/,/\}/=' $js -n|sed -n '$p'`
