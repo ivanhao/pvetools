@@ -1,9 +1,10 @@
 #!/bin/bash
-#############--proxmox tools--###############
-#  Author : 龙天ivan                        #
-#  Mail: ivanhao1984@qq.com                 #
-#  Version: V1.2                            #
-#############################################
+#############--proxmox tools--##########################
+#  Author : 龙天ivan                        
+#  Mail: ivanhao1984@qq.com
+#  Version: V1.3                          
+#  Github: https://github.com/ivanhao/pvetools
+########################################################
 
 if [ `export|grep 'LC_ALL'|wc -l` = 0 ];then
     if [ `grep "LC_ALL" /etc/profile|wc -l` = 0 ];then
@@ -963,7 +964,7 @@ main(){
 clear
 
 if [ $L = "en" ];then
-  echo -e "\033[32mVersion : 1.2\033[0m"
+  echo -e "\033[32mVersion : 1.3\033[0m"
   echo -e "\033[32mPlease input to choose:\033[0m"
   echo -e "\033[32m[a] \033[31mGuide install.\033[0m"
   echo -e "\033[32m[b] \033[31mConfig apt source(change to ustc.edu.cn and so on).\033[0m"
@@ -982,7 +983,7 @@ if [ $L = "en" ];then
   echo -e "\033[32m[exit|q] Quit.\033[0m"
   echo -e "\033[32mInput:\033[0m"
 else
-  echo -e "\033[32mVersion : 1.2\033[0m"
+  echo -e "\033[32mVersion : 1.3\033[0m"
   echo -e "\033[32m请输入序号选择相应的配置：\033[0m"
   echo -e "\033[32m[a] \033[31m无脑引导安装\033[0m"
   echo -e "\033[32m[b] \033[31m配置apt源(更换为ustc.edu.cn,去除企业源等)\033[0m(100%)"
