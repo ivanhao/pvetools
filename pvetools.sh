@@ -41,6 +41,9 @@ else
 fi
 sver=`cat /etc/debian_version |awk -F"." '{print $1}'`
 case "$sver" in
+    10 )
+        sver="buster"
+        ;;
     9 )
         sver="stretch"
         ;;
@@ -756,7 +759,8 @@ chNestedV(){
                     echo -e "\033[31mPlease input your vmid:\033[0m"
                     read vmid
                     if [ `qm showcmd $vmid|grep "+vmx"|wc -l` = 0 ];then
-                        echo "args: -cpu +vmx" >> /etc/pve/qemu-server/$vmid.conf
+                        args=`qm showcmd 104|grep "\-cpu [0-9a-zA-Z,+_]*" -o`
+                        echo  $args",+vmx" >> /etc/pve/qemu-server/$vmid.conf
                     else
                         echo "You already seted.Nothing to do."
                         echo "您的虚拟机已经开启过嵌套虚拟化支持。"
