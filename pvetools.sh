@@ -1004,6 +1004,10 @@ fi
 read i
 case "$i" in 
 a | A )
+    echo "Not support!Please choose other options."
+    echo "本版本已不支持无脑更新，请选择具体项目进行操作！"
+    sleep 3
+    main
     chSource wn
     chSamba wn
     chMail wn
