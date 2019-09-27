@@ -53,6 +53,11 @@ case "$sver" in
     6 )
         sver="squeeze"
 esac
+if [ ! $sver ];then
+    echo "您的版本不支持！无法继续。"
+    sleep 3
+    chSource
+fi
 
 case "$x" in
 a | A )
