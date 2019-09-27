@@ -761,8 +761,8 @@ chNestedV(){
                     if [ `qm showcmd $vmid|grep "+vmx"|wc -l` = 0 ];then
                         args=`qm showcmd 104|grep "\-cpu [0-9a-zA-Z,+_]*" -o`
                         echo  $args",+vmx" >> /etc/pve/qemu-server/$vmid.conf
-                        echo "Nested OK."
-                        echo "您的虚拟机已经开启嵌套虚拟化支持。重启后生效。"
+                        echo "Nested OK.Please reboot your vm."
+                        echo "您的虚拟机已经开启嵌套虚拟化支持。重启虚拟机后生效。"
                     else
                         echo "You already seted.Nothing to do."
                         echo "您的虚拟机已经开启过嵌套虚拟化支持。"
