@@ -701,28 +701,37 @@ chNestedV(){
     fi
     case "$x" in
         a )
-            if [ `cat /sys/module/kvm_intel/parameters/nested` = 'N' ];then
-                for i in `qm list|awk 'NR>1{print $1}'`;do
-                    qm stop $i
-                done
-                modprobe -r kvm_intel  
-                modprobe kvm_intel nested=1
-                if [ `cat /sys/module/kvm_intel/parameters/nested` = 'Y' ];then
-                    echo "options kvm_intel nested=1" >> /etc/modprobe.d/modprobe.conf
-                    echo "Nested ok."
-                    echo "您已经开启嵌套虚拟化。"
+            echo -e "\033[31mAre you sure to enable Nested? (Y/n):\033[0m"
+            echo -e "\033[31m确定要开启嵌套虚拟化吗？(Y/n):\033[0m"
+            read y
+            case "$y" in
+                y | Y )
+                if [ `cat /sys/module/kvm_intel/parameters/nested` = 'N' ];then
+                    for i in `qm list|awk 'NR>1{print $1}'`;do
+                        qm stop $i
+                    done
+                    modprobe -r kvm_intel  
+                    modprobe kvm_intel nested=1
+                    if [ `cat /sys/module/kvm_intel/parameters/nested` = 'Y' ];then
+                        echo "options kvm_intel nested=1" >> /etc/modprobe.d/modprobe.conf
+                        echo "Nested ok."
+                        echo "您已经开启嵌套虚拟化。"
+                    else
+                        echo "Your system can not open nested."
+                        echo "您的系统不支持嵌套虚拟化。"
+                    fi
                 else
-                    echo "Your system can not open nested."
-                    echo "您的系统不支持嵌套虚拟化。"
+                    echo "You already enabled nested virtualization."
+                    echo "您已经开启过嵌套虚拟化。"
                 fi
-            else
-                echo "You already enabled nested virtualization."
-                echo "您已经开启过嵌套虚拟化。"
-            fi
-            sleep 2
-            if [ ! $1 ];then
+                sleep 2
+                if [ ! $1 ];then
+                    chNestedV
+                fi
+                ;;
+                * )
                 chNestedV
-            fi
+            esac
             ;;
         b )
             if [ `cat /sys/module/kvm_intel/parameters/nested` = 'Y' ];then
@@ -884,7 +893,7 @@ EOF
         h=`sensors|awk 'END{print NR}'`
         let h=$h*9+320
         n=`sed '/widget.pveNodeStatus/,/height/=' $js -n|sed -n '$p'`
-        sed -i ''$n'c \ \ \ \ height:\ '$h',' $js 
+       sed -i ''$n'c \ \ \ \ height:\ '$h',' $js 
         n=`sed '/pveversion/,/\}/=' $js -n|sed -n '$p'`
         sed -i ''$n' r ./p1' $js
         n=`sed '/pveversion/,/version_text/=' $pm -n|sed -n '$p'`
