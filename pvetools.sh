@@ -52,13 +52,15 @@ case "$sver" in
         ;;
     6 )
         sver="squeeze"
+        ;;
+    * )
+        sver=""
 esac
 if [ ! $sver ];then
     echo "您的版本不支持！无法继续。"
     sleep 3
-    chSource
+    main
 fi
-
 case "$x" in
 a | A )
     if [ `grep "ustc.edu.cn" /etc/apt/sources.list|wc -l` = 0 ];then
