@@ -28,7 +28,7 @@ if [ $L = "en" ];then
     echo -e "\033[32m[q] \033[31mMain menu.\033[0m"
 else
     echo -e "\033[31m配置apt镜像源:\033[0m"
-    echo -e "\033[32m[a] \033[31m无脑模式\033[0m"
+    echo -e "\033[32m[a] \033[31m无脑模式(禁用企业订阅更新源，添加非订阅更新源(ustc.edu.cn),修改ceph镜像更新源)\033[0m"
     echo -e "\033[32m[b] \033[31m更换为国内ustc.edu.cn源\033[0m"
     echo -e "\033[32m[c] \033[31m关闭企业更新源\033[0m"
     echo -e "\033[32m[d] \033[31m还原配置\033[0m"
@@ -41,9 +41,6 @@ else
 fi
 sver=`cat /etc/debian_version |awk -F"." '{print $1}'`
 case "$sver" in
-    10 )
-        sver="buster"
-        ;;
     9 )
         sver="stretch"
         ;;
@@ -73,18 +70,18 @@ deb https://mirrors.ustc.edu.cn/debian/ $sver-backports main contrib non-free
 deb-src https://mirrors.ustc.edu.cn/debian/ $sver-backports main contrib non-free
 deb https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-free
 deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-free" > /etc/apt/sources.list
-        #修改pve 5.x 更新源地址为 no subscription，不使用企业订阅更新源。
+        #修改pve 5.x更新源地址为非订阅更新源，不使用企业订阅更新源。
         echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/pve/ $sver pve-no-subscription" > /etc/apt/sources.list.d/pve-no-sub.list
         #关闭pve 5.x企业订阅更新源
         sed -i 's|deb|#deb|' /etc/apt/sources.list.d/pve-enterprise.list
         #修改 ceph镜像更新源
         echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/ceph-luminous $sver main" > /etc/apt/sources.list.d/ceph.list
         echo "apt source has been changed successfully!"
-        echo "更换软件源成功！"
+        echo "软件源已更换成功！"
         apt-get update
         apt-get -y install net-tools
         echo "apt source has been changed successfully!"
-        echo "更换软件源成功！"
+        echo "软件源已更换成功！"
     else
         echo -e "\033[31mAlready changed apt source to ustc.edu.cn\033[0m"
         echo -e "\033[31m已经更换apt源为 ustc.edu.cn\033[0m"
@@ -94,7 +91,7 @@ deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib 
         chSource
     fi
     ;;
-b | B  )
+	b | B  )
     if [ `grep "ustc.edu.cn" /etc/apt/sources.list|wc -l` = 0 ];then
         cp /etc/apt/sources.list /etc/apt/sources.list.bak
         cp /etc/apt/sources.list.d/ceph.list /etc/apt/sources.list.d/ceph.list.bak
@@ -125,14 +122,14 @@ deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib 
 c | C  )
     #sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
     if [ -f /etc/apt/sources.list.d/pve-no-sub.list ];then
-        #修改pve 5.x 更新源地址为 no subscription，不使用企业订阅更新源
+        #修改pve 5.x更新源地址为非订阅更新源，不使用企业订阅更新源
         echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/pve/ $sver pve-no-subscription" > /etc/apt/sources.list.d/pve-no-sub.list
     else
         echo "apt source has been changed successfully!"
         echo "软件源已更换成功！"
     fi
     if [ `grep "^deb" /etc/apt/sources.list.d/pve-enterprise.list` > 0 ];then
-        #关闭pve 5.x企业更新源
+        #关闭pve 5.x企业订阅更新源
         sed -i 's|deb|#deb|' /etc/apt/sources.list.d/pve-enterprise.list
         echo "apt source has been changed successfully!"
         echo "软件源已更换成功！"
@@ -158,6 +155,7 @@ q )
     ;;
 * )
     echo "Please comfirm!"
+	echo "请重新输入!"
     sleep 1
     chSource
 esac
@@ -214,6 +212,7 @@ case "$x" in
         ;;
     * )
         echo "Please comfirm!"
+		echo "请重新输入!"
         sleep 1
         chMail
 esac
@@ -242,6 +241,7 @@ if [ ! -f /etc/modprobe.d/zfs.conf ] || [ `grep "zfs_arc_max" /etc/modprobe.d/zf
                 echo -e "\033[31m配置完成，一会儿最好重启一下系统。\033[0m"
             else
                 echo "Please comfirm!"
+				echo "请重新输入!"
                 sleep 2
             fi
             #set rpool to list snapshots
@@ -269,6 +269,7 @@ if [ ! -f /etc/modprobe.d/zfs.conf ] || [ `grep "zfs_arc_max" /etc/modprobe.d/zf
         ;;
     * )
         echo "Please comfirm!"
+		echo "请重新输入!"
         sleep 1
     esac
 else
@@ -339,6 +340,7 @@ a | A )
             ;;
         * )
             echo "Please comfirm!"
+			echo "请重新输入!"
             sleep 2
         esac
     else
@@ -452,6 +454,7 @@ q )
     ;;
 * )
     echo "Please comfirm!"
+	echo "请重新输入!"
     sleep 1
     chSamba
 esac
@@ -534,6 +537,7 @@ EOF
         ;;
     * )
         echo "Please comfirm!"
+		echo "请重新输入!"
         sleep 1
 esac
 }
@@ -582,6 +586,7 @@ EOF
         ;;
     * )
         echo "Please comfirm!"
+		echo "请重新输入!"
         sleep 1
     esac
 else
@@ -1077,6 +1082,7 @@ exit | quit | q )
     ;;
 * )
     echo "Please comfirm!"
+	echo "请重新输入!"
     sleep 2
     main
 esac
@@ -1088,4 +1094,3 @@ else
     L="zh"
 fi
 main
-
