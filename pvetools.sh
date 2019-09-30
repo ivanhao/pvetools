@@ -36,7 +36,11 @@ else
     echo -e "\033[32m[q] \033[31m返回主菜单\033[0m"
 fi
 if [ $1 ];then
-    x=a
+    #x=a
+    echo "Not supported!"
+    echo "不支持该模式。"
+    sleep 3
+    chSource
 else
     read x 
 fi
@@ -115,6 +119,8 @@ deb https://mirrors.ustc.edu.cn/debian/ $sver-backports main contrib non-free
 deb-src https://mirrors.ustc.edu.cn/debian/ $sver-backports main contrib non-free
 deb https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-free
 deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-free" > /etc/apt/sources.list
+        #修改pve 5.x更新源地址为非订阅更新源，不使用企业订阅更新源
+        echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/pve/ $sver pve-no-subscription" > /etc/apt/sources.list.d/pve-no-sub.list
         #修改 ceph镜像更新源
         echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/ceph-luminous $sver main" > /etc/apt/sources.list.d/ceph.list
         echo "apt source has been changed successfully!"
