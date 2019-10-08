@@ -2,7 +2,7 @@
 #############--proxmox tools--##########################
 #  Author : 龙天ivan                        
 #  Mail: ivanhao1984@qq.com
-#  Version: V2.0                          
+#  Version: V1.3                          
 #  Github: https://github.com/ivanhao/pvetools
 ########################################################
 
@@ -21,21 +21,19 @@ source /etc/profile
 chSource(){
 clear
 if [ $L = "en" ];then
-    x=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config apt source:" 25 55 15 \
-    "[a]" "Automation mode." \
-    "[b]" "Change to ustc.edu.cn." \
-    "[c]" "Disable enterprise." \
-    "[d]" "Undo Change." \
-    "[q]" "Main menu." \
-    3>&1 1>&2 2>&3)
+    echo -e "\033[31mConfig apt source:\033[0m"
+    echo -e "\033[32m[a] \033[31mAutomation mode.\033[0m"
+    echo -e "\033[32m[b] \033[31mChange to ustc.edu.cn.\033[0m"
+    echo -e "\033[32m[c] \033[31mDisable enterprise.\033[0m"
+    echo -e "\033[32m[d] \033[31mUndo Change.\033[0m"
+    echo -e "\033[32m[q] \033[31mMain menu.\033[0m"
 else
-    x=$(whiptail --title " PveTools   Version : 2.0 " --menu "配置apt镜像源:" 25 55 15 \
-    "[a]" "无脑模式(禁用企业订阅更新源，添加非订阅更新源(ustc.edu.cn),修改ceph镜像更新源)" \
-    "[b]" "更换为国内ustc.edu.cn源" \
-    "[c]" "关闭企业更新源" \
-    "[d]" "还原配置" \
-    "[q]" "返回主菜单" \
-    3>&1 1>&2 2>&3)
+    echo -e "\033[31m配置apt镜像源:\033[0m"
+    echo -e "\033[32m[a] \033[31m无脑模式(禁用企业订阅更新源，添加非订阅更新源(ustc.edu.cn),修改ceph镜像更新源)\033[0m"
+    echo -e "\033[32m[b] \033[31m更换为国内ustc.edu.cn源\033[0m"
+    echo -e "\033[32m[c] \033[31m关闭企业更新源\033[0m"
+    echo -e "\033[32m[d] \033[31m还原配置\033[0m"
+    echo -e "\033[32m[q] \033[31m返回主菜单\033[0m"
 fi
 if [ $1 ];then
     #x=a
@@ -43,6 +41,8 @@ if [ $1 ];then
     echo "不支持该模式。"
     sleep 3
     chSource
+else
+    read x 
 fi
 sver=`cat /etc/debian_version |awk -F"." '{print $1}'`
 case "$sver" in
@@ -69,9 +69,7 @@ if [ ! $sver ];then
     sleep 3
     main
 fi
-exitstatus=$?
-if [ $exitstatus = 0 ]; then
-    case "$x" in
+case "$x" in
 a | A )
     if [ `grep "ustc.edu.cn" /etc/apt/sources.list|wc -l` = 0 ];then
         #sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
@@ -100,8 +98,8 @@ deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib 
         echo "apt source has been changed successfully!"
         echo "软件源已更换成功！"
     else
-        echo -e "Already changed apt source to ustc.edu.cn"
-        echo -e "已经更换apt源为 ustc.edu.cn"
+        echo -e "\033[31mAlready changed apt source to ustc.edu.cn\033[0m"
+        echo -e "\033[31m已经更换apt源为 ustc.edu.cn\033[0m"
     fi
     sleep 2
     if [ ! $1 ];then
@@ -132,8 +130,8 @@ deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib 
         echo "apt source has been changed successfully!"
         echo "软件源已更换成功！"
     else
-        echo -e "Already changed apt source to ustc.edu.cn"
-        echo -e "已经更换apt源为 ustc.edu.cn"
+        echo -e "\033[31mAlready changed apt source to ustc.edu.cn\033[0m"
+        echo -e "\033[31m已经更换apt源为 ustc.edu.cn\033[0m"
     fi
     sleep 2
     chSource
@@ -172,21 +170,23 @@ d | D )
 q )
     main
     ;;
+* )
+    echo "Please comfirm!"
+	echo "请重新输入!"
+    sleep 1
+    chSource
 esac
-else
-    exit
-fi
 }
 
 chMail(){
 #set mailutils to send mail
 if [ -f /etc/mailname ];then
-    echo -e "It seems you have already configed it before."
-    echo -e "您好像已经配置过这个了。"
+    echo -e "\033[31mIt seems you have already configed it before.\033[0m"
+    echo -e "\033[31m您好像已经配置过这个了。\033[0m"
     c="ok"
 fi
-echo -e "Will you want to config mailutils & postfix to send notification?(Y/N):"
-echo -e "是否配置mailutils和postfix来发送邮件通知？(Y/N):"
+echo -e "\033[31mWill you want to config mailutils & postfix to send notification?(Y/N):\033[0m"
+echo -e "\033[31m是否配置mailutils和postfix来发送邮件通知？(Y/N):\033[0m"
 if [ $1 ];then
     if [ $c ];then
         x="n"
@@ -199,8 +199,8 @@ fi
 case "$x" in 
     y | yes | a )
         apt -y install mailutils 
-        echo -e "Input email adress:"
-        echo -e "输入邮箱地址："
+        echo -e "\033[31mInput email adress:\033[0m"
+        echo -e "\033[31m输入邮箱地址：\033[0m"
         read qqmail
         while [ true ]
         do
@@ -218,8 +218,8 @@ case "$x" in
         dpkg-reconfigure postfix
         service postfix reload
         echo "This is a mail test." |mail -s "mail test" root
-        echo -e "Config complete and send test email to you."
-        echo -e "已经配置好并发送了测试邮件。"
+        echo -e "\033[31mConfig complete and send test email to you.\033[0m"
+        echo -e "\033[31m已经配置好并发送了测试邮件。\033[0m"
         sleep 2
         if [ ! $1 ];then
             main
@@ -238,8 +238,8 @@ esac
 chZfs(){
 #set max zfs ram
 if [ ! -f /etc/modprobe.d/zfs.conf ] || [ `grep "zfs_arc_max" /etc/modprobe.d/zfs.conf|wc -l` = 0 ];then
-    echo -e "set max zfs ram 4(G) or 8(G) etc, just enter number or n?(number/n) "
-    echo -e "设置最大zfs内存（zfs_arc_max),比如4G或8G等, 只需要输入纯数字即可，比如4G输入4?(number/n) "
+    echo -e "\033[31mset max zfs ram 4(G) or 8(G) etc, just enter number or n?(number/n) \033[0m"
+    echo -e "\033[31m设置最大zfs内存（zfs_arc_max),比如4G或8G等, 只需要输入纯数字即可，比如4G输入4?(number/n) \033[0m"
     if [ $1 ];then
         x=a
     else
@@ -254,8 +254,8 @@ if [ ! -f /etc/modprobe.d/zfs.conf ] || [ `grep "zfs_arc_max" /etc/modprobe.d/zf
             if [[ "$x" =~ ^[1-9]+$ ]]; then
                 echo "options zfs zfs_arc_max=$[$x*1024*1024*1024]">/etc/modprobe.d/zfs.conf
                 update-initramfs -u
-                echo -e "Config complete!you should reboot later."
-                echo -e "配置完成，一会儿最好重启一下系统。"
+                echo -e "\033[31mConfig complete!you should reboot later.\033[0m"
+                echo -e "\033[31m配置完成，一会儿最好重启一下系统。\033[0m"
             else
                 echo "Please comfirm!"
 				echo "请重新输入!"
@@ -268,8 +268,8 @@ if [ ! -f /etc/modprobe.d/zfs.conf ] || [ `grep "zfs_arc_max" /etc/modprobe.d/zf
         done
     esac
     #zfs-zed
-    echo -e "Install zfs-zed to get email notification of zfs scrub?(Y/n):"
-    echo -e "安装zfs-zed来发送zfs scrub的结果提醒邮件？(Y/n):"
+    echo -e "\033[31mInstall zfs-zed to get email notification of zfs scrub?(Y/n):\033[0m"
+    echo -e "\033[31m安装zfs-zed来发送zfs scrub的结果提醒邮件？(Y/n):\033[0m"
     if [ $1 ];then
         zed=a
     else
@@ -278,8 +278,8 @@ if [ ! -f /etc/modprobe.d/zfs.conf ] || [ `grep "zfs_arc_max" /etc/modprobe.d/zf
     case "$zed" in 
     y | yes | a )
         apt -y install zfs-zed 
-        echo -e "Install complete!"
-        echo -e "安装zfs-zed成功！"
+        echo -e "\033[31mInstall complete!\033[0m"
+        echo -e "\033[31m安装zfs-zed成功！\033[0m"
         sleep 2
         ;;
     n | no )
@@ -290,8 +290,8 @@ if [ ! -f /etc/modprobe.d/zfs.conf ] || [ `grep "zfs_arc_max" /etc/modprobe.d/zf
         sleep 1
     esac
 else
-    echo -e "It seems you have already configed it before."
-    echo -e "您好像已经配置过这个了。"
+    echo -e "\033[31mIt seems you have already configed it before.\033[0m"
+    echo -e "\033[31m您好像已经配置过这个了。\033[0m"
     sleep 2
     if [ ! $1 ];then
         main
@@ -303,17 +303,17 @@ chSamba(){
 #config samba
 clear
 if [ $L = "en" ];then
-    echo -e "Config samba:"
-    echo -e "[a] Install samba and config user."
-    echo -e "[b] Add folder to share."
-    echo -e "[C] Delete folder to share."
-    echo -e "[back] Main menu."
+    echo -e "\033[31mConfig samba:\033[0m"
+    echo -e "\033[32m[a] \033[31mInstall samba and config user.\033[0m"
+    echo -e "\033[32m[b] \033[31mAdd folder to share.\033[0m"
+    echo -e "\033[32m[C] \033[31mDelete folder to share.\033[0m"
+    echo -e "\033[32m[back] \033[31mMain menu.\033[0m"
 else
-    echo -e "配置samba:"
-    echo -e "[a] 安装配置samba并配置好samba用户"
-    echo -e "[b] 添加共享文件夹"
-    echo -e "[c] 删除共享文件夹"
-    echo -e "[q] 返回主菜单"
+    echo -e "\033[31m配置samba:\033[0m"
+    echo -e "\033[32m[a] \033[31m安装配置samba并配置好samba用户\033[0m"
+    echo -e "\033[32m[b] \033[31m添加共享文件夹\033[0m"
+    echo -e "\033[32m[c] \033[31m删除共享文件夹\033[0m"
+    echo -e "\033[32m[q] \033[31m返回主菜单\033[0m"
 fi
 if [ $1 ];then
     x=a
@@ -323,8 +323,8 @@ fi
 case "$x" in
 a | A )
     if [ `grep samba /etc/group|wc -l` = 0 ];then
-        echo -e "set samba and admin user for samba?(Y/n):"
-        echo -e "安装samba并配置admin为samba用户？(Y/n):"
+        echo -e "\033[31mset samba and admin user for samba?(Y/n):\033[0m"
+        echo -e "\033[31m安装samba并配置admin为samba用户？(Y/n):\033[0m"
         if [ $1 ];then
             x=a
         else
@@ -335,14 +335,14 @@ a | A )
             apt -y install samba
             groupadd samba
             useradd -g samba -M -s /sbin/nologin admin
-            echo -e "Please input samba user admin's password:"
-            echo -e "请输入samba用户admin的密码："
+            echo -e "\033[31mPlease input samba user admin's password:\033[0m"
+            echo -e "\033[31m请输入samba用户admin的密码：\033[0m"
             read m
             while [ true ]
             do
                 if [[ ! `echo $m|grep "^[0-9a-zA-Z.-@]*$"` ]] || [[ $m = '^M' ]];then
-                    echo -e "Wrong format!!!   input again:"
-                    echo -e "密码格式不对！！！请重新输入："
+                    echo -e "\033[31mWrong format!!!   input again:\033[0m"
+                    echo -e "\033[31m密码格式不对！！！请重新输入：\033[0m"
                     read m
                 else
                     break
@@ -350,7 +350,7 @@ a | A )
             done
             echo -e "$pass\n$pass"|smbpasswd -a admin
             service smbd restart
-            echo -e "已成功配置好samba，请记好samba用户admin的密码！"
+            echo -e "\033[31m已成功配置好samba，请记好samba用户admin的密码！\033[0m"
             sleep 3
             ;;
         n | no )
@@ -361,8 +361,8 @@ a | A )
             sleep 2
         esac
     else
-        echo -e "Already configed samba."
-        echo -e "已配置过samba，没什么可做的!"
+        echo -e "\033[31mAlready configed samba.\033[0m"
+        echo -e "\033[31m已配置过samba，没什么可做的!\033[0m"
         sleep 2
     fi
     if [ ! $1 ];then
@@ -370,11 +370,11 @@ a | A )
     fi
     ;;
 b | B )
-    echo -e "Exist share folders:"
-    echo -e "已有的共享目录："
+    echo -e "\033[31mExist share folders:\033[0m"
+    echo -e "\033[31m已有的共享目录：\033[0m"
     echo "`grep "^\[[0-9a-zA-Z.-]*\]$" /etc/samba/smb.conf|awk 'NR>3{print $0}'`"
-    echo -e "Input share folder path:"
-    echo -e "输入共享文件夹的路径:"
+    echo -e "\033[31mInput share folder path:\033[0m"
+    echo -e "\033[31m输入共享文件夹的路径:\033[0m"
     read x
     while [ ! -d $x ]
     do
@@ -401,8 +401,8 @@ b | B )
     n=`echo $x|grep -o "[a-zA-Z0-9.-]*$"`
     while [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` != 0 ]
     do
-        echo -e "Input share name:"
-        echo -e "输入共享名称："
+        echo -e "\033[31mInput share name:\033[0m"
+        echo -e "\033[31m输入共享名称：\033[0m"
         read n
         while [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` != 0 ]
         do
@@ -439,11 +439,11 @@ EOF
     chSamba
     ;;
 c )
-    echo -e "Exist share folders:"
-    echo -e "已有的共享目录："
+    echo -e "\033[31mExist share folders:\033[0m"
+    echo -e "\033[31m已有的共享目录：\033[0m"
     echo "`grep "^\[[0-9a-zA-Z.-]*\]$" /etc/samba/smb.conf|awk 'NR>3{print $0}'`"
-    echo -e "Input share name:"
-    echo -e "输入共享名称："
+    echo -e "\033[31mInput share name:\033[0m"
+    echo -e "\033[31m输入共享名称：\033[0m"
     read n
     while [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` = 0 ]
     do
@@ -480,13 +480,13 @@ esac
 chVim(){
 #config vim
 if [ $L = "en" ];then
-    echo -e "Install vim and config:"
-    echo -e "[a] Install vim & simply config display."
-    echo -e "[b] Install vim & config 'vim-for-server'(https://github.com/wklken/vim-for-server)."
+    echo -e "\033[31mInstall vim and config:\033[0m"
+    echo -e "\033[32m[a] \033[31mInstall vim & simply config display.\033[0m"
+    echo -e "\033[32m[b] \033[31mInstall vim & config 'vim-for-server'(https://github.com/wklken/vim-for-server).\033[0m"
 else
-    echo -e "安装配置VIM！"
-    echo -e "[a] 安装VIM并简单配置，如配色行号等，基本是vim原味儿。"
-    echo -e "[b] 安装VIM并配置'vim-for-server'(https://github.com/wklken/vim-for-server)."
+    echo -e "\033[31m安装配置VIM！\033[0m"
+    echo -e "\033[32m[a] \033[31m安装VIM并简单配置，如配色行号等，基本是vim原味儿。\033[0m"
+    echo -e "\033[32m[b] \033[31m安装VIM并配置'vim-for-server'(https://github.com/wklken/vim-for-server).\033[0m"
 fi
 if [ $1 ];then
     x=a
@@ -562,8 +562,8 @@ esac
 chSpindown(){
 #set hard drivers to spindown
 if [ ! -f /root/hdspindown/spindownall ];then
-    echo -e "Config hard drives to auto pindown?(Y/n):"
-    echo -e "配置硬盘自动休眠？(Y/n):"
+    echo -e "\033[31mConfig hard drives to auto pindown?(Y/n):\033[0m"
+    echo -e "\033[31m配置硬盘自动休眠？(Y/n):\033[0m"
     if [ $1 ];then
         x=a
     else
@@ -578,13 +578,13 @@ if [ ! -f /root/hdspindown/spindownall ];then
         chmod +x *.sh
         ./spindownall
         if [ `grep "spindownall" /etc/crontab|wc -l` = 0 ];then
-            echo -e "Input number of .bake to auto spindown:"
-            echo -e "输入硬盘自动休眠的检测时间，周期为分钟，输入5为5分钟:"
+            echo -e "\033[31mInput number of .bake to auto spindown:\033[0m"
+            echo -e "\033[31m输入硬盘自动休眠的检测时间，周期为分钟，输入5为5分钟:\033[0m"
             read x
             while [ true ]
             do
                 if [[ `echo "$x"|grep "[0-9]*"|wc -l` = 0 ]] || [[ $x = "" ]];then
-                    echo -e "输入格式错误，请重新输入："
+                    echo -e "\033[31m输入格式错误，请重新输入：\033[0m"
                     read x
                 else
                     break
@@ -594,8 +594,8 @@ if [ ! -f /root/hdspindown/spindownall ];then
 */$x * * * * root /root/hdspindown/spindownall
 EOF
             service cron reload
-            echo -e "Config every $x .bake to check disks and auto spindown:"
-            echo -e "已为您配置好硬盘每$x分钟自动检测硬盘和休眠。"
+            echo -e "\033[31mConfig every $x .bake to check disks and auto spindown:\033[0m"
+            echo -e "\033[31m已为您配置好硬盘每$x分钟自动检测硬盘和休眠。\033[0m"
             sleep 2
         fi
         ;;
@@ -607,8 +607,8 @@ EOF
         sleep 1
     esac
 else
-    echo -e "It seems you have already configed it before."
-    echo -e "您好像已经配置过这个了。"
+    echo -e "\033[31mIt seems you have already configed it before.\033[0m"
+    echo -e "\033[31m您好像已经配置过这个了。\033[0m"
     sleep 2
     main
 fi
@@ -617,7 +617,7 @@ fi
 chCpu(){
 #setup for cpufreq
 if [ `grep "intel_pstate=disable" /etc/default/grub|wc -l` = 0 ];then
-    echo -e "Install cpufrequtils to save power?(Y/n):"
+    echo -e "\033[31mInstall cpufrequtils to save power?(Y/n):\033[0m"
     if [ $1 ];then
         x=a
     else
@@ -635,7 +635,7 @@ if [ `grep "intel_pstate=disable" /etc/default/grub|wc -l` = 0 ];then
             while [ true ]
             do
                 if [[ `echo "$x"|grep "[0-9]*"|wc -l` = 0 ]] || [[ $x = "" ]];then
-                    echo -e "输入格式错误,请重新输入："
+                    echo -e "\033[31m输入格式错误,请重新输入：\033[0m"
                     read x
                 else
                     break
@@ -647,7 +647,7 @@ if [ `grep "intel_pstate=disable" /etc/default/grub|wc -l` = 0 ];then
             while [ true ]
             do
                 if [[ `echo "$x"|grep "[0-9]*"|wc -l` = 0 ]] || [[ $x = "" ]];then
-                    echo -e "输入格式错误，请重新输入："
+                    echo -e "\033[31m输入格式错误，请重新输入：\033[0m"
                     read x
                 else
                     break
@@ -660,8 +660,8 @@ GOVERNOR="powersave"
 MAX_SPEED="$mx"
 MIN_SPEED="$mi"
 EOF
-            echo -e "  cpufrequtils need to reboot to apply! Please reboot.  "
-            echo -e "  cpufrequtils 安装好后需要重启系统，请稍后重启。"
+            echo -e " \033[31m cpufrequtils need to reboot to apply! Please reboot.  \033[0m"
+            echo -e " \033[31m cpufrequtils 安装好后需要重启系统，请稍后重启。\033[0m"
             sleep 2
         fi
         ;;
@@ -672,8 +672,8 @@ EOF
         sleep 1
     esac
 else
-    echo -e "It seems you have already configed it before."
-    echo -e "您好像已经配置过这个了。"
+    echo -e "\033[31mIt seems you have already configed it before.\033[0m"
+    echo -e "\033[31m您好像已经配置过这个了。\033[0m"
     sleep 2
 fi
 }
@@ -682,10 +682,10 @@ chSubs(){
     clear
     case $L in
         en )
-            echo -e "Remove subscribe notice."
+            echo -e "\033[31mRemove subscribe notice.\033[0m"
             ;;
         zh )
-            echo -e "去除订阅提示"
+            echo -e "\033[31m去除订阅提示\033[0m"
             ;;
     esac
     if [ `grep "data.status !== 'Active'" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js|wc -l` = 1 ];then
@@ -706,14 +706,14 @@ chNestedV(){
     clear
     case $L in
         en )
-            echo -e "[a] Enable nested"
-            echo -e "[b] Set vm to nested."
-            echo -e "[q] back to main menu."
+            echo -e "\033[32m[a] \033[31mEnable nested\033[0m"
+            echo -e "\033[32m[b] \033[31mSet vm to nested.\033[0m"
+            echo -e "\033[32m[q] \033[31mback to main menu.\033[0m"
             ;;
         zh )
-            echo -e "[a] 开启嵌套虚拟化"
-            echo -e "[b] 开启某个虚拟机的嵌套虚拟化"
-            echo -e "[q] 返回主菜单"
+            echo -e "\033[32m[a] \033[31m开启嵌套虚拟化\033[0m"
+            echo -e "\033[32m[b] \033[31m开启某个虚拟机的嵌套虚拟化\033[0m"
+            echo -e "\033[32m[q] \033[31m返回主菜单\033[0m"
             ;;
     esac
     if [ $1 ];then
@@ -723,8 +723,8 @@ chNestedV(){
     fi
     case "$x" in
         a )
-            echo -e "Are you sure to enable Nested? (Y/n):"
-            echo -e "确定要开启嵌套虚拟化吗？(Y/n):"
+            echo -e "\033[31mAre you sure to enable Nested? (Y/n):\033[0m"
+            echo -e "\033[31m确定要开启嵌套虚拟化吗？(Y/n):\033[0m"
             read y
             case "$y" in
                 y | Y )
@@ -763,7 +763,7 @@ chNestedV(){
                     echo "您还没有虚拟机。"
                 else
                     qm list
-                    echo -e "Please input your vmid:"
+                    echo -e "\033[31mPlease input your vmid:\033[0m"
                     read vmid
                     if [ `qm showcmd $vmid|grep "+vmx"|wc -l` = 0 ];then
                         args=`qm showcmd 104|grep "\-cpu [0-9a-zA-Z,+_]*" -o`
@@ -795,18 +795,18 @@ chSensors(){
 #安装lm-sensors并配置在界面上显示
 #for i in `sed -n '/Chip drivers/,/\#----cut here/p' /tmp/sensors|sed '/Chip /d'|sed '/cut/d'`;do modprobe $i;done
 clear
-echo -e "安装配置lm-sensors并配置web界面显示温度。"
-echo -e "Install lm-sensors and config web interface to display sensors data."
+echo -e "\033[31m安装配置lm-sensors并配置web界面显示温度。\033[0m"
+echo -e "\033[31mInstall lm-sensors and config web interface to display sensors data.\033[0m"
 case $L in
     en )
-        echo -e "[a] Install"
-        echo -e "[b] Uninstall"
-        echo -e "[q] back to main menu."
+        echo -e "\033[32m[a] \033[31mInstall\033[0m"
+        echo -e "\033[32m[b] \033[31mUninstall\033[0m"
+        echo -e "\033[32m[q] \033[31mback to main menu.\033[0m"
         ;;
     zh )
-        echo -e "[a] 安装"
-        echo -e "[b] 卸载"
-        echo -e "[q] 返回主菜单"
+        echo -e "\033[32m[a] \033[31m安装\033[0m"
+        echo -e "\033[32m[b] \033[31m卸载\033[0m"
+        echo -e "\033[32m[q] \033[31m返回主菜单\033[0m"
         ;;
 esac
 if [ $1 ];then
@@ -856,23 +856,23 @@ case "$x" in
     sensors-detect --auto > /tmp/sensors
     drivers=`sed -n '/Chip drivers/,/\#----cut here/p' /tmp/sensors|sed '/Chip /d'|sed '/cut/d'`
     if [ `echo $drivers|wc -w` = 0 ];then
-        echo -e "Sensors driver not found."
-        echo -e "没有找到任何驱动，似乎你的系统不支持。"
+        echo -e "\033[31mSensors driver not found.\033[0m"
+        echo -e "\033[31m没有找到任何驱动，似乎你的系统不支持。\033[0m"
         sleep 3
         chSensors
     else
         for i in $drivers;do modprobe $i;done
         sensors
-        echo -e "Install complete,if everything ok ,it's showed sensors."
-        echo -e "安装配置成功，如果没有意外，上面已经显示sensors。"
+        echo -e "\033[31mInstall complete,if everything ok ,it's showed sensors.\033[0m"
+        echo -e "\033[31m安装配置成功，如果没有意外，上面已经显示sensors。\033[0m"
     fi
     rm /tmp/sensors
     echo "您的系统是：$pve, 您将安装sensors界面，是否继续？(y/n)"
     echo -n "Your OS：$pve, you will install sensors interface, continue?(y/n)"
     #if [ `/usr/bin/pveversion|awk -F'/' 'NR==1{print $2}'|awk -F'.' '{print $1}'` != "5" ];then
     #    echo ""
-    #    echo -e "Pve 6.x not support websites display change yet.You can use sensors command."
-    #    echo -e "Pve 6.x暂不支持网页配置显示，请使用sensors命令."
+    #    echo -e "\033[31mPve 6.x not support websites display change yet.You can use sensors command.\033[0m"
+    #    echo -e "\033[31mPve 6.x暂不支持网页配置显示，请使用sensors命令.\033[0m"
     #    sleep 3
     #    chSensors
     #fi
@@ -965,8 +965,8 @@ EOF
         js='/usr/share/pve-manager/js/pvemanagerlib.js'
         pm='/usr/share/perl5/PVE/API2/Nodes.pm'
         if [[ ! -f $js.backup && ! -f /usr/bin/sensors ]];then
-            echo -e "No sensors found."
-            echo -e "没有检测到安装，不需要卸载。"
+            echo -e "\033[32mNo sensors found.\033[0m"
+            echo -e "\033[32m没有检测到安装，不需要卸载。\033[0m"
         else
             mv $js.backup $js
             mv $pm.backup $pm
@@ -985,182 +985,47 @@ esac
 
 
 #--------------------------function-main-------------------------#
-#    "a" "无脑模式" \
-          #  a )
-          #      if (whiptail --title "Test Yes/No Box" --yesno "Choose between Yes and No." 10 60) then
-          #          whiptail --title "OK" --msgbox "OK" 10 60
-          #      else
-          #          whiptail --title "OK" --msgbox "OK" 10 60
-          #      fi
-          #      sleep 3
-          #      main
-          #      ;;
-          #  b )
-          #      echo "b"
-          #      ;;
-          #  c )
-          #      echo "c"
-          #      ;;
-
-function main(){
-    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "请选择相应的配置：" 25 55 15 \
-    "b" "配置apt源(更换为ustc.edu.cn,去除企业源等)" \
-    "c" "安装配置samba" \
-    "d" "安装配置root邮件通知" \
-    "e" "安装配置zfs最大内存及zed通知" \
-    "f" "安装配置VIM" \
-    "g" "安装配置CPU省电" \
-    "h" "安装配置硬盘休眠" \
-    "i" "配置PCI硬件直通" \
-    "j" "配置pve的web界面显示传感器温度" \
-    "k" "配置开启嵌套虚拟化" \
-    "l" "去除订阅提示" \
-    "u" "升级该pvetools脚本到最新版本" \
-    3>&1 1>&2 2>&3)
-    exitstatus=$?
-    if [ $exitstatus = 0 ]; then
-        case "$OPTION" in
-        a | A )
-            echo "Not support!Please choose other options."
-            echo "本版本已不支持无脑更新，请选择具体项目进行操作！"
-            sleep 3
-            main
-            chSource wn
-            chSamba wn
-            chMail wn
-        #    chZfs wn
-            chVim wn
-        #    chCpu wn
-            chSpindown wn
-            chNestedV wn
-            chSubs wn
-            chSensors wn
-            echo "Config complete!Back to main menu 5s later."
-            echo "已经完成配置！5秒后返回主界面。"
-            echo "5"
-            sleep 1
-            echo "4"
-            sleep 1
-            echo "3"
-            sleep 1
-            echo "2"
-            sleep 1
-            echo "1"
-            sleep 1
-            main
-            ;;
-        b | B )
-            chSource
-            main
-            ;;
-        c | C )
-            chSamba
-            main
-            ;;
-        d | D )
-            chMail
-            main
-            ;;
-        e | E )
-            chZfs
-            main
-            ;;
-        f | F )
-            chVim
-            main
-            ;;
-        g | G )
-            chCpu
-            main
-            ;;
-        h | H )
-            chSpindown
-            main
-            ;;
-        i | I )
-            echo "not support yet."
-            sleep 2
-            main
-            ;;
-        j | J )
-            chSensors
-            sleep 2
-            main
-            ;;
-        k | K )
-            clear
-            chNestedV
-            main
-            ;;
-        l | L )
-            chSubs
-            main
-            ;;
-
-        u )
-            git pull \
-            && echo "done!" \
-            && sleep 3 \
-            && ./pvetools.sh
-            ;;
-        lang )
-            if [ $L = "zh" ];then
-                L="en"
-            else
-                L="zh"
-            fi
-            main
-            ;;
-        exit | quit | q )
-            exit
-            ;;
-        esac
-    else
-        echo "You chose Cancel."
-        exit
-    fi
-}
-main1(){
+main(){
 clear
 
 if [ $L = "en" ];then
-  echo -e "Version : 1.3"
-  echo -e "Please input to choose:"
-  echo -e "[a] Guide install."
-  echo -e "[b] Config apt source(change to ustc.edu.cn and so on)."
-  echo -e "[c] Install & config samba."
-  echo -e "[d] Install mailutils and config root email."
-  echo -e "[e] Config zfs_arc_max & Install zfs-zed."
-  echo -e "[f] Install & config VIM."
-  echo -e "[g] Install cpufrequtils to save power."
-  echo -e "[h] Config hard disks to spindown."
-  echo -e "[i] Config PCI hardware pass-thrugh."
-  echo -e "[j] Config web interface to display sensors data."
-  echo -e "[k] Config enable Nested virtualization."
-  echo -e "[l] Remove subscribe notice."
-  echo -e "[u] Upgrade this script to new version."
-  echo -e "[lang] Change Language."
-  echo -e "[exit|q] Quit."
-  echo -e "Input:"
+  echo -e "\033[32mVersion : 1.3\033[0m"
+  echo -e "\033[32mPlease input to choose:\033[0m"
+  echo -e "\033[32m[a] \033[31mGuide install.\033[0m"
+  echo -e "\033[32m[b] \033[31mConfig apt source(change to ustc.edu.cn and so on).\033[0m"
+  echo -e "\033[32m[c] \033[31mInstall & config samba.\033[0m"
+  echo -e "\033[32m[d] \033[31mInstall mailutils and config root email.\033[0m"
+  echo -e "\033[32m[e] \033[31mConfig zfs_arc_max & Install zfs-zed.\033[0m"
+  echo -e "\033[32m[f] \033[31mInstall & config VIM.\033[0m"
+  echo -e "\033[32m[g] \033[31mInstall cpufrequtils to save power.\033[0m"
+  echo -e "\033[32m[h] \033[31mConfig hard disks to spindown.\033[0m"
+  echo -e "\033[32m[i] \033[31mConfig PCI hardware pass-thrugh.\033[0m"
+  echo -e "\033[32m[j] \033[31mConfig web interface to display sensors data.\033[0m"
+  echo -e "\033[32m[k] \033[31mConfig enable Nested virtualization.\033[0m"
+  echo -e "\033[32m[l] \033[31mRemove subscribe notice.\033[0m"
+  echo -e "\033[32m[u] Upgrade this script to new version.\033[0m"
+  echo -e "\033[32m[lang] Change Language.\033[0m"
+  echo -e "\033[32m[exit|q] Quit.\033[0m"
+  echo -e "\033[32mInput:\033[0m"
 else
-  echo -e "Version : 1.3"
-  echo -e "请输入序号选择相应的配置："
-  echo -e "[a] 无脑引导安装"
-  echo -e "[b] 配置apt源(更换为ustc.edu.cn,去除企业源等)(100%)"
-  echo -e "[c] 安装配置samba(100%)"
-  echo -e "[d] 安装配置root邮件通知(100%)"
-  echo -e "[e] 安装配置zfs最大内存及zed通知(100%)"
-  echo -e "[f] 安装配置VIM(100%)"
-  echo -e "[g] 安装配置CPU省电(100%)"
-  echo -e "[h] 安装配置硬盘休眠(100%)"
-  echo -e "[i] 配置PCI硬件直通(0%)"
-  echo -e "[j] 配置pve的web界面显示传感器温度(100%)"
-  echo -e "[k] 配置开启嵌套虚拟化(100%)"
-  echo -e "[l] 去除订阅提示(100%)"
-  echo -e "[u] 升级该pvetools脚本到最新版本"
-  echo -e "[lang] Change Language"
-  echo -e "[exit|q] 退出"
-  echo -e "Input:"
+  echo -e "\033[32mVersion : 1.3\033[0m"
+  echo -e "\033[32m请输入序号选择相应的配置：\033[0m"
+  echo -e "\033[32m[a] \033[31m无脑引导安装\033[0m"
+  echo -e "\033[32m[b] \033[31m配置apt源(更换为ustc.edu.cn,去除企业源等)\033[0m(100%)"
+  echo -e "\033[32m[c] \033[31m安装配置samba\033[0m(100%)"
+  echo -e "\033[32m[d] \033[31m安装配置root邮件通知\033[0m(100%)"
+  echo -e "\033[32m[e] \033[31m安装配置zfs最大内存及zed通知\033[0m(100%)"
+  echo -e "\033[32m[f] \033[31m安装配置VIM\033[0m(100%)"
+  echo -e "\033[32m[g] \033[31m安装配置CPU省电\033[0m(100%)"
+  echo -e "\033[32m[h] \033[31m安装配置硬盘休眠\033[0m(100%)"
+  echo -e "\033[32m[i] \033[31m配置PCI硬件直通\033[0m(0%)"
+  echo -e "\033[32m[j] \033[31m配置pve的web界面显示传感器温度\033[0m(100%)"
+  echo -e "\033[32m[k] \033[31m配置开启嵌套虚拟化\033[0m(100%)"
+  echo -e "\033[32m[l] \033[31m去除订阅提示\033[0m(100%)"
+  echo -e "\033[32m[u] \033[31m升级该pvetools脚本到最新版本\033[0m"
+  echo -e "\033[32m[lang] Change Language\033[0m"
+  echo -e "\033[32m[exit|q] 退出\033[0m"
+  echo -e "\033[32mInput:\033[0m"
 fi
 read i
 case "$i" in 
