@@ -6,6 +6,7 @@
 #  Github: https://github.com/ivanhao/pvetools
 ########################################################
 
+#js whiptail --title "Success" --msgbox "c" 10 60
 if [ `export|grep 'LC_ALL'|wc -l` = 0 ];then
     if [ `grep "LC_ALL" /etc/profile|wc -l` = 0 ];then
         echo "export LC_ALL=en_US.UTF-8" >> /etc/profile
@@ -17,31 +18,54 @@ if [ `grep "alias ll" /etc/profile|wc -l` = 0 ];then
 fi
 source /etc/profile
 #-----------------functions--start------------------#
+example(){
+#msgbox
+whiptail --title "Success" --msgbox "
+" 10 60
+#yesno
+if (whiptail --title "Yes/No Box" --yesno "
+" 10 60);then
+    echo ""
+fi
+#password
+PASSWORD=$(whiptail --title "Password Box" --passwordbox "
+Enter your password and choose Ok to continue.
+                " 10 60 3>&1 1>&2 2>&3)
+exitstatus=$?
+if [ $exitstatus = 0 ]; then
+    echo "Your password is:" $m
+fi
+}
+
+smbp(){
+m=$(whiptail --title "Password Box" --passwordbox "
+Enter samba user 'admin' password: 
+请输入samba用户admin的密码：
+                " 10 60 3>&1 1>&2 2>&3)
+exitstatus=$?
+if [ $exitstatus = 0 ]; then
+    while [ true ]
+    do
+        if [[ ! `echo $m|grep "^[0-9a-zA-Z.-@]*$"` ]] || [[ $m = '^M' ]];then
+            whiptail --title "Success" --msgbox "
+Wrong format!!!   input again:
+密码格式不对！！！请重新输入：
+            " 10 60
+            smbp
+        else
+            break
+        fi
+    done
+fi
+}
+
 #修改debian的镜像源地址：
 chSource(){
 clear
-if [ $L = "en" ];then
-    x=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config apt source:" 25 55 15 \
-    "[a]" "Automation mode." \
-    "[b]" "Change to ustc.edu.cn." \
-    "[c]" "Disable enterprise." \
-    "[d]" "Undo Change." \
-    "[q]" "Main menu." \
-    3>&1 1>&2 2>&3)
-else
-    x=$(whiptail --title " PveTools   Version : 2.0 " --menu "配置apt镜像源:" 25 55 15 \
-    "[a]" "无脑模式(禁用企业订阅更新源，添加非订阅更新源(ustc.edu.cn),修改ceph镜像更新源)" \
-    "[b]" "更换为国内ustc.edu.cn源" \
-    "[c]" "关闭企业更新源" \
-    "[d]" "还原配置" \
-    "[q]" "返回主菜单" \
-    3>&1 1>&2 2>&3)
-fi
 if [ $1 ];then
     #x=a
-    echo "Not supported!"
-    echo "不支持该模式。"
-    sleep 3
+    whiptail --title "Warnning" --msgbox "Not supported!
+    不支持该模式。" 10 60
     chSource
 fi
 sver=`cat /etc/debian_version |awk -F"." '{print $1}'`
@@ -65,116 +89,132 @@ case "$sver" in
         sver=""
 esac
 if [ ! $sver ];then
-    echo "您的版本不支持！无法继续。"
-    sleep 3
+    whiptail --title "Warnning" --msgbox "Not supported!
+    您的版本不支持！无法继续。" 10 60
     main
+fi
+if [ $L = "en" ];then
+    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config apt source:" 25 55 15 \
+    "a" "Automation mode." \
+    "b" "Change to ustc.edu.cn." \
+    "c" "Disable enterprise." \
+    "d" "Undo Change." \
+    "q" "Main menu." \
+    3>&1 1>&2 2>&3)
+else
+    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "配置apt镜像源:" 25 35 15 \
+    "a" "无脑模式" \
+    "b" "更换为国内ustc.edu.cn源" \
+    "c" "关闭企业更新源" \
+    "d" "还原配置" \
+    "q" "返回主菜单" \
+    3>&1 1>&2 2>&3)
 fi
 exitstatus=$?
 if [ $exitstatus = 0 ]; then
-    case "$x" in
+    case "$OPTION" in
 a | A )
-    if [ `grep "ustc.edu.cn" /etc/apt/sources.list|wc -l` = 0 ];then
-        #sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
-        cp /etc/apt/sources.list /etc/apt/sources.list.bak
-        cp /etc/apt/sources.list.d/pve-no-sub.list /etc/apt/sources.list.d/pve-no-sub.list.bak
-        cp /etc/apt/sources.list.d/pve-enterprise.list /etc/apt/sources.list.d/pve-enterprise.list.bak
-        cp /etc/apt/sources.list.d/ceph.list /etc/apt/sources.list.d/ceph.list.bak
-        echo "deb https://mirrors.ustc.edu.cn/debian/ $sver main contrib non-free
-deb-src https://mirrors.ustc.edu.cn/debian/ $sver main contrib non-free
-deb https://mirrors.ustc.edu.cn/debian/ $sver-updates main contrib non-free
-deb-src https://mirrors.ustc.edu.cn/debian/ $sver-updates main contrib non-free
-deb https://mirrors.ustc.edu.cn/debian/ $sver-backports main contrib non-free
-deb-src https://mirrors.ustc.edu.cn/debian/ $sver-backports main contrib non-free
-deb https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-free
-deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-free" > /etc/apt/sources.list
-        #修改pve 5.x更新源地址为非订阅更新源，不使用企业订阅更新源。
-        echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/pve/ $sver pve-no-subscription" > /etc/apt/sources.list.d/pve-no-sub.list
-        #关闭pve 5.x企业订阅更新源
-        sed -i 's|deb|#deb|' /etc/apt/sources.list.d/pve-enterprise.list
-        #修改 ceph镜像更新源
-        echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/ceph-luminous $sver main" > /etc/apt/sources.list.d/ceph.list
-        echo "apt source has been changed successfully!"
-        echo "软件源已更换成功！"
-        apt-get update
-        apt-get -y install net-tools
-        echo "apt source has been changed successfully!"
-        echo "软件源已更换成功！"
-    else
-        echo -e "Already changed apt source to ustc.edu.cn"
-        echo -e "已经更换apt源为 ustc.edu.cn"
-    fi
-    sleep 2
-    if [ ! $1 ];then
-        chSource
+    if (whiptail --title "Yes/No Box" --yesno "修改为ustc.edu.cn源，禁用企业订阅更新源，添加非订阅更新源(ustc.edu.cn),修改ceph镜像更新源" 10 60) then
+        if [ `grep "ustc.edu.cn" /etc/apt/sources.list|wc -l` = 0 ];then
+            #sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
+            cp /etc/apt/sources.list /etc/apt/sources.list.bak
+            cp /etc/apt/sources.list.d/pve-no-sub.list /etc/apt/sources.list.d/pve-no-sub.list.bak
+            cp /etc/apt/sources.list.d/pve-enterprise.list /etc/apt/sources.list.d/pve-enterprise.list.bak
+            cp /etc/apt/sources.list.d/ceph.list /etc/apt/sources.list.d/ceph.list.bak
+            echo "deb https://mirrors.ustc.edu.cn/debian/ $sver main contrib non-free
+    deb-src https://mirrors.ustc.edu.cn/debian/ $sver main contrib non-free
+    deb https://mirrors.ustc.edu.cn/debian/ $sver-updates main contrib non-free
+    deb-src https://mirrors.ustc.edu.cn/debian/ $sver-updates main contrib non-free
+    deb https://mirrors.ustc.edu.cn/debian/ $sver-backports main contrib non-free
+    deb-src https://mirrors.ustc.edu.cn/debian/ $sver-backports main contrib non-free
+    deb https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-free
+    deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-free" > /etc/apt/sources.list
+            #修改pve 5.x更新源地址为非订阅更新源，不使用企业订阅更新源。
+            echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/pve/ $sver pve-no-subscription" > /etc/apt/sources.list.d/pve-no-sub.list
+            #关闭pve 5.x企业订阅更新源
+            sed -i 's|deb|#deb|' /etc/apt/sources.list.d/pve-enterprise.list
+            #修改 ceph镜像更新源
+            echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/ceph-luminous $sver main" > /etc/apt/sources.list.d/ceph.list
+            whiptail --title "Success" --msgbox " apt source has been changed successfully!
+            软件源已更换成功！" 10 60
+            apt-get update
+            apt-get -y install net-tools
+            whiptail --title "Success" --msgbox " apt source has been changed successfully!
+            软件源已更换成功！" 10 60
+        else
+            whiptail --title "Success" --msgbox " Already changed apt source to ustc.edu.cn!
+            已经更换apt源为 ustc.edu.cn" 10 60
+        fi
+        if [ ! $1 ];then
+            chSource
+        fi
     fi
     ;;
 	b | B  )
-    if [ `grep "ustc.edu.cn" /etc/apt/sources.list|wc -l` = 0 ];then
-        cp /etc/apt/sources.list /etc/apt/sources.list.bak
-        cp /etc/apt/sources.list.d/ceph.list /etc/apt/sources.list.d/ceph.list.bak
-        #sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
-        echo "deb https://mirrors.ustc.edu.cn/debian/ $sver main contrib non-free
-deb-src https://mirrors.ustc.edu.cn/debian/ $sver main contrib non-free
-deb https://mirrors.ustc.edu.cn/debian/ $sver-updates main contrib non-free
-deb-src https://mirrors.ustc.edu.cn/debian/ $sver-updates main contrib non-free
-deb https://mirrors.ustc.edu.cn/debian/ $sver-backports main contrib non-free
-deb-src https://mirrors.ustc.edu.cn/debian/ $sver-backports main contrib non-free
-deb https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-free
-deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-free" > /etc/apt/sources.list
-        #修改pve 5.x更新源地址为非订阅更新源，不使用企业订阅更新源
-        echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/pve/ $sver pve-no-subscription" > /etc/apt/sources.list.d/pve-no-sub.list
-        #修改 ceph镜像更新源
-        echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/ceph-luminous $sver main" > /etc/apt/sources.list.d/ceph.list
-        echo "apt source has been changed successfully!"
-        echo "软件源已更换成功！"
-        apt-get update
-        apt-get -y install net-tools
-        echo "apt source has been changed successfully!"
-        echo "软件源已更换成功！"
-    else
-        echo -e "Already changed apt source to ustc.edu.cn"
-        echo -e "已经更换apt源为 ustc.edu.cn"
+        if (whiptail --title "Yes/No Box" --yesno "修改更新源为ustc.edu.cn(包括ceph))?" 10 60) then
+        if [ `grep "ustc.edu.cn" /etc/apt/sources.list|wc -l` = 0 ];then
+            cp /etc/apt/sources.list /etc/apt/sources.list.bak
+            cp /etc/apt/sources.list.d/ceph.list /etc/apt/sources.list.d/ceph.list.bak
+            #sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
+            echo "deb https://mirrors.ustc.edu.cn/debian/ $sver main contrib non-free
+    deb-src https://mirrors.ustc.edu.cn/debian/ $sver main contrib non-free
+    deb https://mirrors.ustc.edu.cn/debian/ $sver-updates main contrib non-free
+    deb-src https://mirrors.ustc.edu.cn/debian/ $sver-updates main contrib non-free
+    deb https://mirrors.ustc.edu.cn/debian/ $sver-backports main contrib non-free
+    deb-src https://mirrors.ustc.edu.cn/debian/ $sver-backports main contrib non-free
+    deb https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-free
+    deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-free" > /etc/apt/sources.list
+            #修改 ceph镜像更新源
+            echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/ceph-luminous $sver main" > /etc/apt/sources.list.d/ceph.list
+            whiptail --title "Success" --msgbox " apt source has been changed successfully!
+            软件源已更换成功！" 10 60
+            apt-get update
+            apt-get -y install net-tools
+            whiptail --title "Success" --msgbox " apt source has been changed successfully!
+            软件源已更换成功！" 10 60
+        else
+            whiptail --title "Success" --msgbox " Already changed apt source to ustc.edu.cn!
+            已经更换apt源为 ustc.edu.cn" 10 60
+        fi
+        chSource
     fi
-    sleep 2
-    chSource
     ;;
 c | C  )
-    #sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
-    if [ -f /etc/apt/sources.list.d/pve-no-sub.list ];then
-        #修改pve 5.x更新源地址为非订阅更新源，不使用企业订阅更新源
-        echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/pve/ $sver pve-no-subscription" > /etc/apt/sources.list.d/pve-no-sub.list
-    else
-        echo "apt source has been changed successfully!"
-        echo "软件源已更换成功！"
+    if (whiptail --title "Yes/No Box" --yesno "禁用企业订阅更新源?" 10 60) then
+        #sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
+        if [ -f /etc/apt/sources.list.d/pve-no-sub.list ];then
+            #修改pve 5.x更新源地址为非订阅更新源，不使用企业订阅更新源
+            echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/pve/ $sver pve-no-subscription" > /etc/apt/sources.list.d/pve-no-sub.list
+        else
+            whiptail --title "Success" --msgbox " apt source has been changed successfully!
+            软件源已更换成功！" 10 60
+        fi
+        if [ `grep "^deb" /etc/apt/sources.list.d/pve-enterprise.list|wc -l` != 0 ];then
+            #关闭pve 5.x企业订阅更新源
+            sed -i 's|deb|#deb|' /etc/apt/sources.list.d/pve-enterprise.list
+            whiptail --title "Success" --msgbox " apt source has been changed successfully!
+            软件源已更换成功！" 10 60
+        else
+            whiptail --title "Success" --msgbox " apt source has been changed successfully!
+            软件源已更换成功！" 10 60
+        fi
+        chSource
     fi
-    if [ `grep "^deb" /etc/apt/sources.list.d/pve-enterprise.list|wc -l` != 0 ];then
-        #关闭pve 5.x企业订阅更新源
-        sed -i 's|deb|#deb|' /etc/apt/sources.list.d/pve-enterprise.list
-        echo "apt source has been changed successfully!"
-        echo "软件源已更换成功！"
-    else
-        echo "apt source has been changed successfully!"
-        echo "软件源已更换成功！"
-    fi
-    sleep 2 
-    chSource
     ;;
 d | D )
     cp /etc/apt/sources.list.bak /etc/apt/sources.list
     cp /etc/apt/sources.list.d/pve-no-sub.list.bak /etc/apt/sources.list.d/pve-no-sub.list
     cp /etc/apt/sources.list.d/pve-enterprise.list.bak /etc/apt/sources.list.d/pve-enterprise.list
     cp /etc/apt/sources.list.d/ceph.list.bak /etc/apt/sources.list.d/ceph.list
-    echo "apt source has been changed successfully!"
-    echo "软件源已更换成功！"
-    sleep 2
+    whiptail --title "Success" --msgbox "apt source has been changed successfully!
+    软件源已更换成功！" 10 60
     chSource
     ;;
 q )
-    main
+    echo "q"
+    #main
     ;;
 esac
-else
-    exit
 fi
 }
 
@@ -303,111 +343,144 @@ chSamba(){
 #config samba
 clear
 if [ $L = "en" ];then
-    echo -e "Config samba:"
-    echo -e "[a] Install samba and config user."
-    echo -e "[b] Add folder to share."
-    echo -e "[C] Delete folder to share."
-    echo -e "[back] Main menu."
+    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config samba:" 25 55 15 \
+    "a" "Install samba and config user." \
+    "b" "Add folder to share." \
+    "C" "Delete folder to share." \
+    "q" "Main menu." \
+    3>&1 1>&2 2>&3)
 else
-    echo -e "配置samba:"
-    echo -e "[a] 安装配置samba并配置好samba用户"
-    echo -e "[b] 添加共享文件夹"
-    echo -e "[c] 删除共享文件夹"
-    echo -e "[q] 返回主菜单"
+    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "配置samba:" 25 55 15 \
+    "a" "安装配置samba并配置好samba用户" \
+    "b" "添加共享文件夹" \
+    "c" "删除共享文件夹" \
+    "q" "返回主菜单" \
+    3>&1 1>&2 2>&3)
 fi
 if [ $1 ];then
-    x=a
-else
-    read x
+    OPTION=a
 fi
-case "$x" in
-a | A )
-    if [ `grep samba /etc/group|wc -l` = 0 ];then
-        echo -e "set samba and admin user for samba?(Y/n):"
-        echo -e "安装samba并配置admin为samba用户？(Y/n):"
-        if [ $1 ];then
-            x=a
-        else
-            read x
-        fi
-        case "$x" in 
-        y | yes | a )
-            apt -y install samba
-            groupadd samba
-            useradd -g samba -M -s /sbin/nologin admin
-            echo -e "Please input samba user admin's password:"
-            echo -e "请输入samba用户admin的密码："
-            read m
-            while [ true ]
-            do
-                if [[ ! `echo $m|grep "^[0-9a-zA-Z.-@]*$"` ]] || [[ $m = '^M' ]];then
-                    echo -e "Wrong format!!!   input again:"
-                    echo -e "密码格式不对！！！请重新输入："
-                    read m
-                else
-                    break
+exitstatus=$?
+if [ $exitstatus = 0 ]; then
+    case "$OPTION" in
+    a | A )
+        if [ `grep samba /etc/group|wc -l` = 0 ];then
+            if (whiptail --title "Yes/No Box" --yesno "set samba and admin user for samba?
+安装samba并配置admin为samba用户？
+                " 10 60);then
+                apt -y install samba
+                groupadd samba
+                useradd -g samba -M -s /sbin/nologin admin
+                m=$(whiptail --title "Password Box" --passwordbox "
+Enter samba user 'admin' password: 
+请输入samba用户admin的密码：
+                " 10 60 3>&1 1>&2 2>&3)
+                exitstatus=$?
+                if [ $exitstatus = 0 ]; then
+                    while [ true ]
+                    do
+                        if [[ ! `echo $m|grep "^[0-9a-zA-Z.-@]*$"` ]] || [[ $m = '^M' ]];then
+                            echo -e "Wrong format!!!   input again:"
+                            echo -e "密码格式不对！！！请重新输入："
+                            read m
+                        else
+                            break
+                        fi
+                    done
+                    echo -e "$m\n$m"|smbpasswd -a admin
+                    service smbd restart
+                    echo -e "已成功配置好samba，请记好samba用户admin的密码！"
                 fi
+            fi
+        else
+            whiptail --title "Success" --msgbox "Already configed samba.
+已配置过samba，没什么可做的!
+" 10 60
+                    fi
+        if [ ! $1 ];then
+            chSamba
+        fi
+        ;;
+    b | B )
+        echo -e "Exist share folders:"
+        echo -e "已有的共享目录："
+        echo "`grep "^\[[0-9a-zA-Z.-]*\]$" /etc/samba/smb.conf|awk 'NR>3{print $0}'`"
+        echo -e "Input share folder path:"
+        echo -e "输入共享文件夹的路径:"
+        read x
+        while [ ! -d $x ]
+        do
+            echo "Path not exist!Input again([q]back):"
+            echo "路径不存在，重新输入([q]返回菜单):"
+            read x
+            case $x in
+                q )
+                    chSamba
+                    ;;
+            esac
+        done
+        while [ `grep "path \= ${x}$" /etc/samba/smb.conf|wc -l` != 0 ]
+        do
+            echo "Path exist!Input again([q]back):"
+            echo "路径已存在，重新输入([q]返回菜单)："
+            read x
+            case $x in
+                q )
+                    chSamba
+                    ;;
+            esac
+        done
+        n=`echo $x|grep -o "[a-zA-Z0-9.-]*$"`
+        while [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` != 0 ]
+        do
+            echo -e "Input share name:"
+            echo -e "输入共享名称："
+            read n
+            while [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` != 0 ]
+            do
+                echo "Name already exist!Input again([q]back):"
+                echo "名称已存在，重新输入([q]返回菜单)："
+                read n 
+                case $n in
+                    q )
+                        chSamba
+                        ;;
+                esac
             done
-            echo -e "$pass\n$pass"|smbpasswd -a admin
+        done
+        if [ `grep "${x}" /etc/samba/smb.conf|wc -l` = 0 ];then
+            cat << EOF >> /etc/samba/smb.conf
+[$n]
+comment = All 
+browseable = yes
+path = $x
+guest ok = no
+read only = no
+create mask = 0700
+directory mask = 0700
+;  $n end
+EOF
+            echo "Configed!"
+            echo "配置成功！"
             service smbd restart
-            echo -e "已成功配置好samba，请记好samba用户admin的密码！"
-            sleep 3
-            ;;
-        n | no )
-            ;;
-        * )
-            echo "Please comfirm!"
-			echo "请重新输入!"
-            sleep 2
-        esac
-    else
-        echo -e "Already configed samba."
-        echo -e "已配置过samba，没什么可做的!"
+        else
+            echo "Already configed！"
+            echo "已经配置过了！"
+        fi
         sleep 2
-    fi
-    if [ ! $1 ];then
         chSamba
-    fi
-    ;;
-b | B )
-    echo -e "Exist share folders:"
-    echo -e "已有的共享目录："
-    echo "`grep "^\[[0-9a-zA-Z.-]*\]$" /etc/samba/smb.conf|awk 'NR>3{print $0}'`"
-    echo -e "Input share folder path:"
-    echo -e "输入共享文件夹的路径:"
-    read x
-    while [ ! -d $x ]
-    do
-        echo "Path not exist!Input again([q]back):"
-        echo "路径不存在，重新输入([q]返回菜单):"
-        read x
-        case $x in
-            q )
-                chSamba
-                ;;
-        esac
-    done
-    while [ `grep "path \= ${x}$" /etc/samba/smb.conf|wc -l` != 0 ]
-    do
-        echo "Path exist!Input again([q]back):"
-        echo "路径已存在，重新输入([q]返回菜单)："
-        read x
-        case $x in
-            q )
-                chSamba
-                ;;
-        esac
-    done
-    n=`echo $x|grep -o "[a-zA-Z0-9.-]*$"`
-    while [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` != 0 ]
-    do
+        ;;
+    c )
+        echo -e "Exist share folders:"
+        echo -e "已有的共享目录："
+        echo "`grep "^\[[0-9a-zA-Z.-]*\]$" /etc/samba/smb.conf|awk 'NR>3{print $0}'`"
         echo -e "Input share name:"
         echo -e "输入共享名称："
         read n
-        while [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` != 0 ]
+        while [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` = 0 ]
         do
-            echo "Name already exist!Input again([q]back):"
-            echo "名称已存在，重新输入([q]返回菜单)："
+            echo "Name not exist!Input again([q]back):"
+            echo "名称不存在，重新输入([q]返回菜单):"
             read n 
             case $n in
                 q )
@@ -415,66 +488,21 @@ b | B )
                     ;;
             esac
         done
-    done
-    if [ `grep "${x}" /etc/samba/smb.conf|wc -l` = 0 ];then
-        cat << EOF >> /etc/samba/smb.conf
-[$n]
-   comment = All 
-   browseable = yes
-   path = $x
-   guest ok = no
-   read only = no
-   create mask = 0700
-   directory mask = 0700
-;  $n end
-EOF
-        echo "Configed!"
-        echo "配置成功！"
-        service smbd restart
-    else
-        echo "Already configed！"
-        echo "已经配置过了！"
-    fi
-    sleep 2
-    chSamba
-    ;;
-c )
-    echo -e "Exist share folders:"
-    echo -e "已有的共享目录："
-    echo "`grep "^\[[0-9a-zA-Z.-]*\]$" /etc/samba/smb.conf|awk 'NR>3{print $0}'`"
-    echo -e "Input share name:"
-    echo -e "输入共享名称："
-    read n
-    while [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` = 0 ]
-    do
-        echo "Name not exist!Input again([q]back):"
-        echo "名称不存在，重新输入([q]返回菜单):"
-        read n 
-        case $n in
-            q )
-                chSamba
-                ;;
-        esac
-    done
-    if [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` != 0 ];then
-        sed "/\[${n}\]/,/${n} end/d" /etc/samba/smb.conf -i 
-        echo "Configed!"
-        echo "配置成功！"
-        service smbd restart
-    fi
-    sleep 2
-    chSamba
-    ;;
+        if [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` != 0 ];then
+            sed "/\[${n}\]/,/${n} end/d" /etc/samba/smb.conf -i 
+            echo "Configed!"
+            echo "配置成功！"
+            service smbd restart
+        fi
+        sleep 2
+        chSamba
+        ;;
 
-q )
-    main
-    ;;
-* )
-    echo "Please comfirm!"
-	echo "请重新输入!"
-    sleep 1
-    chSamba
-esac
+    q )
+        main
+        ;;
+    esac
+fi
 }
 
 chVim(){
@@ -1002,7 +1030,26 @@ esac
           #      echo "c"
           #      ;;
 
-function main(){
+main(){
+clear
+if [ $L = "en" ];then
+    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "Please choose:" 25 75 15 \
+    "a" "Guide install." \
+    "b" "Config apt source(change to ustc.edu.cn and so on)." \
+    "c" "Install & config samba." \
+    "d" "Install mailutils and config root email." \
+    "e" "Config zfs_arc_max & Install zfs-zed." \
+    "f" "Install & config VIM." \
+    "g" "Install cpufrequtils to save power." \
+    "h" "Config hard disks to spindown." \
+    "i" "Config PCI hardware pass-thrugh." \
+    "j" "Config web interface to display sensors data." \
+    "k" "Config enable Nested virtualization." \
+    "l" "Remove subscribe notice." \
+    "u" "Upgrade this script to new version." \
+    "lang" "Change Language." \
+    3>&1 1>&2 2>&3)
+else
     OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "请选择相应的配置：" 25 55 15 \
     "b" "配置apt源(更换为ustc.edu.cn,去除企业源等)" \
     "c" "安装配置samba" \
@@ -1016,7 +1063,9 @@ function main(){
     "k" "配置开启嵌套虚拟化" \
     "l" "去除订阅提示" \
     "u" "升级该pvetools脚本到最新版本" \
+    "lang" "Change Language" \
     3>&1 1>&2 2>&3)
+fi
     exitstatus=$?
     if [ $exitstatus = 0 ]; then
         case "$OPTION" in
@@ -1104,25 +1153,30 @@ function main(){
             && ./pvetools.sh
             ;;
         lang )
-            if [ $L = "zh" ];then
-                L="en"
-            else
-                L="zh"
+            if (whiptail --title "Yes/No Box" --yesno "Change Language?
+修改语言？" 10 60);then
+                if [ $L = "zh" ];then
+                    L="en"
+                else
+                    L="zh"
+                fi
+                main
+                #main $L
             fi
-            main
             ;;
         exit | quit | q )
             exit
             ;;
         esac
     else
-        echo "You chose Cancel."
         exit
     fi
 }
 main1(){
 clear
-
+if [[ $1 = "en" || $1 = "zh" ]];then
+    L=$1
+fi
 if [ $L = "en" ];then
   echo -e "Version : 1.3"
   echo -e "Please input to choose:"
@@ -1266,9 +1320,15 @@ exit | quit | q )
 esac
 }
 #----------------------functions--end------------------#
-if [ `export|grep "zh_CN"|wc -l` = 0 ];then
-    L="en"
-else
+#if [ `export|grep "zh_CN"|wc -l` = 0 ];then
+#    L="en"
+#else
+#    L="zh"
+#fi
+if (whiptail --title "Language" --yes-button "中文" --no-button "English"  --yesno "Choose Language:
+选择语言：" 10 60) then
     L="zh"
+else
+    L="en"
 fi
 main
