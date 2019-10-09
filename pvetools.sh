@@ -364,7 +364,11 @@ Invalidate value.Please comfirm!
         " 10 60);then
             {
                 echo 10
-                $(apt -y install zfs-zed)
+                $(
+                    if [ `dpkg -l|grep zfs-zed|wc -l` = 0 ];then
+                        apt -y install zfs-zed
+                    fi
+                )
                 echo 100
                 sleep 1
             }|whiptail --gauge "installing" 10 60 0
