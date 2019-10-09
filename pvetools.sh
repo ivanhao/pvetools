@@ -35,6 +35,23 @@ exitstatus=$?
 if [ $exitstatus = 0 ]; then
     echo "Your password is:" $m
 fi
+
+
+#input form
+NAME=$(whiptail --title "
+Free-form Input Box
+" --inputbox "
+What is your pet's name?
+" 10 60 
+Peter
+3>&1 1>&2 2>&3)
+ 
+exitstatus=$?
+if [ $exitstatus = 0 ]; then
+    echo "" 
+else
+    echo "" 
+fi
 }
 
 smbp(){
@@ -220,75 +237,72 @@ fi
 
 chMail(){
 #set mailutils to send mail
-if [ -f /etc/mailname ];then
-    echo -e "It seems you have already configed it before."
-    echo -e "您好像已经配置过这个了。"
-    c="ok"
-fi
-echo -e "Will you want to config mailutils & postfix to send notification?(Y/N):"
-echo -e "是否配置mailutils和postfix来发送邮件通知？(Y/N):"
-if [ $1 ];then
-    if [ $c ];then
-        x="n"
-    else
-        x="a"
-    fi
-else
-    read x 
-fi
-case "$x" in 
-    y | yes | a )
-        apt -y install mailutils 
-        echo -e "Input email adress:"
-        echo -e "输入邮箱地址："
-        read qqmail
+addMail(){
+if (whiptail --title "Yes/No Box" --yesno "
+Will you want to config mailutils & postfix to send notification?(Y/N):
+是否配置mailutils和postfix来发送邮件通知？
+" 10 60);then
+    qqmail=$(whiptail --title "Config mail" --inputbox "
+Input email adress:
+输入邮箱地址：
+    " 10 60    3>&1 1>&2 2>&3)
+    exitstatus=$?
+    if [ $exitstatus = 0 ]; then
         while [ true ]
         do
             if [ `echo $qqmail|grep '^[a-zA-Z0-9\_\-\.]*\@[A-Za-z\_\-\.]*\.[a-zA-Z\_\-\.]*$'` ];then
                     break
             else
-                echo "Wrong email format!!!   input xxxx@qq.com for example.retry:"
-                echo "错误的邮箱格式！！！请输入类似xxxx@qq.com并重试："
-                read qqmail
+                whiptail --title "Warnning" --msgbox "
+Wrong email format!!!   input xxxx@qq.com for example.retry:
+错误的邮箱格式！！！请输入类似xxxx@qq.com并重试：
+                " 10 60
+                addMail
             fi
         done
+        if [[ ! -f /etc/mailname || `dpkg -l|grep mailutils|wc -l` = 0 ]];then
+            apt -y install mailutils 
+        fi
         echo "pve.local" > /etc/mailname
         sed -i -e "/root:/d" /etc/aliases
         echo "root: $qqmail">>/etc/aliases
         dpkg-reconfigure postfix
         service postfix reload
         echo "This is a mail test." |mail -s "mail test" root
-        echo -e "Config complete and send test email to you."
-        echo -e "已经配置好并发送了测试邮件。"
-        sleep 2
-        if [ ! $1 ];then
-            main
-        fi
-        ;;
-    n | no )
-        ;;
-    * )
-        echo "Please comfirm!"
-		echo "请重新输入!"
-        sleep 1
-        chMail
-esac
+        whiptail --title "Success" --msgbox "
+Config complete and send test email to you.
+已经配置好并发送了测试邮件。
+        " 10 60
+        main
+    else
+        main
+    fi
+else
+    main
+fi
+}
+if [ -f /etc/mailname ];then
+    if (whiptail --title "Yes/No Box" --yesno "
+It seems you have already configed it before.Reconfig?
+您好像已经配置过这个了。重新配置？
+    " 10 60);then
+        addMail
+    else
+        main
+    fi
+fi
+addMail
 }
 
 chZfs(){
 #set max zfs ram
 if [ ! -f /etc/modprobe.d/zfs.conf ] || [ `grep "zfs_arc_max" /etc/modprobe.d/zfs.conf|wc -l` = 0 ];then
-    echo -e "set max zfs ram 4(G) or 8(G) etc, just enter number or n?(number/n) "
-    echo -e "设置最大zfs内存（zfs_arc_max),比如4G或8G等, 只需要输入纯数字即可，比如4G输入4?(number/n) "
-    if [ $1 ];then
-        x=a
-    else
-        read x 
-    fi
-    case "$x" in
-    n | no )
-        ;;
-    * )
+    x=$(whiptail --title "Config mail" --inputbox "
+set max zfs ram 4(G) or 8(G) etc, just enter number or n?
+设置最大zfs内存（zfs_arc_max),比如4G或8G等, 只需要输入纯数字即可，比如4G输入4?
+    " 10 60    3>&1 1>&2 2>&3)
+    exitstatus=$?
+    if [ $exitstatus = 0 ]; then
         while [ true ]
         do
             if [[ "$x" =~ ^[1-9]+$ ]]; then
@@ -306,7 +320,7 @@ if [ ! -f /etc/modprobe.d/zfs.conf ] || [ `grep "zfs_arc_max" /etc/modprobe.d/zf
                 zpool set listsnapshots=on rpool
             fi
         done
-    esac
+    fi
     #zfs-zed
     echo -e "Install zfs-zed to get email notification of zfs scrub?(Y/n):"
     echo -e "安装zfs-zed来发送zfs scrub的结果提醒邮件？(Y/n):"
@@ -330,12 +344,11 @@ if [ ! -f /etc/modprobe.d/zfs.conf ] || [ `grep "zfs_arc_max" /etc/modprobe.d/zf
         sleep 1
     esac
 else
-    echo -e "It seems you have already configed it before."
-    echo -e "您好像已经配置过这个了。"
-    sleep 2
-    if [ ! $1 ];then
-        main
-    fi
+    whiptail --title "Success" --msgbox "
+It seems you have already configed it before.
+您好像已经配置过这个了。
+    " 10 60
+    main
 fi
 }
 
@@ -346,7 +359,7 @@ if [ $L = "en" ];then
     OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config samba:" 25 55 15 \
     "a" "Install samba and config user." \
     "b" "Add folder to share." \
-    "C" "Delete folder to share." \
+    "c" "Delete folder to share." \
     "q" "Main menu." \
     3>&1 1>&2 2>&3)
 else
@@ -371,85 +384,81 @@ if [ $exitstatus = 0 ]; then
                 apt -y install samba
                 groupadd samba
                 useradd -g samba -M -s /sbin/nologin admin
-                m=$(whiptail --title "Password Box" --passwordbox "
-Enter samba user 'admin' password: 
-请输入samba用户admin的密码：
-                " 10 60 3>&1 1>&2 2>&3)
-                exitstatus=$?
-                if [ $exitstatus = 0 ]; then
-                    while [ true ]
-                    do
-                        if [[ ! `echo $m|grep "^[0-9a-zA-Z.-@]*$"` ]] || [[ $m = '^M' ]];then
-                            echo -e "Wrong format!!!   input again:"
-                            echo -e "密码格式不对！！！请重新输入："
-                            read m
-                        else
-                            break
-                        fi
-                    done
-                    echo -e "$m\n$m"|smbpasswd -a admin
-                    service smbd restart
-                    echo -e "已成功配置好samba，请记好samba用户admin的密码！"
-                fi
+                smbp
+                echo -e "$m\n$m"|smbpasswd -a admin
+                service smbd restart
+                echo -e "已成功配置好samba，请记好samba用户admin的密码！"
+                whiptail --title "Success" --msgbox "
+已成功配置好samba，请记好samba用户admin的密码！
+                " 10 60
             fi
         else
             whiptail --title "Success" --msgbox "Already configed samba.
 已配置过samba，没什么可做的!
-" 10 60
+            " 10 60
                     fi
         if [ ! $1 ];then
             chSamba
         fi
         ;;
     b | B )
-        echo -e "Exist share folders:"
-        echo -e "已有的共享目录："
-        echo "`grep "^\[[0-9a-zA-Z.-]*\]$" /etc/samba/smb.conf|awk 'NR>3{print $0}'`"
-        echo -e "Input share folder path:"
-        echo -e "输入共享文件夹的路径:"
-        read x
-        while [ ! -d $x ]
-        do
-            echo "Path not exist!Input again([q]back):"
-            echo "路径不存在，重新输入([q]返回菜单):"
-            read x
-            case $x in
-                q )
-                    chSamba
-                    ;;
-            esac
-        done
-        while [ `grep "path \= ${x}$" /etc/samba/smb.conf|wc -l` != 0 ]
-        do
-            echo "Path exist!Input again([q]back):"
-            echo "路径已存在，重新输入([q]返回菜单)："
-            read x
-            case $x in
-                q )
-                    chSamba
-                    ;;
-            esac
-        done
-        n=`echo $x|grep -o "[a-zA-Z0-9.-]*$"`
-        while [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` != 0 ]
-        do
-            echo -e "Input share name:"
-            echo -e "输入共享名称："
-            read n
+       # echo -e "Exist share folders:"
+       # echo -e "已有的共享目录："
+       # echo "`grep "^\[[0-9a-zA-Z.-]*\]$" /etc/samba/smb.conf|awk 'NR>3{print $0}'`"
+       # echo -e "Input share folder path:"
+       # echo -e "输入共享文件夹的路径:"
+       addFolder(){
+        h=`grep "^\[[0-9a-zA-Z.-]*\]$" /etc/samba/smb.conf|awk 'NR>3{print $0}'|wc -l`
+        if [ $h -lt 3 ];then
+            let h=h*10
+        else
+            let h=h*5
+        fi
+        x=$(whiptail --title "Samba Share folder" --inputbox "
+Exist share folders:
+已有的共享目录：
+----------------------------------------
+$(grep -E "^\[[0-9a-zA-Z.-]*\]$|^path" /etc/samba/smb.conf|awk 'NR>3{print $0}'|sed 's/path/        path/')
+----------------------------------------
+Input share folder path(like /root):
+输入共享文件夹的路径(只需要输入/root类似的路径):
+" $h 60 "" 3>&1 1>&2 2>&3)
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+            while [ ! -d $x ]
+            do
+                whiptail --title "Success" --msgbox "Path not exist!
+路径不存在！
+                " 10 60
+                addFolder
+            done
+            while [ `grep "path \= ${x}$" /etc/samba/smb.conf|wc -l` != 0 ]
+            do
+                whiptail --title "Success" --msgbox "Path exist!
+路径已存在！
+                " 10 60
+                addFolder
+            done
+            n=`echo $x|grep -o "[a-zA-Z0-9.-]*$"`
             while [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` != 0 ]
             do
-                echo "Name already exist!Input again([q]back):"
-                echo "名称已存在，重新输入([q]返回菜单)："
-                read n 
-                case $n in
-                    q )
-                        chSamba
-                        ;;
-                esac
+                n=$(whiptail --title "Samba Share folder" --inputbox "
+Input share name:
+输入共享名称：
+    " 10 60 "" 3>&1 1>&2 2>&3)
+                exitstatus=$?
+                if [ $exitstatus = 0 ]; then       
+                    while [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` != 0 ]
+                    do
+                        whiptail --title "Success" --msgbox "Name exist!
+名称已存在！
+                        " 10 60
+                        addFolder
+                    done
+                fi
             done
-        done
-        if [ `grep "${x}" /etc/samba/smb.conf|wc -l` = 0 ];then
-            cat << EOF >> /etc/samba/smb.conf
+            if [ `grep "${x}" /etc/samba/smb.conf|wc -l` = 0 ];then
+                cat << EOF >> /etc/samba/smb.conf
 [$n]
 comment = All 
 browseable = yes
@@ -460,48 +469,73 @@ create mask = 0700
 directory mask = 0700
 ;  $n end
 EOF
-            echo "Configed!"
-            echo "配置成功！"
-            service smbd restart
+                whiptail --title "Success" --msgbox "
+Configed!
+配置成功！
+                " 10 60
+                service smbd restart
+            else
+                whiptail --title "Success" --msgbox "
+Already configed！
+已经配置过了！
+                " 10 60
+            fi
+            addFolder
         else
-            echo "Already configed！"
-            echo "已经配置过了！"
+            chSamba
         fi
-        sleep 2
-        chSamba
+}
+        addFolder
         ;;
     c )
-        echo -e "Exist share folders:"
-        echo -e "已有的共享目录："
-        echo "`grep "^\[[0-9a-zA-Z.-]*\]$" /etc/samba/smb.conf|awk 'NR>3{print $0}'`"
-        echo -e "Input share name:"
-        echo -e "输入共享名称："
-        read n
-        while [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` = 0 ]
-        do
-            echo "Name not exist!Input again([q]back):"
-            echo "名称不存在，重新输入([q]返回菜单):"
-            read n 
-            case $n in
-                q )
-                    chSamba
-                    ;;
-            esac
-        done
-        if [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` != 0 ];then
-            sed "/\[${n}\]/,/${n} end/d" /etc/samba/smb.conf -i 
-            echo "Configed!"
-            echo "配置成功！"
-            service smbd restart
+        delFolder(){
+        h=`grep "^\[[0-9a-zA-Z.-]*\]$" /etc/samba/smb.conf|awk 'NR>3{print $0}'|wc -l`
+        if [ $h -lt 3 ];then
+            let h=h*10
+        else
+            let h=h*5
         fi
-        sleep 2
-        chSamba
+        n=$(whiptail --title "Samba Share folder" --inputbox "
+Exist share folders:
+已有的共享目录：
+----------------------------------------
+$(grep -E "^\[[0-9a-zA-Z.-]*\]$|^path" /etc/samba/smb.conf|awk 'NR>3{print $0}'|sed 's/path/        path/')
+----------------------------------------
+Input share folder name(type words in []):
+输入共享文件夹的名称(只需要输入[]中的名字):
+        " $h 60 "" 3>&1 1>&2 2>&3)
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+            while [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` = 0 ]
+            do
+                whiptail --title "Success" --msgbox "
+Name not exist!:
+名称不存在！:
+                " 10 60
+                delFolder
+            done
+            if [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` != 0 ];then
+                sed "/\[${n}\]/,/${n} end/d" /etc/samba/smb.conf -i 
+                whiptail --title "Success" --msgbox "
+Configed!
+删除成功！
+                " 10 60
+                service smbd restart
+            fi
+            delFolder
+        else
+            chSamba
+        fi
+    }
+        delFolder
         ;;
 
     q )
         main
         ;;
     esac
+else
+    chSamba
 fi
 }
 
@@ -1034,7 +1068,6 @@ main(){
 clear
 if [ $L = "en" ];then
     OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "Please choose:" 25 75 15 \
-    "a" "Guide install." \
     "b" "Config apt source(change to ustc.edu.cn and so on)." \
     "c" "Install & config samba." \
     "d" "Install mailutils and config root email." \
@@ -1047,7 +1080,7 @@ if [ $L = "en" ];then
     "k" "Config enable Nested virtualization." \
     "l" "Remove subscribe notice." \
     "u" "Upgrade this script to new version." \
-    "lang" "Change Language." \
+    "L" "Change Language." \
     3>&1 1>&2 2>&3)
 else
     OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "请选择相应的配置：" 25 55 15 \
@@ -1063,13 +1096,13 @@ else
     "k" "配置开启嵌套虚拟化" \
     "l" "去除订阅提示" \
     "u" "升级该pvetools脚本到最新版本" \
-    "lang" "Change Language" \
+    "L" "Change Language" \
     3>&1 1>&2 2>&3)
 fi
     exitstatus=$?
     if [ $exitstatus = 0 ]; then
         case "$OPTION" in
-        a | A )
+        a )
             echo "Not support!Please choose other options."
             echo "本版本已不支持无脑更新，请选择具体项目进行操作！"
             sleep 3
@@ -1098,50 +1131,50 @@ fi
             sleep 1
             main
             ;;
-        b | B )
+        b )
             chSource
             main
             ;;
-        c | C )
+        c )
             chSamba
             main
             ;;
-        d | D )
+        d )
             chMail
             main
             ;;
-        e | E )
+        e )
             chZfs
             main
             ;;
-        f | F )
+        f )
             chVim
             main
             ;;
-        g | G )
+        g )
             chCpu
             main
             ;;
-        h | H )
+        h )
             chSpindown
             main
             ;;
-        i | I )
+        i )
             echo "not support yet."
             sleep 2
             main
             ;;
-        j | J )
+        j )
             chSensors
             sleep 2
             main
             ;;
-        k | K )
+        k )
             clear
             chNestedV
             main
             ;;
-        l | L )
+        l )
             chSubs
             main
             ;;
@@ -1152,7 +1185,7 @@ fi
             && sleep 3 \
             && ./pvetools.sh
             ;;
-        lang )
+        L )
             if (whiptail --title "Yes/No Box" --yesno "Change Language?
 修改语言？" 10 60);then
                 if [ $L = "zh" ];then
@@ -1193,7 +1226,7 @@ if [ $L = "en" ];then
   echo -e "[k] Config enable Nested virtualization."
   echo -e "[l] Remove subscribe notice."
   echo -e "[u] Upgrade this script to new version."
-  echo -e "[lang] Change Language."
+  echo -e "[L] Change Language."
   echo -e "[exit|q] Quit."
   echo -e "Input:"
 else
@@ -1212,7 +1245,7 @@ else
   echo -e "[k] 配置开启嵌套虚拟化(100%)"
   echo -e "[l] 去除订阅提示(100%)"
   echo -e "[u] 升级该pvetools脚本到最新版本"
-  echo -e "[lang] Change Language"
+  echo -e "[L] Change Language"
   echo -e "[exit|q] 退出"
   echo -e "Input:"
 fi
@@ -1301,7 +1334,7 @@ u )
     && sleep 3 \
     && ./pvetools.sh
     ;;
-lang )
+L )
     if [ $L = "zh" ];then
         L="en"
     else
