@@ -52,6 +52,15 @@ if [ $exitstatus = 0 ]; then
 else
     echo "" 
 fi
+
+#processing
+{
+    echo 50
+    sleep 1
+    $(apt -y install mailutils)
+    echo 100
+    sleep 1
+} | whiptail --gauge "Please wait while installing" 6 60 0
 }
 
 smbp(){
@@ -261,11 +270,28 @@ Wrong email format!!!   input xxxx@qq.com for example.retry:
             fi
         done
         if [[ ! -f /etc/mailname || `dpkg -l|grep mailutils|wc -l` = 0 ]];then
-            apt -y install mailutils 
+            {
+                echo 50
+                sleep 1
+                $(apt -y install mailutils)
+                echo 100
+                sleep 1
+            } | whiptail --gauge "Please wait while installing" 6 60 0
         fi
-        echo "pve.local" > /etc/mailname
-        sed -i -e "/root:/d" /etc/aliases
-        echo "root: $qqmail">>/etc/aliases
+        {
+            echo 10
+            sleep 1
+            $(echo "pve.local" > /etc/mailname)
+            echo 40
+            sleep 1
+            $(sed -i -e "/root:/d" /etc/aliases)
+            echo 70
+            sleep 1
+            $(echo "root: $qqmail">>/etc/aliases)
+            echo 100
+            sleep 1
+        } | whiptail --gauge "Please wait while installing" 6 60 0
+        sleep 1
         dpkg-reconfigure postfix
         service postfix reload
         echo "This is a mail test." |mail -s "mail test" root
@@ -296,7 +322,7 @@ addMail
 
 chZfs(){
 #set max zfs ram
-if [ ! -f /etc/modprobe.d/zfs.conf ] || [ `grep "zfs_arc_max" /etc/modprobe.d/zfs.conf|wc -l` = 0 ];then
+setMen(){
     x=$(whiptail --title "Config mail" --inputbox "
 set max zfs ram 4(G) or 8(G) etc, just enter number or n?
 设置最大zfs内存（zfs_arc_max),比如4G或8G等, 只需要输入纯数字即可，比如4G输入4?
@@ -306,49 +332,60 @@ set max zfs ram 4(G) or 8(G) etc, just enter number or n?
         while [ true ]
         do
             if [[ "$x" =~ ^[1-9]+$ ]]; then
-                echo "options zfs zfs_arc_max=$[$x*1024*1024*1024]">/etc/modprobe.d/zfs.conf
-                update-initramfs -u
-                echo -e "Config complete!you should reboot later."
-                echo -e "配置完成，一会儿最好重启一下系统。"
+                {
+                    $(echo "options zfs zfs_arc_max=$[$x*1024*1024*1024]">/etc/modprobe.d/zfs.conf)
+                    echo 10
+                    $(update-initramfs -u)
+                    echo 70
+                    sleep 1
+                    #set rpool to list snapshots
+                    $(if [ `zpool get listsnapshots|grep rpool|awk '{print $3}'` = "off" ];then
+                        zpool set listsnapshots=on rpool
+                    fi)
+                    echo 100
+                }|whiptail --gauge "installing" 6 60 0
+                whiptail --title "Success" --msgbox "
+Config complete!you should reboot later.
+配置完成，一会儿最好重启一下系统。
+                " 10 60
+                break
             else
-                echo "Please comfirm!"
-				echo "请重新输入!"
-                sleep 2
-            fi
-            #set rpool to list snapshots
-            if [ `zpool get listsnapshots|grep rpool|awk '{print $3}'` = "off" ];then
-                zpool set listsnapshots=on rpool
+                whiptail --title "Warnning" --msgbox "
+Invalidate value.Please comfirm!
+输入的值非法，请重新输入!
+                " 10 60
+                setMen
             fi
         done
+        #zfs-zed
+        if (whiptail --title "Yes/No Box" --yesno "
+    Install zfs-zed to get email notification of zfs scrub?(Y/n):
+    安装zfs-zed来发送zfs scrub的结果提醒邮件？(Y/n):
+        " 10 60);then
+            {
+                echo 10
+                $(apt -y install zfs-zed)
+                echo 100
+                sleep 1
+            }|whiptail --gauge "installing" 10 60 0
+            whiptail --title "Success" --msgbox "
+    Install complete!
+    安装zfs-zed成功！
+            " 10 60
+        fi
     fi
-    #zfs-zed
-    echo -e "Install zfs-zed to get email notification of zfs scrub?(Y/n):"
-    echo -e "安装zfs-zed来发送zfs scrub的结果提醒邮件？(Y/n):"
-    if [ $1 ];then
-        zed=a
-    else
-        read zed
-    fi
-    case "$zed" in 
-    y | yes | a )
-        apt -y install zfs-zed 
-        echo -e "Install complete!"
-        echo -e "安装zfs-zed成功！"
-        sleep 2
-        ;;
-    n | no )
-        ;;
-    * )
-        echo "Please comfirm!"
-		echo "请重新输入!"
-        sleep 1
-    esac
+}
+if [ ! -f /etc/modprobe.d/zfs.conf ] || [ `grep "zfs_arc_max" /etc/modprobe.d/zfs.conf|wc -l` = 0 ];then
+    setMen
 else
-    whiptail --title "Success" --msgbox "
-It seems you have already configed it before.
-您好像已经配置过这个了。
-    " 10 60
-    main
+    if(whiptail --title "Yes/No box" --yesno "
+It seems you have already configed it before.Reconfig?
+您好像已经配置过这个了。是否重新配置？
+    " 10 60 );then
+        setMen
+    else
+        main
+    fi
 fi
 }
 
