@@ -19,6 +19,8 @@ apt update && apt -y install git && git clone https://github.com/ivanhao/pvetool
 cd pvetools
 ./pvetools.sh
 ```
+>pve6.0需要先删除企业源：`rm /etc/apt/sources.list.d/pve-enterprise.list`
+
 ### 卸载
 1. 删除下载的pvetools目录
 
