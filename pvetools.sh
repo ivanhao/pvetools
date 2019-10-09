@@ -352,7 +352,7 @@ Config complete!you should reboot later.
             else
                 whiptail --title "Warnning" --msgbox "
 Invalidate value.Please comfirm!
-输入的值非法，请重新输入!
+输入的值无效，请重新输入!
                 " 10 60
                 setMen
             fi
