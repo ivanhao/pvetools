@@ -120,7 +120,7 @@ if [ ! $sver ];then
     main
 fi
 if [ $L = "en" ];then
-    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config apt source:" 25 55 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config apt source:" 25 60 15 \
     "a" "Automation mode." \
     "b" "Change to ustc.edu.cn." \
     "c" "Disable enterprise." \
@@ -128,7 +128,7 @@ if [ $L = "en" ];then
     "q" "Main menu." \
     3>&1 1>&2 2>&3)
 else
-    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "配置apt镜像源:" 25 35 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "配置apt镜像源:" 25 60 15 \
     "a" "无脑模式" \
     "b" "更换为国内ustc.edu.cn源" \
     "c" "关闭企业更新源" \
@@ -276,7 +276,7 @@ Wrong email format!!!   input xxxx@qq.com for example.retry:
                 $(apt -y install mailutils)
                 echo 100
                 sleep 1
-            } | whiptail --gauge "Please wait while installing" 6 60 0
+            } | whiptail --gauge "Please wait while installing" 10 60 0
         fi
         {
             echo 10
@@ -290,7 +290,7 @@ Wrong email format!!!   input xxxx@qq.com for example.retry:
             $(echo "root: $qqmail">>/etc/aliases)
             echo 100
             sleep 1
-        } | whiptail --gauge "Please wait while installing" 6 60 0
+        } | whiptail --gauge "Please wait while installing" 10 60 0
         sleep 1
         dpkg-reconfigure postfix
         service postfix reload
@@ -343,7 +343,7 @@ set max zfs ram 4(G) or 8(G) etc, just enter number or n?
                         zpool set listsnapshots=on rpool
                     fi)
                     echo 100
-                }|whiptail --gauge "installing" 6 60 0
+                }|whiptail --gauge "installing" 10 60 0
                 whiptail --title "Success" --msgbox "
 Config complete!you should reboot later.
 配置完成，一会儿最好重启一下系统。
@@ -377,6 +377,8 @@ Invalidate value.Please comfirm!
     安装zfs-zed成功！
             " 10 60
         fi
+    else
+        main
     fi
 }
 if [ ! -f /etc/modprobe.d/zfs.conf ] || [ `grep "zfs_arc_max" /etc/modprobe.d/zfs.conf|wc -l` = 0 ];then
@@ -397,14 +399,14 @@ chSamba(){
 #config samba
 clear
 if [ $L = "en" ];then
-    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config samba:" 25 55 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config samba:" 25 60 15 \
     "a" "Install samba and config user." \
     "b" "Add folder to share." \
     "c" "Delete folder to share." \
     "q" "Main menu." \
     3>&1 1>&2 2>&3)
 else
-    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "配置samba:" 25 55 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "配置samba:" 25 60 15 \
     "a" "安装配置samba并配置好samba用户" \
     "b" "添加共享文件夹" \
     "c" "删除共享文件夹" \
@@ -583,27 +585,36 @@ fi
 chVim(){
 #config vim
 if [ $L = "en" ];then
-    echo -e "Install vim and config:"
-    echo -e "[a] Install vim & simply config display."
-    echo -e "[b] Install vim & config 'vim-for-server'(https://github.com/wklken/vim-for-server)."
+    x=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config VIM:" 12 60 4 \
+    "a" "Install vim & simply config display." \
+    "b" "Install vim & config 'vim-for-server'." \
+    3>&1 1>&2 2>&3)
 else
-    echo -e "安装配置VIM！"
-    echo -e "[a] 安装VIM并简单配置，如配色行号等，基本是vim原味儿。"
-    echo -e "[b] 安装VIM并配置'vim-for-server'(https://github.com/wklken/vim-for-server)."
+    x=$(whiptail --title " PveTools   Version : 2.0 " --menu "安装配置VIM！" 12 60 4 \
+    "a" "安装VIM并简单配置，如配色行号等。" \
+    "b" "安装VIM并配置'vim-for-server'。" \
+    3>&1 1>&2 2>&3)
 fi
-if [ $1 ];then
-    x=a
-else
-    read x
-fi
-case "$x" in 
-    a | A  )
-        if [ ! -f /root/.vimrc ] || [ `cat /root/.vimrc|wc -l` = 0 ];then
-            apt -y install vim
-        else
-            cp ~/.vimrc ~/.vimrc.bak
-        fi
-        cat << EOF > ~/.vimrc
+exitstatus=$?
+if [ $exitstatus = 0 ]; then
+    case "$x" in 
+        a )
+        if(whiptail --title "Yes/No Box" --yesno "
+Install vim & simply config display.Continue?
+安装VIM并简单配置，如配色行号等，基本是vim原味儿。是否继续？
+            " 10 60) then
+            {
+            echo 10
+            $(
+            if [ ! -f /root/.vimrc ] || [ `cat /root/.vimrc|wc -l` = 0 ] || [ `dpkg -l |grep vim|wc -l` = 0 ];then
+                apt -y install vim
+            else
+                cp ~/.vimrc ~/.vimrc.bak
+            fi
+            )
+            echo 50
+            $(
+            cat << EOF > ~/.vimrc
 set number
 set showcmd
 set incsearch
@@ -643,23 +654,46 @@ set softtabstop=4
 inoremap fff <esc>h
 autocmd BufWritePost \$MYVIMRC source \$MYVIMRCi
 EOF
-        echo "Install & config complete!"
-        echo "安装配置完成!"
-        sleep 2
-        ;;
-    b | B )
-        apt -y install curl vim
-        cp ~/.vimrc ~/.vimrc_bak
-        curl https://raw.githubusercontent.com/wklken/vim-for-server/master/vimrc > ~/.vimrc
-        echo "Install & config complete!"
-        echo "安装配置完成！"
-        sleep 2
-        ;;
-    * )
-        echo "Please comfirm!"
-		echo "请重新输入!"
-        sleep 1
-esac
+            )
+            echo 100
+            }|whiptail --gauge "installing" 10 60
+            whiptail --title "Success" --msgbox "
+    Install & config complete!
+    安装配置完成!
+            " 10 60
+        else
+            chVim
+        fi
+            ;;
+        b | B )
+        if(whiptail --title "Yes/No Box" --yesno "
+安装VIM并配置 'vim-for-server'(https://github.com/wklken/vim-for-server).
+yes or no?
+            " 12 60) then
+            {
+            echo 10
+            $(
+            apt -y install curl vim
+            )
+            echo 80
+            $(
+            cp ~/.vimrc ~/.vimrc_bak
+            curl https://raw.githubusercontent.com/wklken/vim-for-server/master/vimrc > ~/.vimrc
+            )
+            echo 100
+        }|whiptail --gauge "installing" 10 60
+            whiptail --title "Success" --msgbox "
+    Install & config complete!
+    安装配置完成！
+            " 10 60
+        else
+            chVim
+        fi
+            ;;
+    esac
+else
+    main
+fi
 }
 
 chSpindown(){
@@ -1108,7 +1142,7 @@ esac
 main(){
 clear
 if [ $L = "en" ];then
-    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "Please choose:" 25 75 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "Please choose:" 25 60 15 \
     "b" "Config apt source(change to ustc.edu.cn and so on)." \
     "c" "Install & config samba." \
     "d" "Install mailutils and config root email." \
@@ -1124,7 +1158,7 @@ if [ $L = "en" ];then
     "L" "Change Language." \
     3>&1 1>&2 2>&3)
 else
-    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "请选择相应的配置：" 25 55 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "请选择相应的配置：" 25 60 15 \
     "b" "配置apt源(更换为ustc.edu.cn,去除企业源等)" \
     "c" "安装配置samba" \
     "d" "安装配置root邮件通知" \
