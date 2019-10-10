@@ -311,7 +311,7 @@ if [ -f /etc/mailname ];then
     if (whiptail --title "Yes/No Box" --yesno "
 It seems you have already configed it before.Reconfig?
 您好像已经配置过这个了。重新配置？
-    " 10 60);then
+    " --defaultno 10 60);then
         addMail
     else
         main
@@ -387,7 +387,7 @@ else
     if(whiptail --title "Yes/No box" --yesno "
 It seems you have already configed it before.Reconfig?
 您好像已经配置过这个了。是否重新配置？
-    " 10 60 );then
+    " --defaultno 10 60 );then
         setMen
     else
         main
@@ -588,11 +588,13 @@ if [ $L = "en" ];then
     x=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config VIM:" 12 60 4 \
     "a" "Install vim & simply config display." \
     "b" "Install vim & config 'vim-for-server'." \
+    "c" "Uninstall." \
     3>&1 1>&2 2>&3)
 else
     x=$(whiptail --title " PveTools   Version : 2.0 " --menu "安装配置VIM！" 12 60 4 \
     "a" "安装VIM并简单配置，如配色行号等。" \
     "b" "安装VIM并配置'vim-for-server'。" \
+    "c" "还原配置。" \
     3>&1 1>&2 2>&3)
 fi
 exitstatus=$?
@@ -690,6 +692,19 @@ yes or no?
             chVim
         fi
             ;;
+        c )
+            if(whiptail --title "Yes/No Box" --yesno"
+Remove Config?
+确认要还原配置？
+                " --defaultno 10 60) then
+                cp ~/.vimrc.bak ~/.vimrc
+                whiptail --title "Success" --msgbox "
+Done
+已经完成配置
+                " 10 60
+            else
+                chVim
+            fi
     esac
 else
     main
@@ -698,120 +713,223 @@ fi
 
 chSpindown(){
 #set hard drivers to spindown
-if [ ! -f /root/hdspindown/spindownall ];then
-    echo -e "Config hard drives to auto pindown?(Y/n):"
-    echo -e "配置硬盘自动休眠？(Y/n):"
-    if [ $1 ];then
-        x=a
-    else
-        read x
+spinTime(){
+    x=$(whiptail --title "config" --inputbox "
+input number of minite to auto spindown:
+输入硬盘自动休眠的检测时间，周期为分钟，输入5为5分钟:
+    " 10 60  3>&1 1>&2 2>&3)
+    exitstatus=$?
+    if [ $exitstatus = 0 ]; then
+        while [ true ]
+        do
+            if [ `echo "$x"|grep "^[0-9]*$"|wc -l` = 0 ];then
+                whiptail --title "Warnning" --msgbox "
+输入格式错误，请重新输入：
+                " 10 60
+                spinTime
+            else
+                break
+            fi
+        done
+        cat << eof >> /etc/crontab
+*/$x * * * * root /root/hdspindown/spindownall
+eof
+        service cron reload
+        whiptail --title "Success" --msgbox "
+config every $x minite to check disks and auto spindown:
+已为您配置好硬盘每$x分钟自动检测硬盘和休眠。
+        " 10 60
     fi
-    case "$x" in 
-    y | yes | a )
-        apt -y install git
+}
+doSpindown(){
+    if(whiptail --title "Yes/No Box" --yesno "
+    Config hard drives to auto spindown?(Y/n):
+    配置硬盘自动休眠？(Y/n):
+    " 10 60) then
+    {
+        echo 10
+        if [ `dpkg -l|grep git|wc -l` = 0 ];then
+            apt -y install git
+        fi
+        echo 50
         cd /root
-        git clone https://github.com/ivanhao/hdspindown.git
+        $(
+            git clone https://github.com/ivanhao/hdspindown.git 2>&1 &
+        )
+        echo 90
         cd hdspindown
         chmod +x *.sh
         ./spindownall
+        echo 100
+    }   | whiptail --gauge "installing" 10 60 0
         if [ `grep "spindownall" /etc/crontab|wc -l` = 0 ];then
-            echo -e "Input number of .bake to auto spindown:"
-            echo -e "输入硬盘自动休眠的检测时间，周期为分钟，输入5为5分钟:"
-            read x
-            while [ true ]
-            do
-                if [[ `echo "$x"|grep "[0-9]*"|wc -l` = 0 ]] || [[ $x = "" ]];then
-                    echo -e "输入格式错误，请重新输入："
-                    read x
-                else
-                    break
-                fi
-            done
-            cat << EOF >> /etc/crontab
-*/$x * * * * root /root/hdspindown/spindownall
-EOF
-            service cron reload
-            echo -e "Config every $x .bake to check disks and auto spindown:"
-            echo -e "已为您配置好硬盘每$x分钟自动检测硬盘和休眠。"
-            sleep 2
+            spinTime
+        fi
+    else
+        chSpindown
+    fi
+}
+
+if [ $L = "en" ];then
+    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config hard disks spindown:" 25 60 15 \
+    "a" "Config hard drives to auto spindown." \
+    "b" "Remove config spindown." \
+    3>&1 1>&2 2>&3)
+else
+    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "配置硬盘自动休眠" 25 60 15 \
+    "a" "配置硬盘自动休眠" \
+    "b" "还原配置" \
+    3>&1 1>&2 2>&3)
+fi
+if [ $1 ];then
+    OPTION=a
+fi
+exitstatus=$?
+if [ $exitstatus = 0 ]; then
+    case "$OPTION" in
+    a | A )
+        if [ ! -f /root/hdspindown/spindownall ];then
+            doSpindown
+        else
+            whiptail --title "Yes/No Box" --msgbox "
+It seems you have already configed it before.
+您好像已经配置过这个了。
+                " 10 60
+            chSpindown
         fi
         ;;
-    n | no )
-        ;;
-    * )
-        echo "Please comfirm!"
-		echo "请重新输入!"
-        sleep 1
+    b )
+        if(whiptail --title "Yes/No Box" --yesno "
+Remove config spindown?
+确认要还原配置？
+        " 10 60) then
+            sed -i '/spindownall/d' /etc/crontab
+            rm /usr/bin/hdspindown
+            if(whiptail --title "Yes/No Box" --yesno "
+Remove source code?
+是否要删除休眠程序代码？
+            " 10 60) then
+                rm -rf /root/hdspindown
+            fi
+            whiptail --title "Success" --msgbox "
+OK
+已经完成配置
+            " 10 60
+        else
+            chSpindown
+        fi
     esac
-else
-    echo -e "It seems you have already configed it before."
-    echo -e "您好像已经配置过这个了。"
-    sleep 2
-    main
 fi
 }
 
 chCpu(){
-#setup for cpufreq
-if [ `grep "intel_pstate=disable" /etc/default/grub|wc -l` = 0 ];then
-    echo -e "Install cpufrequtils to save power?(Y/n):"
-    if [ $1 ];then
-        x=a
+maxCpu(){
+    info=`cpufreq-info|grep -E "available|analyzing CPU|current"|sed -n "/analyz/,/analyz/p"|sed '$d'`
+    x=$(whiptail --title "cpufrequtils" --inputbox "
+$info
+--------------------------------------------
+Input MAX_SPEED(example: 1.6GHz type 1600000):
+输入最大频率（示例：1.6GHz 输入1600000）：
+    " 20 60  3>&1 1>&2 2>&3)
+    exitstatus=$?
+    if [ $exitstatus = 0 ]; then
+        while [ true ]
+        do
+            if [[ `echo "$x"|grep "[0-9][0-9][0-9][0-9][0-9][0-9][0-9]"|wc -l` = 0 ]] || [[ $x = "" ]];then
+                whiptail --title "Warnning" --msgbox "
+example: 1.6GHz type 1600000
+retry
+示例：1.6GHz 输入1600000
+输入格式错误,请重新输入：
+                " 15 60
+                maxCpu
+            else
+                break
+            fi
+        done
+        mx=$x
     else
-        read x
+        chCpu
     fi
-    case "$x" in 
-    y | yes | a )
+}
+minCpu(){
+    x=$(whiptail --title "cpufrequtils" --inputbox "
+$info
+--------------------------------------------
+Input MIN_SPEED(example: 1.6GHz type 1600000):
+输入最小频率（示例：1.6GHz 输入1600000）：
+    " 20 60   3>&1 1>&2 2>&3)
+    exitstatus=$?
+    if [ $exitstatus = 0 ]; then
+        while [ true ]
+        do
+            if [[ `echo "$x"|grep "[0-9][0-9][0-9][0-9][0-9][0-9][0-9]"|wc -l` = 0 ]] || [[ $x = "" ]];then
+                whiptail --title "Warnning" --msgbox "
+example: 1.6GHz type 1600000
+retry
+示例：1.6GHz 输入1600000
+输入格式错误,请重新输入：
+                " 15 60
+                minCpu
+            else
+                break
+            fi
+        done
+        mi=$x
+    else
+        chCpu
+    fi
+}
+
+#setup for cpufreq
+doChCpu(){
+if(whiptail --title "Yes/No Box" --yesno "
+Install cpufrequtils to save power?
+安装配置CPU省电?
+" --defaultno 10 60) then
+{
+    echo 10
+    if [ `dpkg -l|grep cpufrequtils|wc -l` = 0 ];then
         apt -y install cpufrequtils
+    fi
+    echo 50
+    if [ `grep "intel_pstate=disable" /etc/default/grub|wc -l` = 0 ];then
         sed -i.bak 's|quiet|quiet intel_pstate=disable|' /etc/default/grub 
         update-grub
-        if [ ! -f /etc/default/cpufrequtils ];then
-            cpufreq-info
-            echo "Input MAX_SPEED:"
-            echo "输入最大频率：";read x
-            while [ true ]
-            do
-                if [[ `echo "$x"|grep "[0-9]*"|wc -l` = 0 ]] || [[ $x = "" ]];then
-                    echo -e "输入格式错误,请重新输入："
-                    read x
-                else
-                    break
-                fi
-            done
-            mx=$x
-            echo "Input MIN_SPEED:"
-            echo "输入最小频率：";read x
-            while [ true ]
-            do
-                if [[ `echo "$x"|grep "[0-9]*"|wc -l` = 0 ]] || [[ $x = "" ]];then
-                    echo -e "输入格式错误，请重新输入："
-                    read x
-                else
-                    break
-                fi
-            done
-            mi=$x
-            cat << EOF > /etc/default/cpufrequtils
+    fi
+    if [ ! -f /etc/default/cpufrequtils ];then
+        cpufreq-info|grep -E "available|analyzing CPU|current"|sed -n "/analyz/,/analyz/p"|sed '$d'
+    fi
+    echo 100
+    sleep 1
+}|whiptail --gauge "installing..." 10 60 0
+    maxCpu
+    minCpu
+    cat << EOF > /etc/default/cpufrequtils
 ENABLE="true"
 GOVERNOR="powersave"
 MAX_SPEED="$mx"
 MIN_SPEED="$mi"
 EOF
-            echo -e "  cpufrequtils need to reboot to apply! Please reboot.  "
-            echo -e "  cpufrequtils 安装好后需要重启系统，请稍后重启。"
-            sleep 2
-        fi
-        ;;
-    n | no )
-        ;;
-    * )
-        echo "Please confirm!"
-        sleep 1
-    esac
+    whiptail --title "Success" --msgbox "
+cpufrequtils need to reboot to apply! Please reboot.  
+cpufrequtils 安装好后需要重启系统，请稍后重启。
+    " 10 60
 else
-    echo -e "It seems you have already configed it before."
-    echo -e "您好像已经配置过这个了。"
-    sleep 2
+    main
+fi
+}
+if [ `grep "intel_pstate=disable" /etc/default/grub|wc -l` = 0 ];then
+    doChCpu
+else
+    if(whiptail --title "Yes/No Box" --yesno "
+It seems you have already configed it before.
+您好像已经配置过这个了。
+    " --defaultno 10 60) then
+        doChCpu
+    else
+        main
+    fi
 fi
 }
 
