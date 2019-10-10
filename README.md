@@ -39,6 +39,8 @@ cd pvetools
 ### 主界面
 
 ![main](./main.png)
+![main](./main1.png)
+
 根据需要选择对应的选项即可。
 
 #### 配置邮件说明：
