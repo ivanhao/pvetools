@@ -453,11 +453,11 @@ if [ $exitstatus = 0 ]; then
        addFolder(){
         h=`grep "^\[[0-9a-zA-Z.-]*\]$" /etc/samba/smb.conf|awk 'NR>3{print $0}'|wc -l`
         if [ $h -lt 3 ];then
-            let h=h*10
+            let h=h*15
         else
             let h=h*5
         fi
-        x=$(whiptail --title "Samba Share folder" --inputbox "
+        x=$(whiptail --title "Add Samba Share folder" --inputbox "
 Exist share folders:
 已有的共享目录：
 ----------------------------------------
@@ -534,11 +534,11 @@ Already configed！
         delFolder(){
         h=`grep "^\[[0-9a-zA-Z.-]*\]$" /etc/samba/smb.conf|awk 'NR>3{print $0}'|wc -l`
         if [ $h -lt 3 ];then
-            let h=h*10
+            let h=h*15
         else
             let h=h*5
         fi
-        n=$(whiptail --title "Samba Share folder" --inputbox "
+        n=$(whiptail --title "Remove Samba Share folder" --inputbox "
 Exist share folders:
 已有的共享目录：
 ----------------------------------------
@@ -693,7 +693,7 @@ yes or no?
         fi
             ;;
         c )
-            if(whiptail --title "Yes/No Box" --yesno"
+            if(whiptail --title "Yes/No Box" --yesno "
 Remove Config?
 确认要还原配置？
                 " --defaultno 10 60) then
@@ -919,18 +919,65 @@ else
     main
 fi
 }
-if [ `grep "intel_pstate=disable" /etc/default/grub|wc -l` = 0 ];then
-    doChCpu
+#-------------chCpu--main---------------
+if [ $L = "en" ];then
+    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config Cpufrequtils:" 25 60 15 \
+    "a" "Config cpufrequtils to save power." \
+    "b" "Remove config." \
+    3>&1 1>&2 2>&3)
 else
-    if(whiptail --title "Yes/No Box" --yesno "
-It seems you have already configed it before.
-您好像已经配置过这个了。
-    " --defaultno 10 60) then
-        doChCpu
-    else
-        main
-    fi
+    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "安装配置CPU省电" 25 60 15 \
+    "a" "安装配置CPU省电" \
+    "b" "还原配置" \
+    3>&1 1>&2 2>&3)
 fi
+if [ $1 ];then
+    OPTION=a
+fi
+exitstatus=$?
+if [ $exitstatus = 0 ]; then
+    case "$OPTION" in
+    a | A )
+        if [ `grep "intel_pstate=disable" /etc/default/grub|wc -l` = 0 ];then
+            doChCpu
+        else
+            if(whiptail --title "Yes/No Box" --yesno "
+        It seems you have already configed it before.
+        您好像已经配置过这个了。
+            " --defaultno 10 60) then
+                doChCpu
+            else
+                main
+            fi
+        fi
+        ;;
+    b )
+        if(whiptail --title "Yes/No" --yesno "
+continue?
+还原配置？
+        " --defaultno 10 60 ) then
+            sed -i 's/ intel_pstate=disable//g' /etc/default/grub
+            rm -rf /etc/default/cpufrequtils
+            if (whiptail --title "Yes/No" --yesno "
+Uninstall cpufrequtils?
+卸载cpufrequtils?
+                " 10 60 ) then
+            {
+                echo 20
+                apt -y remove cpufrequtils 2>&1 &
+                echo 10
+            }  |  whiptail --gauge "Uninstalling..." 10 60 0
+            fi
+            whiptail --title "Success" --msgbox "
+Done
+配置完成
+            " 10 60
+        fi
+        chCpu
+    esac
+fi
+#-------------chCpu--main--end------------
+
 }
 
 chSubs(){
@@ -958,31 +1005,134 @@ chSmartd(){
 }
 
 chNestedV(){
-    clear
-    case $L in
-        en )
-            echo -e "[a] Enable nested"
-            echo -e "[b] Set vm to nested."
-            echo -e "[q] back to main menu."
-            ;;
-        zh )
-            echo -e "[a] 开启嵌套虚拟化"
-            echo -e "[b] 开启某个虚拟机的嵌套虚拟化"
-            echo -e "[q] 返回主菜单"
-            ;;
-    esac
-    if [ $1 ];then
-        x=a
-    else
-        read x
+clear
+unsetVmN(){
+    list=`qm list|awk 'NR>1{print $1":"$2"......."$3" "}'`
+    ls=`for i in $list;do echo $i|awk -F ":" '{print $1" "$2}';done`
+    h=`echo $ls|wc -l`
+    let h=h*1
+    if [ $h -lt 30 ];then
+        let h=30
     fi
+    list1=`echo $list|awk 'NR>1{print $1}'`
+    vmid=$(whiptail --scrolltext --title " PveTools   Version : 2.0 " --menu "
+Choose vmid to unset nested:
+选择需要关闭嵌套虚拟化的vm：" 25 60 15 \
+    $(echo $ls) \
+     3>&1 1>&2 2>&3)
+    exitstatus=$?
+    if [ $exitstatus = 0 ]; then
+        if(whiptail --title "Yes/No" --yesno "
+you choose: $vmid ,continue?
+你选的是：$vmid ，是否继续?
+            " 10 60)then
+            while [ true ]
+            do
+                if [ `echo "$vmid"|grep "^[0-9]*$"|wc -l` = 0 ];then
+                    whiptail --title "Warnning" --msgbox "
+    输入格式错误，请重新输入：
+                    " 10 60
+                    setVmN
+                else
+                    break
+                fi
+            done
+            if [ `qm showcmd $vmid|grep "+vmx"|wc -l` = 0 ];then
+                whiptail --title "Success" --msgbox "
+    You already unseted.Nothing to do.
+    您的虚拟机未开启过嵌套虚拟化支持。
+                " 10 60
+            else
+                args=`qm showcmd $vmid|grep "\-cpu [0-9a-zA-Z,+_]*" -o`
+                sed -i '/,+vmx/d' /etc/pve/qemu-server/$vmid.conf
+                echo  "args: "$args >> /etc/pve/qemu-server/$vmid.conf
+                whiptail --title "Success" --msgbox "
+    Unset OK.Please reboot your vm.
+    您的虚拟机已经关闭嵌套虚拟化支持。重启虚拟机后生效。
+                " 10 60
+            fi
+        else
+            chNestedV
+        fi
+    else
+        chNestedV
+    fi
+}
+setVmN(){
+    list=`qm list|awk 'NR>1{print $1":"$2"......."$3" "}'`
+    ls=`for i in $list;do echo $i|awk -F ":" '{print $1" "$2}';done`
+    h=`echo $ls|wc -l`
+    let h=h*1
+    if [ $h -lt 30 ];then
+        let h=30
+    fi
+    list1=`echo $list|awk 'NR>1{print $1}'`
+    vmid=$(whiptail --scrolltext --title " PveTools   Version : 2.0 " --menu "
+Choose vmid to set nested:
+选择需要配置嵌套虚拟化的vm：" 25 60 15 \
+    $(echo $ls) \
+     3>&1 1>&2 2>&3)
+    exitstatus=$?
+    if [ $exitstatus = 0 ]; then
+        if(whiptail --title "Yes/No" --yesno "
+you choose: $vmid ,continue?
+你选的是：$vmid ，是否继续?
+            " 10 60)then
+            while [ true ]
+            do
+                if [ `echo "$vmid"|grep "^[0-9]*$"|wc -l` = 0 ];then
+                    whiptail --title "Warnning" --msgbox "
+    输入格式错误，请重新输入：
+                    " 10 60
+                    setVmN
+                else
+                    break
+                fi
+            done
+            if [ `qm showcmd $vmid|grep "+vmx"|wc -l` = 0 ];then
+                args=`qm showcmd $vmid|grep "\-cpu [0-9a-zA-Z,+_]*" -o`
+                sed "/boot:/a\args: $args,+vmx" -i /etc/pve/qemu-server/$vmid.conf
+                #echo "args: "$args",+vmx" >> /etc/pve/qemu-server/$vmid.conf
+                whiptail --title "Success" --msgbox "
+    Nested OK.Please reboot your vm.
+    您的虚拟机已经开启嵌套虚拟化支持。重启虚拟机后生效。
+                " 10 60
+            else
+                whiptail --title "Success" --msgbox "
+    You already seted.Nothing to do.
+    您的虚拟机已经开启过嵌套虚拟化支持。
+                " 10 60
+            fi
+        else
+            chNestedV
+        fi
+    else
+        chNestedV
+    fi
+}
+if [ $L = "en" ];then
+    x=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config Nested:" 25 60 15 \
+    "a" "Enable nested" \
+    "b" "Set vm to nested" \
+    "c" "Unset vm nested" \
+    "d" "Disable nested" \
+    3>&1 1>&2 2>&3)
+else
+    x=$(whiptail --title " PveTools   Version : 2.0 " --menu "配置嵌套虚拟化:" 25 60 15 \
+    "a" "开启嵌套虚拟化" \
+    "b" "开启某个虚拟机的嵌套虚拟化" \
+    "c" "关闭某个虚拟机的嵌套虚拟化" \
+    "d" "关闭嵌套虚拟化" \
+    3>&1 1>&2 2>&3)
+fi
+exitstatus=$?
+if [ $exitstatus = 0 ]; then
     case "$x" in
         a )
-            echo -e "Are you sure to enable Nested? (Y/n):"
-            echo -e "确定要开启嵌套虚拟化吗？(Y/n):"
-            read y
-            case "$y" in
-                y | Y )
+            if(whiptail --title "Yes/No" --yesno "
+Are you sure to enable Nested? (Y/n):
+确定要开启嵌套虚拟化吗？(Y/n):
+            " 10 60) then
                 if [ `cat /sys/module/kvm_intel/parameters/nested` = 'N' ];then
                     for i in `qm list|awk 'NR>1{print $1}'`;do
                         qm stop $i
@@ -991,169 +1141,172 @@ chNestedV(){
                     modprobe kvm_intel nested=1
                     if [ `cat /sys/module/kvm_intel/parameters/nested` = 'Y' ];then
                         echo "options kvm_intel nested=1" >> /etc/modprobe.d/modprobe.conf
-                        echo "Nested ok."
-                        echo "您已经开启嵌套虚拟化。"
+                        whiptail --title "Success" --msgbox "
+Nested ok.
+您已经开启嵌套虚拟化。
+                        " 10 60
                     else
-                        echo "Your system can not open nested."
-                        echo "您的系统不支持嵌套虚拟化。"
+                        whiptail --title "Warnning" --msgbox "
+Your system can not open nested.
+您的系统不支持嵌套虚拟化。
+                        " 10 60
                     fi
                 else
-                    echo "You already enabled nested virtualization."
-                    echo "您已经开启过嵌套虚拟化。"
+                    whiptail --title "Warnning" --msgbox "
+You already enabled nested virtualization.
+您已经开启过嵌套虚拟化。
+                    " 10 60
                 fi
-                sleep 2
-                if [ ! $1 ];then
-                    chNestedV
-                fi
-                ;;
-                * )
-                chNestedV
-            esac
+            fi
+            chNestedV
             ;;
         b )
             if [ `cat /sys/module/kvm_intel/parameters/nested` = 'Y' ];then
-                echo "Nested ok."
                 if [ `qm list|wc -l` = 0 ];then
-                    echo "You have no vm."
-                    echo "您还没有虚拟机。"
+                    whiptail --title "Warnning" --msgbox "
+You have no vm.
+您还没有虚拟机。
+                    " 10 60
                 else
-                    qm list
-                    echo -e "Please input your vmid:"
-                    read vmid
-                    if [ `qm showcmd $vmid|grep "+vmx"|wc -l` = 0 ];then
-                        args=`qm showcmd 104|grep "\-cpu [0-9a-zA-Z,+_]*" -o`
-                        echo  $args",+vmx" >> /etc/pve/qemu-server/$vmid.conf
-                        echo "Nested OK.Please reboot your vm."
-                        echo "您的虚拟机已经开启嵌套虚拟化支持。重启虚拟机后生效。"
-                    else
-                        echo "You already seted.Nothing to do."
-                        echo "您的虚拟机已经开启过嵌套虚拟化支持。"
-                    fi
+                    setVmN
                 fi
-                sleep 2
                 chNestedV
             else
-                echo "Your system can not open nested."
-                echo "您的系统不支持嵌套虚拟化。"
-                sleep 2
+                whiptail --title "Warnning" --msgbox "
+Your system can not open nested.
+您的系统不支持嵌套虚拟化。
+                " 10 60
+                chNestedV
+            fi
+            ;;
+        c )
+            if [ `cat /sys/module/kvm_intel/parameters/nested` = 'Y' ];then
+                if [ `qm list|wc -l` = 0 ];then
+                    whiptail --title "Warnning" --msgbox "
+You have no vm.
+您还没有虚拟机。
+                    " 10 60
+                else
+                    unsetVmN
+                fi
+                chNestedV
+            else
+                whiptail --title "Warnning" --msgbox "
+Your system can not open nested.
+您的系统不支持嵌套虚拟化。
+                " 10 60
                 chNestedV
             fi
             ;;
         q )
             main
             ;;
-        * )
-            chNestedV
     esac
+else
+    main
+fi
 }
 chSensors(){
 #安装lm-sensors并配置在界面上显示
 #for i in `sed -n '/Chip drivers/,/\#----cut here/p' /tmp/sensors|sed '/Chip /d'|sed '/cut/d'`;do modprobe $i;done
 clear
-echo -e "安装配置lm-sensors并配置web界面显示温度。"
-echo -e "Install lm-sensors and config web interface to display sensors data."
-case $L in
-    en )
-        echo -e "[a] Install"
-        echo -e "[b] Uninstall"
-        echo -e "[q] back to main menu."
-        ;;
-    zh )
-        echo -e "[a] 安装"
-        echo -e "[b] 卸载"
-        echo -e "[q] 返回主菜单"
-        ;;
-esac
-if [ $1 ];then
-    x=a
+if [ $L = "en" ];then
+    x=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config lm-sensors & proxmox ve display:" 25 60 15 \
+    "a" "Install." \
+    "b" "Uninstall." \
+    3>&1 1>&2 2>&3)
 else
-    read x
+    x=$(whiptail --title " PveTools   Version : 2.0 " --menu "配置samba:" 25 60 15 \
+    "a" "安装配置温度显示" \
+    "b" "删除配置" \
+    3>&1 1>&2 2>&3)
 fi
-case "$x" in
-    a )
-    js='/usr/share/pve-manager/js/pvemanagerlib.js'
-    pm='/usr/share/perl5/PVE/API2/Nodes.pm'
-    sh='/usr/bin/s.sh'
-    ppv=`/usr/bin/pveversion`
-    OS=`echo $ppv|awk -F'-' 'NR==1{print $1}'`
-    ver=`echo $ppv|awk -F'/' 'NR==1{print $2}'|awk -F'-' '{print $1}'`
-    bver=`echo $ppv|awk -F'/' 'NR==1{print $2}'|awk -F'.' '{print $1}'`
-    pve=$OS$ver
-    if [[ "$OS" != "pve" ]];then
-        echo "您的系统不是Proxmox VE, 无法安装!"
-        echo "Your OS is not Proxmox VE!"
-        if [[ "$bver" != "5" || "$bver" != "6" ]];then
-            echo "您的系统版本无法安装!"
-            echo "Your Proxmox VE version can not install!"
-            sleep 2
-            main
-        fi
-        sleep 2
-        main
-    fi
-    if [[ ! -f "$js" || ! -f "$pm" ]];then
-        echo "您的Proxmox VE版本不支持此方式！"
-        echo "Your Proxmox VE's version is not supported,Now quit!"
-        sleep 2
-        main
-    fi
-    if [[ -f "$js.backup" && -f "$sh" ]];then
-        echo "您已经安装过本软件，请不要重复安装！"
-        echo "You already installed,Now quit!"
-        sleep 3
-        chSensors
-    fi
-    if [ ! -f "/usr/bin/sensors" ];then
-        echo "您还没有安装lm-sensors，将会自动进行安装配置："
-        echo "you have not installed lm-sensors, auto install now."
-        apt -y install lm-sensors
-    fi
-    sensors-detect --auto > /tmp/sensors
-    drivers=`sed -n '/Chip drivers/,/\#----cut here/p' /tmp/sensors|sed '/Chip /d'|sed '/cut/d'`
-    if [ `echo $drivers|wc -w` = 0 ];then
-        echo -e "Sensors driver not found."
-        echo -e "没有找到任何驱动，似乎你的系统不支持。"
-        sleep 3
-        chSensors
-    else
-        for i in $drivers;do modprobe $i;done
-        sensors
-        echo -e "Install complete,if everything ok ,it's showed sensors."
-        echo -e "安装配置成功，如果没有意外，上面已经显示sensors。"
-    fi
-    rm /tmp/sensors
-    echo "您的系统是：$pve, 您将安装sensors界面，是否继续？(y/n)"
-    echo -n "Your OS：$pve, you will install sensors interface, continue?(y/n)"
-    #if [ `/usr/bin/pveversion|awk -F'/' 'NR==1{print $2}'|awk -F'.' '{print $1}'` != "5" ];then
-    #    echo ""
-    #    echo -e "Pve 6.x not support websites display change yet.You can use sensors command."
-    #    echo -e "Pve 6.x暂不支持网页配置显示，请使用sensors命令."
-    #    sleep 3
-    #    chSensors
-    #fi
-    if [ $1 ];then
-        x=a
-    else
-        read x
-    fi
+exitstatus=$?
+if [ $exitstatus = 0 ]; then
     case "$x" in
-    y | yes | a )
-        cp $js $js.backup
-        cp $pm $pm.backup
-        cat << EOF > /usr/bin/s.sh
+    a )
+        if(whiptail --title "Yes/No" --yesno "
+Your OS：$pve, you will install sensors interface, continue?(y/n)
+您的系统是：$pve, 您将安装sensors界面，是否继续？(y/n)
+            " 10 60) then
+            js='/usr/share/pve-manager/js/pvemanagerlib.js'
+            pm='/usr/share/perl5/PVE/API2/Nodes.pm'
+            sh='/usr/bin/s.sh'
+            ppv=`/usr/bin/pveversion`
+            OS=`echo $ppv|awk -F'-' 'NR==1{print $1}'`
+            ver=`echo $ppv|awk -F'/' 'NR==1{print $2}'|awk -F'-' '{print $1}'`
+            bver=`echo $ppv|awk -F'/' 'NR==1{print $2}'|awk -F'.' '{print $1}'`
+            pve=$OS$ver
+            if [[ "$OS" != "pve" ]];then
+                whiptail --title "Warnning" --msgbox "
+您的系统不是Proxmox VE, 无法安装!
+Your OS is not Proxmox VE!
+                " 10 60
+                if [[ "$bver" != "5" || "$bver" != "6" ]];then
+                    whiptail --title "Warnning" --msgbox "
+您的系统版本无法安装!
+Your Proxmox VE version can not install!
+                    " 10 60
+                    main
+                fi
+                main
+            fi
+            if [[ ! -f "$js" || ! -f "$pm" ]];then
+                whiptail --title "Warnning" --msgbox "
+您的Proxmox VE版本不支持此方式！
+Your Proxmox VE's version is not supported,Now quit!
+                " 10 60
+                main
+            fi
+            if [[ -f "$js.backup" && -f "$sh" ]];then
+                whiptail --title "Warnning" --msgbox "
+您已经安装过本软件，请不要重复安装！
+You already installed,Now quit!
+                " 10 60
+                chSensors
+            fi
+            if [ ! -f "/usr/bin/sensors" ];then
+                {
+                    echo 50
+                apt-get -y install lm-sensors
+                    echo 100
+                    sleep 1
+                } | whiptail --gauge "installing lm-sensors" 10 60 0
+            fi
+            sensors-detect --auto > /tmp/sensors
+            drivers=`sed -n '/Chip drivers/,/\#----cut here/p' /tmp/sensors|sed '/Chip /d'|sed '/cut/d'`
+            if [ `echo $drivers|wc -w` = 0 ];then
+                whiptail --title "Warnning" --msgbox "
+Sensors driver not found.
+没有找到任何驱动，似乎你的系统不支持。
+                " 10 60
+                chSensors
+            else
+                for i in $drivers;do modprobe $i;done
+                sensors
+                sleep 3
+                whiptail --title "Success" --msgbox "
+Install complete,if everything ok ,it's showed sensors.Next, restart you web.
+安装配置成功，如果没有意外，上面已经显示sensors。下一步会重启web界面，请不要惊慌。
+                " 20 60
+            fi
+            rm /tmp/sensors
+            cp $js $js.backup
+            cp $pm $pm.backup
+            cat << EOF > /usr/bin/s.sh
 r=\`sensors|grep '^[a-zA-Z0-9].[[:print:]]*:.\s*\S*[0-9].\s*[A-Z].' -o|sed 's/:\ */:/g'|sed 's/:/":"/g'|sed 's/^/"/g' |sed 's/$/",/g'|sed 's/\ C\ /C/g'|sed 's/\ V\ /V/g'|sed 's/\ RP/RPM/g'|sed 's/\ //g'|awk 'BEGIN{ORS=""}{print \$0}'|sed 's/,$//g'|sed 's/°C/C/g'\`
 r="{"\$r"}"
 echo \$r
 EOF
-        chmod +x /usr/bin/s.sh
-        #--create the configs--
-        d=`sensors|grep '^[a-zA-Z0-9].[[:print:]]*:.\s*\S*[0-9].\s*[A-Z].' -o|sed 's/:\ */:/g'|sed 's/\ C\ /C/g'|sed 's/\ V\ /V/g'|sed 's/\ RP/RPM/g'|sed 's/\ //g'|awk -F ":" '{print $1}'`
-        if [ -f ./p1 ];then rm ./p1;fi
-        cat << EOF >> ./p1
+            chmod +x /usr/bin/s.sh
+            #--create the configs--
+            d=`sensors|grep '^[a-zA-Z0-9].[[:print:]]*:.\s*\S*[0-9].\s*[A-Z].' -o|sed 's/:\ */:/g'|sed 's/\ C\ /C/g'|sed 's/\ V\ /V/g'|sed 's/\ RP/RPM/g'|sed 's/\ //g'|awk -F ":" '{print $1}'`
+            if [ -f ./p1 ];then rm ./p1;fi
+            cat << EOF >> ./p1
         ,{
             xtype: 'box',
             colspan: 2,
-	    title: gettext('Sensors Data:'),
+        title: gettext('Sensors Data:'),
             padding: '0 0 20 0'
         }
         ,{
@@ -1163,9 +1316,9 @@ EOF
             title: gettext('Sensors Data:')
         }
 EOF
-        for i in $d
-        do
-        cat << EOF >> ./p1
+            for i in $d
+            do
+            cat << EOF >> ./p1
         ,{
             itemId: '$i',
             colspan: 1,
@@ -1180,61 +1333,65 @@ EOF
             }
         }
 EOF
-        done
-        cat << EOF >> ./p2
+            done
+            cat << EOF >> ./p2
 \$res->{tdata} = \`/usr/bin/s.sh\`;
 EOF
-        #--configs end--
-        h=`sensors|awk 'END{print NR}'`
-        if [ $h = 0 ];then
-            h=400
+            #--configs end--
+            h=`sensors|awk 'END{print NR}'`
+            if [ $h = 0 ];then
+                h=400
+            else
+                let h=$h*9+320
+            fi
+            n=`sed '/widget.pveNodeStatus/,/height/=' $js -n|sed -n '$p'`
+            sed -i ''$n'c \ \ \ \ height:\ '$h',' $js 
+            n=`sed '/pveversion/,/\}/=' $js -n|sed -n '$p'`
+            sed -i ''$n' r ./p1' $js
+            n=`sed '/pveversion/,/version_text/=' $pm -n|sed -n '$p'`
+            sed -i ''$n' r ./p2' $pm
+            if [ -f ./p1 ];then rm ./p1;fi
+            if [ -f ./p2 ];then rm ./p2;fi
+            systemctl restart pveproxy
+            whiptail --title "Success" --msgbox "
+如果没有意外，已经安装完成！浏览器打开界面刷新看一下概要界面！
+Installation Complete! Go to websites and refresh to enjoy!
+            " 10 60
         else
-            let h=$h*9+320
-        fi
-        n=`sed '/widget.pveNodeStatus/,/height/=' $js -n|sed -n '$p'`
-       sed -i ''$n'c \ \ \ \ height:\ '$h',' $js 
-        n=`sed '/pveversion/,/\}/=' $js -n|sed -n '$p'`
-        sed -i ''$n' r ./p1' $js
-        n=`sed '/pveversion/,/version_text/=' $pm -n|sed -n '$p'`
-        sed -i ''$n' r ./p2' $pm
-        if [ -f ./p1 ];then rm ./p1;fi
-        if [ -f ./p2 ];then rm ./p2;fi
-        systemctl restart pveproxy
-
-        echo "如果没有意外，已经安装完成！浏览器打开界面刷新看一下概要界面！"
-        echo "Installation Complete! Go to websites and refresh to enjoy!"
-        sleep 5
-        main
-        ;;
-    n | no )
-        sleep 2
-        main
-        ;;
-    * )
-        echo "Please input y/n to comfirm!"
-        sleep 2
-        chSensors
-    esac
-    ;;
-    b )
-        js='/usr/share/pve-manager/js/pvemanagerlib.js'
-        pm='/usr/share/perl5/PVE/API2/Nodes.pm'
-        if [[ ! -f $js.backup && ! -f /usr/bin/sensors ]];then
-            echo -e "No sensors found."
-            echo -e "没有检测到安装，不需要卸载。"
-        else
-            mv $js.backup $js
-            mv $pm.backup $pm
-            apt -y remove lm-sensors
-            echo "Uninstall complete."
-            echo "卸载成功。"
-            sleep 3
             chSensors
         fi
+    ;;
+    b )
+        if(whiptail --title "Yes/No" --yesno "
+Uninstall?
+确认要还原配置？
+        " 10 60)then
+            js='/usr/share/pve-manager/js/pvemanagerlib.js'
+            pm='/usr/share/perl5/PVE/API2/Nodes.pm'
+            if [[ ! -f $js.backup && ! -f /usr/bin/sensors ]];then
+                whiptail --title "Warnning" --msgbox "
+    No sensors found.
+    没有检测到安装，不需要卸载。
+                " 10 60
+            else
+            {
+                mv $js.backup $js
+                mv $pm.backup $pm
+                echo 50
+                apt-get -y remove lm-sensors
+                echo 100
+                sleep 1
+            }|whiptail --gauge "Uninstalling" 10 60 0
+            whiptail --title "Success" --msgbox "
+Uninstall complete.
+卸载成功。
+            " 10 60
+            fi
+        fi
+        chSensors
         ;;
-    q )
-        main
-esac
+    esac
+fi
 }
 #----------------------functions--end------------------#
 
