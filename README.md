@@ -13,17 +13,16 @@ for english user,please look the end of readme.
 > 需要用root账号来运行
 
 在终端中按行分别执行以下内容：
+
+>pve6.0需要先删除企业源：`rm /etc/apt/sources.list.d/pve-enterprise.list`
+
 ```
 export LC_ALL=en_US.UTF-8
 apt update && apt -y install git && git clone https://github.com/ivanhao/pvetools.git
 cd pvetools
 ./pvetools.sh
 ```
-<<<<<<< HEAD
->pve6.0需要先删除企业源：`rm /etc/apt/sources.list.d/pve-enterprise.list` 
-=======
->pve6.0需要先删除企业源：`rm /etc/apt/sources.list.d/pve-enterprise.list`
->>>>>>> v2.0
+
 
 ### 卸载
 1. 删除下载的pvetools目录
@@ -47,12 +46,6 @@ cd pvetools
 只有以下界面需要用tab键选成红框的内容,其他的一律无脑回车即可。
 ![mail](./mail.png)
 
-#### 无脑方式说明：
-
-无脑方式基本不需要你输入内容，除了配置你的邮件地址，邮箱要按上面配置邮件说明中的"Internet Site", 
-其他的一律无脑回车即可。
-其他的一律无脑回车即可。
-其他的一律无脑回车即可。
 
 #### 如果这个脚本帮到你了，麻烦点一下右上角的star小星星^_^
 
