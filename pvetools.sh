@@ -981,24 +981,61 @@ fi
 }
 
 chSubs(){
-    clear
-    case $L in
-        en )
-            echo -e "Remove subscribe notice."
-            ;;
-        zh )
-            echo -e "去除订阅提示"
-            ;;
+clear
+if [ $L = "en" ];then
+    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config Cpufrequtils:" 25 60 15 \
+    "a" "Remove subscribe notice." \
+    "b" "Unset config." \
+    3>&1 1>&2 2>&3)
+else
+    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "安装配置CPU省电" 25 60 15 \
+    "a" "去除订阅提示" \
+    "b" "还原配置" \
+    3>&1 1>&2 2>&3)
+fi
+exitstatus=$?
+if [ $exitstatus = 0 ]; then
+    case "$OPTION" in
+    a )
+        if(whiptail --title "Yes/No" --yesno "
+continue?
+是否去除订阅提示?
+            " 10 60 )then
+            if [ `grep "data.status !== 'Active'" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js|wc -l` = 1 ];then
+                sed -i.bak "s/data.status !== 'Active'/false/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+                whiptail --title "Success" --msgbox "
+Done!!
+去除成功！
+                " 10 60
+            else
+                whiptail --title "Success" --msgbox "
+You already removed.
+已经去除过了，不需要再次去除。
+                " 10 60
+            fi
+        fi
+        ;;
+    b )
+        if(whiptail --title "Yes/No" --yesno "
+continue?
+是否还原订阅提示?
+            " 10 60) then
+            if [ `grep "data.status !== 'Active'" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js|wc -l` = 0 ];then
+                mv /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js.bak /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+                whiptail --title "Success" --msgbox "
+Done!!
+还原成功！
+                " 10 60
+            else
+                whiptail --title "Success" --msgbox "
+You already removed.
+已经还原过了，不需要再次还原。
+                " 10 60
+            fi
+        fi
+        ;;
     esac
-    if [ `grep "data.status !== 'Active'" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js|wc -l` = 1 ];then
-        sed -i.bak "s/data.status !== 'Active'/false/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
-        echo "Done!!"
-        echo "去除成功！"
-    else
-        echo "You already removed." 
-        echo "已经去除过了，不需要再次去除。"
-   fi
-    sleep 2
+fi
 }
 chSmartd(){
   hds=`lsblk|grep "^[s,h]d[a-z]"|awk '{print $1}'`
@@ -1530,10 +1567,15 @@ fi
             ;;
 
         u )
+            {
+            echo 50
+            sleep 1
+            echo 100
+            $(
             git pull \
-            && echo "done!" \
-            && sleep 3 \
             && ./pvetools.sh
+            )
+            } |whiptail --gauge "updating when 100% type enter. 进度条满后回车" 10 60 0
             ;;
         L )
             if (whiptail --title "Yes/No Box" --yesno "Change Language?
