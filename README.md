@@ -22,7 +22,7 @@ apt update && apt -y install git && git clone https://github.com/ivanhao/pvetool
 cd pvetools
 ./pvetools.sh
 ```
-
+请按上面的方式来安装，不建议直接下载单sh脚本使用，因为那样更新的功能会无法使用！
 
 ### 卸载
 1. 删除下载的pvetools目录
