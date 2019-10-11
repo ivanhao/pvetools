@@ -453,9 +453,9 @@ if [ $exitstatus = 0 ]; then
        addFolder(){
         h=`grep "^\[[0-9a-zA-Z.-]*\]$" /etc/samba/smb.conf|awk 'NR>3{print $0}'|wc -l`
         if [ $h -lt 3 ];then
-            let h=h*15
+            let h=$h*15
         else
-            let h=h*5
+            let h=$h*5
         fi
         x=$(whiptail --title "Add Samba Share folder" --inputbox "
 Exist share folders:
@@ -534,9 +534,9 @@ Already configed！
         delFolder(){
         h=`grep "^\[[0-9a-zA-Z.-]*\]$" /etc/samba/smb.conf|awk 'NR>3{print $0}'|wc -l`
         if [ $h -lt 3 ];then
-            let h=h*15
+            let h=$h*15
         else
-            let h=h*5
+            let h=$h*5
         fi
         n=$(whiptail --title "Remove Samba Share folder" --inputbox "
 Exist share folders:
@@ -1047,9 +1047,9 @@ unsetVmN(){
     list=`qm list|awk 'NR>1{print $1":"$2"......."$3" "}'`
     ls=`for i in $list;do echo $i|awk -F ":" '{print $1" "$2}';done`
     h=`echo $ls|wc -l`
-    let h=h*1
+    let h=$h*1
     if [ $h -lt 30 ];then
-        let h=30
+        h=30
     fi
     list1=`echo $list|awk 'NR>1{print $1}'`
     vmid=$(whiptail --scrolltext --title " PveTools   Version : 2.0 " --menu "
@@ -1099,9 +1099,9 @@ setVmN(){
     list=`qm list|awk 'NR>1{print $1":"$2"......."$3" "}'`
     ls=`for i in $list;do echo $i|awk -F ":" '{print $1" "$2}';done`
     h=`echo $ls|wc -l`
-    let h=h*1
+    let h=$h*1
     if [ $h -lt 30 ];then
-        let h=30
+        h=30
     fi
     list1=`echo $list|awk 'NR>1{print $1}'`
     vmid=$(whiptail --scrolltext --title " PveTools   Version : 2.0 " --menu "
