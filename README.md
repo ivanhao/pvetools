@@ -54,6 +54,10 @@ cd pvetools
 ## 如果觉得好的请捐赠一下^_^
 ![pay](./pay.jpg)
 
+感谢捐赠人员！
+捐赚列表：
+杨惠(qq)    
+
 ### install
 
 ##### for english user:
