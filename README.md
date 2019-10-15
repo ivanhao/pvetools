@@ -55,8 +55,10 @@ cd pvetools
 ![pay](./pay.jpg)
 
 感谢捐赠人员！
+
 捐赚列表：
-杨惠(qq)    
+
+杨惠(来源qq)    
 
 ### install
 
