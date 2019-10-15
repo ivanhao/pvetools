@@ -1128,7 +1128,13 @@ you choose: $vmid ,continue?
             done
             if [ `qm showcmd $vmid|grep "+vmx"|wc -l` = 0 ];then
                 args=`qm showcmd $vmid|grep "\-cpu [0-9a-zA-Z,+_]*" -o`
-                sed "/boot:/a\args: $args,+vmx" -i /etc/pve/qemu-server/$vmid.conf
+                for i in 'boot:' 'memory:' 'core:';do
+                    if [ `grep '^'$i /etc/pve/qemu-server/$vmid.conf|wc -l` -gt 0 ];then
+                        con=$i
+                        break
+                    fi
+                done
+                sed "/"$con"/a\args: $args,+vmx" -i /etc/pve/qemu-server/$vmid.conf
                 #echo "args: "$args",+vmx" >> /etc/pve/qemu-server/$vmid.conf
                 whiptail --title "Success" --msgbox "
     Nested OK.Please reboot your vm.
