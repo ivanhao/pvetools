@@ -824,8 +824,8 @@ OK
     c )
         if (whiptail --title "Enable/Disable pvestatd" --yes-button "停止(Disable)" --no-button "启动(Enable)"  --yesno "
 pvestatd may spinup the drivers,if hdspindown can not effective, you can disable it to make drives to spindown.
-pvestatd 可能会造成硬盘频繁唤醒从来导致hdspindown无法让你的硬盘休眠，如果需要，你可以在这里停止这个服务。
-停止这个服务，在web界面中概要页签的数据将不会刷新，但是不影响其他任何功能的正常使用。
+使用lvm的时候pvestatd 可能会造成硬盘频繁唤醒从而导致hdspindown无法让你的硬盘休眠，如果需要，你可以在这里停止这个服务。
+停止这个服务，在web界面将会显示一些异常，如果需要在web界面进行操作，可以再启动这个服务。这个操作不是必须的，要自己灵活应用。
         " 20 60) then
         {
             pvestatd stop
