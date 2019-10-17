@@ -773,12 +773,14 @@ doSpindown(){
 if [ $L = "en" ];then
     OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config hard disks spindown:" 25 60 15 \
     "a" "Config hard drives to auto spindown." \
-    "b" "Remove config spindown." \
+    "b" "Remove config hdspindown." \
+    "c" "Config pvestatd service(in case of spinup drives)." \
     3>&1 1>&2 2>&3)
 else
     OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "配置硬盘自动休眠" 25 60 15 \
     "a" "配置硬盘自动休眠" \
-    "b" "还原配置" \
+    "b" "还原硬盘自动休眠配置" \
+    "c" "配置pvestatd服务（防止休眠后马上被唤醒）。" \
     3>&1 1>&2 2>&3)
 fi
 if [ $1 ];then
@@ -818,6 +820,26 @@ OK
         else
             chSpindown
         fi
+        ;;
+    c )
+        if (whiptail --title "Enable/Disable pvestatd" --yes-button "停止(Disable)" --no-button "启动(Enable)"  --yesno "
+pvestatd may spinup the drivers,if hdspindown can not effective, you can disable it to make drives to spindown.
+pvestatd 可能会造成硬盘频繁唤醒从来导致hdspindown无法让你的硬盘休眠，如果需要，你可以在这里停止这个服务。
+停止这个服务，在web界面中概要页签的数据将不会刷新，但是不影响其他任何功能的正常使用。
+        " 20 60) then
+        {
+            pvestatd stop
+            echo 100
+            sleep 1
+        }|whiptail --gauge "configing..." 10 60 50
+        else
+        {
+            pvestatd start
+            echo 100
+            sleep 1
+        }|whiptail --gauge "configing..." 10 60 50
+        fi
+        ;;
     esac
 fi
 }
