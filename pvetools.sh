@@ -1542,11 +1542,11 @@ Your hardware do not support PCI Passthrough(No IOMMU)
         echo 100
         sleep 1
         }|whiptail --gauge "installing..." 10 60 10
-    fi
-    whiptail --title "Success" --msgbox "
+        whiptail --title "Success" --msgbox "
 need to reboot to apply! Please reboot.  
 安装好后需要重启系统，请稍后重启。
-    " 10 60
+        " 10 60
+    fi
 else
     main
 fi
