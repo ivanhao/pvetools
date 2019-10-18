@@ -1517,7 +1517,7 @@ disable PCI Passthrough(need reboot host)?
 是否关闭硬件直通支持（需要重启物理机）?
 " --defaultno 10 60) then
     if [ `dmesg | grep -e DMAR -e IOMMU|wc -l` = 0 ];then
-        whiptail --title "Warnning" --msgbox "
+        whiptail --title "Warnning" --yesno "
 Your hardware do not support PCI Passthrough(No IOMMU)
 您的硬件不支持直通！
 " 10 60
