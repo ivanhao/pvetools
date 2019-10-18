@@ -1480,10 +1480,13 @@ Your hardware do not support PCI Passthrough(No IOMMU)
         iommu='intel_iommu=on'
     fi
     if [ `grep $iommu /etc/default/grub|wc -l` = 0 ];then
-    {
         sed -i.bak 's|quiet|quiet '$iommu'|' /etc/default/grub 
-        echo 30
+    {
+        echo 50
 #        update-grub
+        echo 100
+        sleep 1
+        }|whiptail --gauge "installing..." 10 60 10
         if [ `grep "vfio" /etc/modules|wc -l` = 0 ];then
             cat <<EOF >> /etc/modules
 vfio
@@ -1492,9 +1495,6 @@ vfio_pci
 vfio_virqfd
 EOF
         fi
-        echo 100
-        sleep 1
-        }|whiptail --gauge "installing..." 10 60 10
         whiptail --title "Success" --msgbox "
     need to reboot to apply! Please reboot.  
     安装好后需要重启系统，请稍后重启。
@@ -1537,7 +1537,8 @@ Your hardware do not support PCI Passthrough(No IOMMU)
         sed -i 's/ '$iommu'//g' /etc/default/grub 
         echo 30
 #        update-grub
-        sed -i 's/vfio/d' /etc/modules
+        echo 80
+        sed -i '/vfio/d' /etc/modules
         echo 100
         sleep 1
         }|whiptail --gauge "installing..." 10 60 10
