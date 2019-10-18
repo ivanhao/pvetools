@@ -1195,8 +1195,10 @@ if [ $exitstatus = 0 ]; then
     case "$x" in
         a )
             if(whiptail --title "Yes/No" --yesno "
-Are you sure to enable Nested? (Y/n):
-确定要开启嵌套虚拟化吗？(Y/n):
+Are you sure to enable Nested?
+It will stop all your runnging vms (Y/n):
+确定要开启嵌套虚拟化吗？
+这个操作会停止你现在所有运行中的虚拟机!(Y/n):
             " 10 60) then
                 if [ `cat /sys/module/kvm_intel/parameters/nested` = 'N' ];then
                     for i in `qm list|awk 'NR>1{print $1}'`;do
