@@ -1567,12 +1567,7 @@ exitstatus=$?
 if [ $exitstatus = 0 ]; then
     case "$x" in
     a )
-        if(whiptail --title "Yes/No" --yesno "
-You will config IOMMU on, continue?(y/n)
-您将配置开启物理机硬件直通支持，是否继续？(y/n)
-            " 10 60) then
-            enablePass
-        fi
+        enablePass
         ;;
     b )
         disablePass
