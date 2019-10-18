@@ -1483,7 +1483,7 @@ Your hardware do not support PCI Passthrough(No IOMMU)
         sed -i.bak 's|quiet|quiet '$iommu'|' /etc/default/grub 
     {
         echo 50
-        update-grub
+        update-grub 2>&1 &
         echo 100
         sleep 1
         }|whiptail --gauge "installing..." 10 60 10
@@ -1536,7 +1536,7 @@ Your hardware do not support PCI Passthrough(No IOMMU)
     {
         sed -i 's/ '$iommu'//g' /etc/default/grub 
         echo 30
-        update-grub
+        update-grub 2>&1 &
         echo 80
         sed -i '/vfio/d' /etc/modules
         echo 100
@@ -1719,7 +1719,7 @@ fi
             sleep 1
             echo 100
             $(
-            git pull \
+            git pull 2>&1 &\
             && ./pvetools.sh
             )
             } |whiptail --gauge "updating when 100% type enter. 进度条满后回车" 10 60 0
