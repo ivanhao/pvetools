@@ -1467,7 +1467,6 @@ if(whiptail --title "Yes/No Box" --yesno "
 Enable PCI Passthrough(need reboot host)?
 是否开启硬件直通支持（需要重启物理机）?
 " --defaultno 10 60) then
-{
     if [ `dmesg | grep -e DMAR -e IOMMU|wc -l` = 0 ];then
         whiptail --title "Warnning" --msgbox "
 Your hardware do not support PCI Passthrough(No IOMMU)
@@ -1481,6 +1480,7 @@ Your hardware do not support PCI Passthrough(No IOMMU)
         iommu='intel_iommu=on'
     fi
     if [ `grep $iommu /etc/default/grub|wc -l` = 0 ];then
+    {
         sed -i.bak 's|quiet|quiet '$iommu'|' /etc/default/grub 
         echo 30
 #        update-grub
@@ -1492,6 +1492,9 @@ vfio_pci
 vfio_virqfd
 EOF
         fi
+        echo 100
+        sleep 1
+        }|whiptail --gauge "installing..." 10 60 10
         whiptail --title "Success" --msgbox "
     need to reboot to apply! Please reboot.  
     安装好后需要重启系统，请稍后重启。
@@ -1503,9 +1506,6 @@ You already configed!
 " 10 60
         chPassth
     fi
-    echo 100
-    sleep 1
-    }|whiptail --gauge "installing..." 10 60 10
 else
     main
 fi
@@ -1516,7 +1516,6 @@ if(whiptail --title "Yes/No Box" --yesno "
 disable PCI Passthrough(need reboot host)?
 是否关闭硬件直通支持（需要重启物理机）?
 " --defaultno 10 60) then
-{
     if [ `dmesg | grep -e DMAR -e IOMMU|wc -l` = 0 ];then
         whiptail --title "Warnning" --msgbox "
 Your hardware do not support PCI Passthrough(No IOMMU)
@@ -1534,18 +1533,19 @@ Your hardware do not support PCI Passthrough(No IOMMU)
 您还没有配置过该项" 10 60 
         chPassth
     else
+    {
         sed -i 's/ '$iommu'//g' /etc/default/grub 
         echo 30
 #        update-grub
         sed -i 's/vfio/d' /etc/modules
-        whiptail --title "Success" --msgbox "
-    need to reboot to apply! Please reboot.  
-    安装好后需要重启系统，请稍后重启。
-        " 10 60
+        echo 100
+        sleep 1
+        }|whiptail --gauge "installing..." 10 60 10
     fi
-    echo 100
-    sleep 1
-    }|whiptail --gauge "installing..." 10 60 10
+    whiptail --title "Success" --msgbox "
+need to reboot to apply! Please reboot.  
+安装好后需要重启系统，请稍后重启。
+    " 10 60
 else
     main
 fi
