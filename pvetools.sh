@@ -1572,7 +1572,9 @@ if [ $exitstatus = 0 ]; then
     b )
         disablePass
         ;;
-esac
+    esac
+else
+    main
 fi
 }
 #----------------------functions--end------------------#
