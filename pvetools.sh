@@ -1460,6 +1460,125 @@ Uninstall complete.
     esac
 fi
 }
+
+chPassth(){
+enablePass(){
+if(whiptail --title "Yes/No Box" --yesno "
+Enable PCI Passthrough(need reboot host)?
+是否开启硬件直通支持（需要重启物理机）?
+" --defaultno 10 60) then
+{
+    if [ `dmesg | grep -e DMAR -e IOMMU|wc -l` = 0 ];then
+        whiptail --title "Warnning" --msgbox "
+Your hardware do not support PCI Passthrough(No IOMMU)
+您的硬件不支持直通！
+" 10 60
+        chPassth
+    fi
+    if [ `cat /proc/cpuinfo|wc -l` = 0 ];then
+        iommu='amd_iommu=on'
+    else
+        iommu='intel_iommu=on'
+    fi
+    if [ `grep $iommu /etc/default/grub|wc -l` = 0 ];then
+        sed -i.bak 's|quiet|quiet '$iommu'|' /etc/default/grub 
+        echo 30
+#        update-grub
+        if [ `grep "vfio" /etc/modules|wc -l` = 0 ];then
+            cat <<EOF >> /etc/modules
+vfio
+vfio_iommu_type1
+vfio_pci
+vfio_virqfd
+EOF
+        fi
+        whiptail --title "Success" --msgbox "
+    need to reboot to apply! Please reboot.  
+    安装好后需要重启系统，请稍后重启。
+        " 10 60
+    else
+        whiptail --title "Warnning" --msgbox "
+You already configed!
+您已经配置过这个了!
+" 10 60
+        chPassth
+    fi
+    echo 100
+    sleep 1
+    }|whiptail --gauge "installing..." 10 60 10
+else
+    main
+fi
+}
+
+disablePass(){
+if(whiptail --title "Yes/No Box" --yesno "
+disable PCI Passthrough(need reboot host)?
+是否关闭硬件直通支持（需要重启物理机）?
+" --defaultno 10 60) then
+{
+    if [ `dmesg | grep -e DMAR -e IOMMU|wc -l` = 0 ];then
+        whiptail --title "Warnning" --msgbox "
+Your hardware do not support PCI Passthrough(No IOMMU)
+您的硬件不支持直通！
+" 10 60
+        chPassth
+    fi
+    if [ `cat /proc/cpuinfo|wc -l` = 0 ];then
+        iommu='amd_iommu=on'
+    else
+        iommu='intel_iommu=on'
+    fi
+    if [ `grep $iommu /etc/default/grub|wc -l` = 0 ];then
+        whiptail --title "Warnning" --msgbox "not config yet.
+您还没有配置过该项" 10 60 
+        chPassth
+    else
+        sed -i 's/ '$iommu'//g' /etc/default/grub 
+        echo 30
+#        update-grub
+        sed -i 's/vfio/d' /etc/modules
+        whiptail --title "Success" --msgbox "
+    need to reboot to apply! Please reboot.  
+    安装好后需要重启系统，请稍后重启。
+        " 10 60
+    fi
+    echo 100
+    sleep 1
+    }|whiptail --gauge "installing..." 10 60 10
+else
+    main
+fi
+}
+clear
+if [ $L = "en" ];then
+    x=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config PCI Passthrough:" 25 60 15 \
+    "a" "Config IOMMU on." \
+    "b" "Config IOMMU off." \
+    3>&1 1>&2 2>&3)
+else
+    x=$(whiptail --title " PveTools   Version : 2.0 " --menu "配置硬件直通:" 25 60 15 \
+    "a" "配置开启物理机硬件直通支持。" \
+    "b" "配置关闭物理机硬件直通支持。" \
+    3>&1 1>&2 2>&3)
+fi
+exitstatus=$?
+if [ $exitstatus = 0 ]; then
+    case "$x" in
+    a )
+        if(whiptail --title "Yes/No" --yesno "
+You will config IOMMU on, continue?(y/n)
+您将配置开启物理机硬件直通支持，是否继续？(y/n)
+            " 10 60) then
+            enablePass
+        fi
+        ;;
+    b )
+        disablePass
+        ;;
+esac
+fi
+}
 #----------------------functions--end------------------#
 
 
@@ -1577,8 +1696,8 @@ fi
             main
             ;;
         i )
-            echo "not support yet."
-            sleep 2
+            #echo "not support yet."
+            chPassth
             main
             ;;
         j )
