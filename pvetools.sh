@@ -1593,11 +1593,10 @@ $(echo $cards) \
 3>&1 1>&2 2>&3)
     exitstatus=$?
     if [ $exitstatus = 0 ];then
-        echo $i"1"
         ids=""
         for i in $DISTROS
         do
-            echo $i
+            echo $i >> id
             ids=`lspci -n -s $i|awk '{print ","$3}'>>ids`
         done
         #whiptail --title "Success" --msgbox $ids 10 60
