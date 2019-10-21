@@ -1582,14 +1582,15 @@ your host not enable IOMMU,jump to enable?
     fi
 
 fi
+}
 
 getVideo(){
     cards=`lspci |grep -e VGA`
     cards=`echo $cards |awk -F '.' '{print $1" " }'``echo $cards|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'``echo " OFF"`
     DISTROS=$(whiptail --title "Video cards:" --checklist \
-    "Choose cards to config?" 15 90 4 \
-    $(echo $cards) \
-    3>&1 1>&2 2>&3)
+"Choose cards to config?" 15 90 4 \
+$(echo $cards) \
+3>&1 1>&2 2>&3)
     exitstatus=$?
     if [ $exitstatus = 0 ];then
         ids=""
@@ -1600,8 +1601,6 @@ getVideo(){
     else
         configVideo
     fi
-
-}
 }
 
 disVideo(){
