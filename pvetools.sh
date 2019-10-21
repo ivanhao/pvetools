@@ -1598,6 +1598,7 @@ $(echo $cards) \
         do
             ids=`echo $(ids)``lspci -n -s $i|awk '{print ","$3}'`
         done
+        ehco $ids>ids
         whiptail --title "Success" --msgbox $ids 10 60
     else
         configVideo
