@@ -1594,8 +1594,9 @@ $(echo $cards) \
     exitstatus=$?
     if [ $exitstatus = 0 ];then
         ids=""
-        for i in $DISTROS;do
-            ids=$ids","lspci -n -s $i|awk '{print $3}'
+        for i in $DISTROS
+        do
+            ids=$ids","`lspci -n -s $i|awk '{print $3}'`
         done
         whiptail --title "Success" --msgbox $ids 10 60
     else
