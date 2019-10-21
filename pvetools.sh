@@ -1,8 +1,8 @@
 #!/bin/bash
 #############--proxmox tools--##########################
-#  Author : 龙天ivan                        
+#  Author : 龙天ivan
 #  Mail: ivanhao1984@qq.com
-#  Version: V2.0                          
+#  Version: V2.0.1
 #  Github: https://github.com/ivanhao/pvetools
 ########################################################
 
@@ -120,7 +120,7 @@ if [ ! $sver ];then
     main
 fi
 if [ $L = "en" ];then
-    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config apt source:" 25 60 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "Config apt source:" 25 60 15 \
     "a" "Automation mode." \
     "b" "Change to ustc.edu.cn." \
     "c" "Disable enterprise." \
@@ -128,7 +128,7 @@ if [ $L = "en" ];then
     "q" "Main menu." \
     3>&1 1>&2 2>&3)
 else
-    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "配置apt镜像源:" 25 60 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "配置apt镜像源:" 25 60 15 \
     "a" "无脑模式" \
     "b" "更换为国内ustc.edu.cn源" \
     "c" "关闭企业更新源" \
@@ -399,14 +399,14 @@ chSamba(){
 #config samba
 clear
 if [ $L = "en" ];then
-    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config samba:" 25 60 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "Config samba:" 25 60 15 \
     "a" "Install samba and config user." \
     "b" "Add folder to share." \
     "c" "Delete folder to share." \
     "q" "Main menu." \
     3>&1 1>&2 2>&3)
 else
-    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "配置samba:" 25 60 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "配置samba:" 25 60 15 \
     "a" "安装配置samba并配置好samba用户" \
     "b" "添加共享文件夹" \
     "c" "删除共享文件夹" \
@@ -585,13 +585,13 @@ fi
 chVim(){
 #config vim
 if [ $L = "en" ];then
-    x=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config VIM:" 12 60 4 \
+    x=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "Config VIM:" 12 60 4 \
     "a" "Install vim & simply config display." \
     "b" "Install vim & config 'vim-for-server'." \
     "c" "Uninstall." \
     3>&1 1>&2 2>&3)
 else
-    x=$(whiptail --title " PveTools   Version : 2.0 " --menu "安装配置VIM！" 12 60 4 \
+    x=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "安装配置VIM！" 12 60 4 \
     "a" "安装VIM并简单配置，如配色行号等。" \
     "b" "安装VIM并配置'vim-for-server'。" \
     "c" "还原配置。" \
@@ -771,13 +771,13 @@ doSpindown(){
 }
 
 if [ $L = "en" ];then
-    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config hard disks spindown:" 25 60 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "Config hard disks spindown:" 25 60 15 \
     "a" "Config hard drives to auto spindown." \
     "b" "Remove config hdspindown." \
     "c" "Config pvestatd service(in case of spinup drives)." \
     3>&1 1>&2 2>&3)
 else
-    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "配置硬盘自动休眠" 25 60 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "配置硬盘自动休眠" 25 60 15 \
     "a" "配置硬盘自动休眠" \
     "b" "还原硬盘自动休眠配置" \
     "c" "配置pvestatd服务（防止休眠后马上被唤醒）。" \
@@ -943,12 +943,12 @@ fi
 }
 #-------------chCpu--main---------------
 if [ $L = "en" ];then
-    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config Cpufrequtils:" 25 60 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "Config Cpufrequtils:" 25 60 15 \
     "a" "Config cpufrequtils to save power." \
     "b" "Remove config." \
     3>&1 1>&2 2>&3)
 else
-    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "安装配置CPU省电" 25 60 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "安装配置CPU省电" 25 60 15 \
     "a" "安装配置CPU省电" \
     "b" "还原配置" \
     3>&1 1>&2 2>&3)
@@ -1005,12 +1005,12 @@ fi
 chSubs(){
 clear
 if [ $L = "en" ];then
-    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config Cpufrequtils:" 25 60 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "Config Cpufrequtils:" 25 60 15 \
     "a" "Remove subscribe notice." \
     "b" "Unset config." \
     3>&1 1>&2 2>&3)
 else
-    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "安装配置CPU省电" 25 60 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "安装配置CPU省电" 25 60 15 \
     "a" "去除订阅提示" \
     "b" "还原配置" \
     3>&1 1>&2 2>&3)
@@ -1074,7 +1074,7 @@ unsetVmN(){
         h=30
     fi
     list1=`echo $list|awk 'NR>1{print $1}'`
-    vmid=$(whiptail --scrolltext --title " PveTools   Version : 2.0 " --menu "
+    vmid=$(whiptail --scrolltext --title " PveTools   Version : 2.0.1 " --menu "
 Choose vmid to unset nested:
 选择需要关闭嵌套虚拟化的vm：" 25 60 15 \
     $(echo $ls) \
@@ -1126,7 +1126,7 @@ setVmN(){
         h=30
     fi
     list1=`echo $list|awk 'NR>1{print $1}'`
-    vmid=$(whiptail --scrolltext --title " PveTools   Version : 2.0 " --menu "
+    vmid=$(whiptail --scrolltext --title " PveTools   Version : 2.0.1 " --menu "
 Choose vmid to set nested:
 选择需要配置嵌套虚拟化的vm：" 25 60 15 \
     $(echo $ls) \
@@ -1176,14 +1176,14 @@ you choose: $vmid ,continue?
     fi
 }
 if [ $L = "en" ];then
-    x=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config Nested:" 25 60 15 \
+    x=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "Config Nested:" 25 60 15 \
     "a" "Enable nested" \
     "b" "Set vm to nested" \
     "c" "Unset vm nested" \
     "d" "Disable nested" \
     3>&1 1>&2 2>&3)
 else
-    x=$(whiptail --title " PveTools   Version : 2.0 " --menu "配置嵌套虚拟化:" 25 60 15 \
+    x=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "配置嵌套虚拟化:" 25 60 15 \
     "a" "开启嵌套虚拟化" \
     "b" "开启某个虚拟机的嵌套虚拟化" \
     "c" "关闭某个虚拟机的嵌套虚拟化" \
@@ -1278,12 +1278,12 @@ chSensors(){
 #for i in `sed -n '/Chip drivers/,/\#----cut here/p' /tmp/sensors|sed '/Chip /d'|sed '/cut/d'`;do modprobe $i;done
 clear
 if [ $L = "en" ];then
-    x=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config lm-sensors & proxmox ve display:" 25 60 15 \
+    x=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "Config lm-sensors & proxmox ve display:" 25 60 15 \
     "a" "Install." \
     "b" "Uninstall." \
     3>&1 1>&2 2>&3)
 else
-    x=$(whiptail --title " PveTools   Version : 2.0 " --menu "配置samba:" 25 60 15 \
+    x=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "配置samba:" 25 60 15 \
     "a" "安装配置温度显示" \
     "b" "删除配置" \
     3>&1 1>&2 2>&3)
@@ -1462,6 +1462,8 @@ fi
 }
 
 chPassth(){
+
+#--------------funcs-start----------------
 enablePass(){
 if(whiptail --title "Yes/No Box" --yesno "
 Enable PCI Passthrough(need reboot host)?
@@ -1554,23 +1556,115 @@ fi
 
 enVideo(){
 clear
+if [ `dmesg | grep -e DMAR -e IOMMU|wc -l` = 0 ];then
+    whiptail --title "Warnning" --msgbox "
+Your hardware do not support PCI Passthrough(No IOMMU)
+您的硬件不支持直通！
+" 10 60
+    configVideo
+fi
+if [ `grep 'IOMMU=on'|wc -l` = 0 ];then
+    if(whiptail --title "Warnning" --yesno "
+your host not enable IOMMU,jump to enable?
+您的主机系统尚未配置直通支持，跳转去设置？
+    " 10 60)then
+        enablePass
+    else
+        configVideo
+    fi
+fi
+if [ `grep 'vfio' /etc/modules|wc -l` = 0 ];then
+    if(whiptail --title "Warnning" --yesno "
+your host not enable IOMMU,jump to enable?
+您的主机系统尚未配置直通支持，跳转去设置？
+    " 10 60)then
+        enablePass
+    fi
+
+fi
+
+getVideo(){
+    cards=`lspci |grep -e VGA`
+    cards=`echo $cards |awk -F '.' '{print $1" " }'`echo $cards|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'``echo " OFF"``
+    DISTROS=$(whiptail --title "Video cards:" --checklist \
+    "Choose cards to config?" 15 90 4 \
+    $(echo $cards) \
+    3>&1 1>&2 2>&3)
+    exitstatus=$?
+    if [ $exitstatus = 0 ];then
+        ids=""
+        for i in $DISTROS;do
+            ids=$ids","lspci -n -s $i|awk '{print $3}'
+        done
+        echo $ids
+    else
+        configVideo
+    fi
+
+}
 }
 
 disVideo(){
-clear
+    clear
+
+}
+addVideo(){
+    clear
+    getVideo
+}
+rmVideo(){
+    clear
+
+}
+configVideo(){
+if [ $L = "en" ];then
+    x=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "Config PCI Video card Passthrough:" 25 60 15 \
+    "a" "Enable Video Card Passthrough" \
+    "b" "Enable Video Card Passthrough" \
+    "c" "Config Video Card Passthrough to vm" \
+    "d" "Remove Video Card Passthrough to vm" \
+    3>&1 1>&2 2>&3)
+else
+    x=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "配置PCI显卡直通:" 25 60 15 \
+    "a" "配置开启物理机硬件直通支持。" \
+    "b" "配置关闭物理机硬件直通支持。" \
+    "c" "添加配置显卡直通给虚拟机。" \
+    "d" "取消配置显卡直通给虚拟机。" \
+    3>&1 1>&2 2>&3)
+fi
+exitstatus=$?
+if [ $exitstatus = 0 ]; then
+    case "$x" in
+    a )
+        enVideo
+        ;;
+    b )
+        disVideo
+        ;;
+    c )
+        addVideo
+        ;;
+    d )
+        rmVideo
+        ;;
+    esac
+else
+    main
+fi
 }
 
 
-clear
+#--------------funcs-end----------------
+
 if [ $L = "en" ];then
-    x=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config PCI Passthrough:" 25 60 15 \
+    x=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "Config PCI Passthrough:" 25 60 15 \
     "a" "Config IOMMU on." \
     "b" "Config IOMMU off." \
     "c" "Config Video Card Passthrough" \
     "d" "Config Audio Card Passthrough" \
     3>&1 1>&2 2>&3)
 else
-    x=$(whiptail --title " PveTools   Version : 2.0 " --menu "配置硬件直通:" 25 60 15 \
+    x=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "配置硬件直通:" 25 60 15 \
     "a" "配置开启物理机硬件直通支持。" \
     "b" "配置关闭物理机硬件直通支持。" \
     "c" "配置显卡直通。" \
@@ -1581,14 +1675,17 @@ exitstatus=$?
 if [ $exitstatus = 0 ]; then
     case "$x" in
     a )
-        enablePass
+        #enablePass
         ;;
     b )
         disablePass
         ;;
     c )
-
+        echo "ok"
+        sleep 3
         ;;
+    d )
+        echo ""
     esac
 else
     main
@@ -1618,7 +1715,9 @@ fi
 main(){
 clear
 if [ $L = "en" ];then
-    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "Please choose:" 25 60 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "
+Github: https://github.com/ivanhao/pvetools
+Please choose:" 25 60 15 \
     "b" "Config apt source(change to ustc.edu.cn and so on)." \
     "c" "Install & config samba." \
     "d" "Install mailutils and config root email." \
@@ -1634,7 +1733,9 @@ if [ $L = "en" ];then
     "L" "Change Language." \
     3>&1 1>&2 2>&3)
 else
-    OPTION=$(whiptail --title " PveTools   Version : 2.0 " --menu "请选择相应的配置：" 25 60 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "
+Github: https://github.com/ivanhao/pvetools
+请选择相应的配置：" 25 60 15 \
     "b" "配置apt源(更换为ustc.edu.cn,去除企业源等)" \
     "c" "安装配置samba" \
     "d" "安装配置root邮件通知" \
@@ -1760,153 +1861,6 @@ fi
     else
         exit
     fi
-}
-main1(){
-clear
-if [[ $1 = "en" || $1 = "zh" ]];then
-    L=$1
-fi
-if [ $L = "en" ];then
-  echo -e "Version : 1.3"
-  echo -e "Please input to choose:"
-  echo -e "[a] Guide install."
-  echo -e "[b] Config apt source(change to ustc.edu.cn and so on)."
-  echo -e "[c] Install & config samba."
-  echo -e "[d] Install mailutils and config root email."
-  echo -e "[e] Config zfs_arc_max & Install zfs-zed."
-  echo -e "[f] Install & config VIM."
-  echo -e "[g] Install cpufrequtils to save power."
-  echo -e "[h] Config hard disks to spindown."
-  echo -e "[i] Config PCI hardware pass-thrugh."
-  echo -e "[j] Config web interface to display sensors data."
-  echo -e "[k] Config enable Nested virtualization."
-  echo -e "[l] Remove subscribe notice."
-  echo -e "[u] Upgrade this script to new version."
-  echo -e "[L] Change Language."
-  echo -e "[exit|q] Quit."
-  echo -e "Input:"
-else
-  echo -e "Version : 1.3"
-  echo -e "请输入序号选择相应的配置："
-  echo -e "[a] 无脑引导安装"
-  echo -e "[b] 配置apt源(更换为ustc.edu.cn,去除企业源等)(100%)"
-  echo -e "[c] 安装配置samba(100%)"
-  echo -e "[d] 安装配置root邮件通知(100%)"
-  echo -e "[e] 安装配置zfs最大内存及zed通知(100%)"
-  echo -e "[f] 安装配置VIM(100%)"
-  echo -e "[g] 安装配置CPU省电(100%)"
-  echo -e "[h] 安装配置硬盘休眠(100%)"
-  echo -e "[i] 配置PCI硬件直通(0%)"
-  echo -e "[j] 配置pve的web界面显示传感器温度(100%)"
-  echo -e "[k] 配置开启嵌套虚拟化(100%)"
-  echo -e "[l] 去除订阅提示(100%)"
-  echo -e "[u] 升级该pvetools脚本到最新版本"
-  echo -e "[L] Change Language"
-  echo -e "[exit|q] 退出"
-  echo -e "Input:"
-fi
-read i
-case "$i" in 
-a | A )
-    echo "Not support!Please choose other options."
-    echo "本版本已不支持无脑更新，请选择具体项目进行操作！"
-    sleep 3
-    main
-    chSource wn
-    chSamba wn
-    chMail wn
-#    chZfs wn
-    chVim wn
-#    chCpu wn
-    chSpindown wn
-    chNestedV wn
-    chSubs wn
-    chSensors wn
-    echo "Config complete!Back to main menu 5s later."
-    echo "已经完成配置！5秒后返回主界面。"
-    echo "5"
-    sleep 1
-    echo "4"
-    sleep 1
-    echo "3"
-    sleep 1
-    echo "2"
-    sleep 1
-    echo "1"
-    sleep 1
-    main
-    ;;
-b | B )
-    chSource
-    main
-    ;;
-c | C )
-    chSamba
-    main
-    ;;
-d | D )
-    chMail
-    main
-    ;;
-e | E )
-    chZfs
-    main
-    ;;
-f | F )
-    chVim
-    main
-    ;;
-g | G )
-    chCpu
-    main
-    ;;
-h | H )
-    chSpindown
-    main
-    ;;
-i | I )
-    echo "not support yet."
-    sleep 2
-    main
-    ;;
-j | J )
-    chSensors
-    sleep 2
-    main
-    ;;
-k | K )
-    clear
-    chNestedV
-    main
-    ;;
-l | L )
-    chSubs
-    main
-    ;;
-
-u )
-    git pull \
-    && echo "done!" \
-    && sleep 3 \
-    && ./pvetools.sh
-    ;;
-L )
-    if [ $L = "zh" ];then
-        L="en"
-    else
-        L="zh"
-    fi
-    main
-    ;;
-exit | quit | q )
-    exit
-    ;;
-* )
-    echo "Please comfirm!"
-	echo "请重新输入!"
-    sleep 2
-    main
-esac
 }
 #----------------------functions--end------------------#
 #if [ `export|grep "zh_CN"|wc -l` = 0 ];then
