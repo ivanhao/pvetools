@@ -1609,7 +1609,6 @@ disVideo(){
 
 }
 addVideo(){
-    clear
     getVideo
 }
 rmVideo(){
@@ -1642,7 +1641,8 @@ if [ $exitstatus = 0 ]; then
         disVideo
         ;;
     c )
-        addVideo
+        #addVideo
+        getVideo
         ;;
     d )
         rmVideo
