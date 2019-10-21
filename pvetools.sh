@@ -1675,14 +1675,13 @@ exitstatus=$?
 if [ $exitstatus = 0 ]; then
     case "$x" in
     a )
-        #enablePass
+        enablePass
         ;;
     b )
         disablePass
         ;;
     c )
-        echo "ok"
-        sleep 3
+        configVideo
         ;;
     d )
         echo ""
