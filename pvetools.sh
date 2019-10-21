@@ -1596,10 +1596,9 @@ $(echo $cards) \
         ids=""
         for i in $DISTROS
         do
-            ids=`echo $(ids)``lspci -n -s $i|awk '{print ","$3}'`
+            ids=`lspci -n -s $i|awk '{print ","$3}'>>ids`
         done
-        ehco $ids>ids
-        whiptail --title "Success" --msgbox $ids 10 60
+        #whiptail --title "Success" --msgbox $ids 10 60
     else
         configVideo
     fi
