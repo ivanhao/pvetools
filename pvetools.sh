@@ -1566,15 +1566,15 @@ if [ $L = "en" ];then
     x=$(whiptail --title " PveTools   Version : 2.0 " --menu "Config PCI Passthrough:" 25 60 15 \
     "a" "Config IOMMU on." \
     "b" "Config IOMMU off." \
-    "c" "Config Video Card Passthrough"
-    "d" "Config Audio Card Passthrough"
+    "c" "Config Video Card Passthrough" \
+    "d" "Config Audio Card Passthrough" \
     3>&1 1>&2 2>&3)
 else
     x=$(whiptail --title " PveTools   Version : 2.0 " --menu "配置硬件直通:" 25 60 15 \
     "a" "配置开启物理机硬件直通支持。" \
     "b" "配置关闭物理机硬件直通支持。" \
-    "c" "配置显卡直通。"
-    "d" "配置声卡直通。"
+    "c" "配置显卡直通。" \
+    "d" "配置声卡直通。" \
     3>&1 1>&2 2>&3)
 fi
 exitstatus=$?
