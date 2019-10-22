@@ -1696,7 +1696,7 @@ $(echo $cards) \
                     fi
                 done
             done
-            list=`qm list|awk 'NR>1{print $1":"$2"......."$3" "}'`
+            list=`qm list|awk 'NR>1{print $1":"$2"       .......      "$3" "}'`
             ls=`for i in $list;do echo $i|awk -F ":" '{print $1" "$2" OFF"}';done`
             ls=`echo $ls|sed -n $confId 's/OFF/ON/p'`
             h=`echo $ls|wc -l`
