@@ -1477,9 +1477,9 @@ Your hardware do not support PCI Passthrough(No IOMMU)
         chPassth
     fi
     if [ `cat /proc/cpuinfo|wc -l` = 0 ];then
-        iommu='amd_iommu=on'
+        iommu='amd_iommu=on video=efifb:off'
     else
-        iommu='intel_iommu=on'
+        iommu='intel_iommu=on video=efifb:off'
     fi
     if [ `grep $iommu /etc/default/grub|wc -l` = 0 ];then
         sed -i.bak 's|quiet|quiet '$iommu'|' /etc/default/grub 
@@ -1579,7 +1579,7 @@ enVideo(){
             enablePass
         fi
     fi
-    getVideo en
+    getVideo
 
 }
 
@@ -1601,14 +1601,14 @@ $(echo $cards) \
     exitstatus=$?
     if [ $exitstatus = 0 ];then
         #--config-id---
-        ids=""
-        for i in $DISTROS
-        do
-            i=`echo $i|sed 's/\"//g'`
-            ids=$ids`lspci -n -s ${i}|awk '{print ","$3}'`
-        done
-        ids=`echo $ids|sed 's/^,//g'|sed 's/ ,/,/g'`
-        if [ $1 = "en" ];then
+        if [ $DISTROS ];then
+            ids=""
+            for i in $DISTROS
+            do
+                i=`echo $i|sed 's/\"//g'`
+                ids=$ids`lspci -n -s ${i}|awk '{print ","$3}'`
+            done
+            ids=`echo $ids|sed 's/^,//g'|sed 's/ ,/,/g'`
             if [ `grep $ids'$' /etc/modprobe.d/vfio.conf|wc -l` = 0 ];then
                 echo "options vfio-pci ids=$ids" > /etc/modprobe.d/vfio.conf
             else
@@ -1652,9 +1652,12 @@ $(echo $cards) \
     need to reboot to apply! Please reboot.  
     安装好后需要重启系统，请稍后重启。
             " 10 60
-        elif [ $1 = "dis" ];then
-            whiptail --title "Success" --msgbox "in" 10 60
-            clear
+        else
+            echo "" > /etc/modprobe.d/vfio.conf
+            for i in nvidiafb nouveau nvidia radeon amdgpu
+            do
+                sed -i '/'$i'/d' /etc/modprobe.d/pve-blacklist.conf 
+            done
         fi
     else
         configVideo
@@ -1675,15 +1678,15 @@ rmVideo(){
 configVideo(){
 if [ $L = "en" ];then
     x=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "Config PCI Video card Passthrough:" 25 60 15 \
-    "a" "Enable Video Card Passthrough" \
-    "b" "Enable Video Card Passthrough" \
+    "a" "Config Video Card Passthrough" \
+#    "b" "Enable Video Card Passthrough" \
     "c" "Config Video Card Passthrough to vm" \
     "d" "Remove Video Card Passthrough to vm" \
     3>&1 1>&2 2>&3)
 else
     x=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "配置PCI显卡直通:" 25 60 15 \
-    "a" "配置开启物理机显卡直通支持。" \
-    "b" "配置关闭物理机显卡直通支持。" \
+    "a" "配置物理机显卡直通支持。" \
+#    "b" "配置关闭物理机显卡直通支持。" \
     "c" "添加配置显卡直通给虚拟机。" \
     "d" "取消配置显卡直通给虚拟机。" \
     3>&1 1>&2 2>&3)
