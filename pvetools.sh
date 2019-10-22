@@ -1792,8 +1792,7 @@ if [ $exitstatus = 0 ]; then
         disVideo
         ;;
     c )
-        #addVideo
-        getVideo
+        addVideo
         ;;
     d )
         rmVideo
