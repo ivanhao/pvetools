@@ -1585,7 +1585,14 @@ enVideo(){
 
 getVideo(){
     cards=`lspci |grep -e VGA`
-    cards=`echo $cards |awk -F '.' '{print $1" " }'``echo $cards|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'``echo " OFF"`
+    cards=`echo $cards |awk -F '.' '{print $1" " }'``echo $cards|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'`
+    echo $cards > cards
+    id=`cat /etc/modprobe.d/vfio.conf|grep -o "ids=[0-9a-zA-Z,:]*"|awk -F "=" '{print $2}'|sed  's/,/ /g'|sort -u`
+    n=`for i in $id;do lspci -n -d $i|awk -F "." '{print $1}';done|sort -u` 
+    for i in $n
+    do
+        cards=`sed -i '/'$i'/ s/$/ ON/' cards`
+    done
     DISTROS=$(whiptail --title "Video cards:" --checklist \
 "Choose cards to config?" 15 90 4 \
 $(echo $cards) \
@@ -1629,6 +1636,17 @@ $(echo $cards) \
                     }|whiptail --gauge "installing..." 10 60 10
                 fi
             fi
+            #--video=efifb:off--
+            if [ `grep 'video=efifb:off' /etc/default/grub|wc -l` = 0 ];then
+                sed -i.bak 's|quiet|quiet video=efifb:off|' /etc/default/grub 
+                update-grub
+            fi
+            {
+            echo 30
+            update-initramfs -u -k all
+            echo 100
+            sleep 1
+            }|whiptail --gauge "configing" 10 60 10
             whiptail --title "Success" --msgbox "
     need to reboot to apply! Please reboot.  
     安装好后需要重启系统，请稍后重启。
