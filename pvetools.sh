@@ -1593,14 +1593,14 @@ $(echo $cards) \
 3>&1 1>&2 2>&3)
     exitstatus=$?
     if [ $exitstatus = 0 ];then
+        ids=""
         for i in $DISTROS
         do
-            #echo $i >> id
             i=`echo $i|sed 's/\"//g'`
-            ids=`lspci -n -s ${i}|awk '{print ","$3}'`
-            echo $ids >> ids
+            ids=$ids`lspci -n -s ${i}|awk '{print ","$3}'`
         done
-        #whiptail --title "Success" --msgbox $ids 10 60
+        ids=`echo $ids|sed 's/^,//g'|sed 's/ ,/,/g'`
+        whiptail --title "Success" --msgbox $ids 10 60
     else
         configVideo
     fi
