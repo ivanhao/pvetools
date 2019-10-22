@@ -1563,7 +1563,7 @@ enVideo(){
     " 10 60
         configVideo
     fi
-    if [ `grep 'IOMMU=on'|wc -l` = 0 ];then
+    if [ `grep 'iommu=on' /etc/default/grub|wc -l` = 0 ];then
         if(whiptail --title "Warnning" --yesno "
     your host not enable IOMMU,jump to enable?
     您的主机系统尚未配置直通支持，跳转去设置？
