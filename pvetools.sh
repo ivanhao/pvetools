@@ -1585,14 +1585,15 @@ enVideo(){
 
 getVideo(){
     cards=`lspci |grep -e VGA`
-    cards=`echo $cards |awk -F '.' '{print $1" " }'``echo $cards|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'`
+    cards=`echo $cards |awk -F '.' '{print $1" " }'``echo $cards|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'``echo ' OFF'`
     echo $cards > cards
     id=`cat /etc/modprobe.d/vfio.conf|grep -o "ids=[0-9a-zA-Z,:]*"|awk -F "=" '{print $2}'|sed  's/,/ /g'|sort -u`
     n=`for i in $id;do lspci -n -d $i|awk -F "." '{print $1}';done|sort -u` 
     for i in $n
     do
-        cards=`sed -i '/'$i'/ s/$/ ON/' cards`
+        cards=`sed -n '/'$i'/ s/OFF/ON/p' cards`
     done
+    rm cards
     DISTROS=$(whiptail --title "Video cards:" --checklist \
 "Choose cards to config?" 15 90 4 \
 $(echo $cards) \
