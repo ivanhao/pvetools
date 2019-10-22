@@ -1555,33 +1555,31 @@ fi
 }
 
 enVideo(){
-clear
-if [ `dmesg | grep -e DMAR -e IOMMU|wc -l` = 0 ];then
-    whiptail --title "Warnning" --msgbox "
-Your hardware do not support PCI Passthrough(No IOMMU)
-您的硬件不支持直通！
-" 10 60
-    configVideo
-fi
-if [ `grep 'IOMMU=on'|wc -l` = 0 ];then
-    if(whiptail --title "Warnning" --yesno "
-your host not enable IOMMU,jump to enable?
-您的主机系统尚未配置直通支持，跳转去设置？
-    " 10 60)then
-        enablePass
-    else
+    clear
+    if [ `dmesg | grep -e DMAR -e IOMMU|wc -l` = 0 ];then
+        whiptail --title "Warnning" --msgbox "
+    Your hardware do not support PCI Passthrough(No IOMMU)
+    您的硬件不支持直通！
+    " 10 60
         configVideo
     fi
-fi
-if [ `grep 'vfio' /etc/modules|wc -l` = 0 ];then
-    if(whiptail --title "Warnning" --yesno "
-your host not enable IOMMU,jump to enable?
-您的主机系统尚未配置直通支持，跳转去设置？
-    " 10 60)then
-        enablePass
+    if [ `grep 'IOMMU=on'|wc -l` = 0 ];then
+        if(whiptail --title "Warnning" --yesno "
+    your host not enable IOMMU,jump to enable?
+    您的主机系统尚未配置直通支持，跳转去设置？
+        " 10 60)then
+            enablePass
+        fi
     fi
-
-fi
+    if [ `grep 'vfio' /etc/modules|wc -l` = 0 ];then
+        if(whiptail --title "Warnning" --yesno "
+    your host not enable IOMMU,jump to enable?
+    您的主机系统尚未配置直通支持，跳转去设置？
+        " 10 60)then
+            enablePass
+        fi
+    fi
+    getVideo
 }
 
 getVideo(){
@@ -1593,6 +1591,7 @@ $(echo $cards) \
 3>&1 1>&2 2>&3)
     exitstatus=$?
     if [ $exitstatus = 0 ];then
+        #--config-id---
         ids=""
         for i in $DISTROS
         do
@@ -1600,7 +1599,30 @@ $(echo $cards) \
             ids=$ids`lspci -n -s ${i}|awk '{print ","$3}'`
         done
         ids=`echo $ids|sed 's/^,//g'|sed 's/ ,/,/g'`
-        whiptail --title "Success" --msgbox $ids 10 60
+        echo "options vfio-pci ids=$ids" > /etc/modprobe.d/vfio.conf
+        #--config-blacklist--
+        for i in nvidiafb nouveau nvidia radeon amdgpu
+        do
+            if [ `grep $i /etc/modprobe.d/pve-blacklist.conf|wc -l` = 0 ];then
+                echo "blacklist "$i >> /etc/modprobe.d/pve-blacklist.conf
+            fi
+        done
+        #--iommu-groups--
+        if [ `find /sys/kernel/iommu_groups/ -type l|wc -l` = 0 ];then
+            if [ `grep 'pcie_acs_override=downstream' /etc/default/grub|wc -l` = 0 ];then
+                sed -i.bak 's|iommu=on|iommu=on 'pcie_acs_override=downstream'|' /etc/default/grub
+                {
+                echo 50
+                update-grub 2>&1 &
+                echo 100
+                sleep 1
+                }|whiptail --gauge "installing..." 10 60 10
+            fi
+        fi
+        whiptail --title "Success" --msgbox "
+need to reboot to apply! Please reboot.  
+安装好后需要重启系统，请稍后重启。
+        " 10 60
     else
         configVideo
     fi
