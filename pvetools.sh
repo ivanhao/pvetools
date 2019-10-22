@@ -1597,7 +1597,7 @@ $(echo $cards) \
         do
             #echo $i >> id
             #ids=`lspci -n -s ${i}|awk '{print ","$3}'`
-            lspci -n -s $i>>ids
+            lspci -n|grep '^$i' >>ids
             #echo $ids >> ids
         done
         #whiptail --title "Success" --msgbox $ids 10 60
