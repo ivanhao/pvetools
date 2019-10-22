@@ -1597,8 +1597,8 @@ $(echo $cards) \
         do
             echo $i >> id
             #ids=`lspci -n -s ${i}|awk '{print ","$3}'`
-            ids=`lspci -n -s $i`
-            echo $ids >> ids
+            lspci -n -s $i>>ids
+            #echo $ids >> ids
         done
         #whiptail --title "Success" --msgbox $ids 10 60
     else
