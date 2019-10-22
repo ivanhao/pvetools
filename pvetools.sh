@@ -1596,9 +1596,9 @@ $(echo $cards) \
         for i in $DISTROS
         do
             #echo $i >> id
-            #ids=`lspci -n -s ${i}|awk '{print ","$3}'`
-            lspci -n|grep ${i} >>ids
-            #echo $ids >> ids
+            i=`echo $i|sed 's/\"//g'`
+            ids=`lspci -n -s ${i}|awk '{print ","$3}'`
+            echo $ids >> ids
         done
         #whiptail --title "Success" --msgbox $ids 10 60
     else
