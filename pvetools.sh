@@ -1595,7 +1595,7 @@ $(echo $cards) \
     if [ $exitstatus = 0 ];then
         for i in $DISTROS
         do
-            echo $i >> id
+            #echo $i >> id
             #ids=`lspci -n -s ${i}|awk '{print ","$3}'`
             lspci -n -s $i>>ids
             #echo $ids >> ids
