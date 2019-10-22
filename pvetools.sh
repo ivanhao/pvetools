@@ -1593,7 +1593,6 @@ getVideo(){
     do
         cards=`sed -i '/'$i'/ s/$/ ON/' cards`
     done
-    rm cards
     DISTROS=$(whiptail --title "Video cards:" --checklist \
 "Choose cards to config?" 15 90 4 \
 $(echo $cards) \
