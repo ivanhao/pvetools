@@ -1706,8 +1706,8 @@ $(echo $cards) \
             fi
             list1=`echo $list|awk 'NR>1{print $1}'`
             vmid=$(whiptail --scrolltext --title " PveTools   Version : 2.0.1 " --radiolist "
-        Choose vmid to set nested:
-        选择需要配置嵌套虚拟化的vm：" 20 60 10 \
+        Choose vmid to set video card Passthrough:
+        选择需要配置显卡直通的vm：" 20 60 10 \
             $(echo $ls) \
             3>&1 1>&2 2>&3)
             exitstatus=$?
