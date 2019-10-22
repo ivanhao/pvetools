@@ -1653,11 +1653,17 @@ $(echo $cards) \
     安装好后需要重启系统，请稍后重启。
             " 10 60
         else
+            {
             echo "" > /etc/modprobe.d/vfio.conf
             for i in nvidiafb nouveau nvidia radeon amdgpu
             do
                 sed -i '/'$i'/d' /etc/modprobe.d/pve-blacklist.conf 
             done
+            echo 100
+            sleep 1
+            }|whiptail --gauge "configing..." 10 60 10
+            whiptail --title "Success" --msgbox "Done.
+配置完成" 10 60
         fi
     else
         configVideo
@@ -1669,7 +1675,94 @@ disVideo(){
     getVideo dis
 }
 addVideo(){
-    getVideo
+    cards=`lspci |grep -e VGA`
+    cards=`echo $cards |awk -F '.' '{print $1" " }'``echo $cards|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'``echo ' OFF'`
+    DISTROS=$(whiptail --title "Video cards:" --checklist \
+"Choose cards to config?" 15 90 4 \
+$(echo $cards) \
+    3>&1 1>&2 2>&3)
+    exitstatus=$?
+    if [ $exitstatus = 0 ];then
+        #--config-id---
+        if [ $DISTROS ];then
+            ids=""
+            for i in $DISTROS
+            do
+                confPath='/etc/pve/qemu-server/'
+                for j in `ls $confPath`
+                do
+                    if [ `grep $i $confPath$j|wc -l` -gt 0 ];then
+                        confId=`$j|awk -F '.' '{print $1}'`
+                    fi
+                done
+            done
+            list=`qm list|awk 'NR>1{print $1":"$2"......."$3" "}'`
+            ls=`for i in $list;do echo $i|awk -F ":" '{print $1" "$2" OFF"}';done`
+            ls=`echo $ls|sed $confId 's/OFF/ON/p'`
+            h=`echo $ls|wc -l`
+            let h=$h*1
+            if [ $h -lt 30 ];then
+                h=30
+            fi
+            list1=`echo $list|awk 'NR>1{print $1}'`
+            vmid=$(whiptail --scrolltext --title " PveTools   Version : 2.0.1 " --radiolist "
+        Choose vmid to set nested:
+        选择需要配置嵌套虚拟化的vm：" 25 60 15 \
+            $(echo $ls) \
+            3>&1 1>&2 2>&3)
+            exitstatus=$?
+            if [ $exitstatus = 0 ]; then
+                if(whiptail --title "Yes/No" --yesno "
+        you choose: $vmid ,continue?
+        你选的是：$vmid ，是否继续?
+                    " 10 60)then
+                    while [ true ]
+                    do
+                        if [ `echo "$vmid"|grep "^[0-9]*$"|wc -l` = 0 ];then
+                            whiptail --title "Warnning" --msgbox "
+            输入格式错误，请重新输入：
+                            " 10 60
+                            addVideo
+                        else
+                            break
+                        fi
+                    done
+                    whiptail --title "OK" --msgbox "ok" 10 60
+                    #if [ `qm showcmd $vmid|grep "+vmx"|wc -l` = 0 ];then
+                    #    args=`qm showcmd $vmid|grep "\-cpu [0-9a-zA-Z,+_]*" -o`
+                    #    for i in 'boot:' 'memory:' 'core:';do
+                    #        if [ `grep '^'$i /etc/pve/qemu-server/$vmid.conf|wc -l` -gt 0 ];then
+                    #            con=$i
+                    #            break
+                    #        fi
+                    #    done
+                    #    sed "/"$con"/a\args: $args,+vmx" -i /etc/pve/qemu-server/$vmid.conf
+                    #    #echo "args: "$args",+vmx" >> /etc/pve/qemu-server/$vmid.conf
+                    #    whiptail --title "Success" --msgbox "
+#            Nested OK.Please reboot your vm.
+#            您的虚拟机已经开启嵌套虚拟化支持。重启虚拟机后生效。
+                    #    " 10 60
+                    #else
+                    #    whiptail --title "Success" --msgbox "
+#            You alre#ady seted.Nothing to do.
+#            您的虚拟#机已经开启过嵌套虚拟化支持。
+                    #    " 10 60
+                    #fi
+                else
+                    configVideo
+                fi
+            else
+                configVideo
+            fi
+        else
+            whiptail --title "Warnning" --msgbox "
+Please choose a card.
+请选择一个显卡。" 10 60
+            addVideo
+        fi
+    else
+        configVideo
+    fi
 }
 rmVideo(){
     clear
