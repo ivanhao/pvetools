@@ -1579,7 +1579,7 @@ enVideo(){
             enablePass
         fi
     fi
-    getVideo
+    getVideo en
 
 }
 
@@ -1600,30 +1600,43 @@ $(echo $cards) \
             ids=$ids`lspci -n -s ${i}|awk '{print ","$3}'`
         done
         ids=`echo $ids|sed 's/^,//g'|sed 's/ ,/,/g'`
-        echo "options vfio-pci ids=$ids" > /etc/modprobe.d/vfio.conf
-        #--config-blacklist--
-        for i in nvidiafb nouveau nvidia radeon amdgpu
-        do
-            if [ `grep $i /etc/modprobe.d/pve-blacklist.conf|wc -l` = 0 ];then
-                echo "blacklist "$i >> /etc/modprobe.d/pve-blacklist.conf
+        if [ $1 = "en" ];then
+            if [ `grep $ids'$' /etc/modprobe.d/vfio.conf|wc -l` = 0 ];then
+                echo "options vfio-pci ids=$ids" > /etc/modprobe.d/vfio.conf
+            else
+                whiptail --title "Warnning" --msgbox "
+    It seems you have already configed it before.
+    您好像已经配置过这个了。
+                    " 10 60
+                    configVideo
             fi
-        done
-        #--iommu-groups--
-        if [ `find /sys/kernel/iommu_groups/ -type l|wc -l` = 0 ];then
-            if [ `grep 'pcie_acs_override=downstream' /etc/default/grub|wc -l` = 0 ];then
-                sed -i.bak 's|iommu=on|iommu=on 'pcie_acs_override=downstream'|' /etc/default/grub
-                {
-                echo 50
-                update-grub 2>&1 &
-                echo 100
-                sleep 1
-                }|whiptail --gauge "installing..." 10 60 10
+            #--config-blacklist--
+            for i in nvidiafb nouveau nvidia radeon amdgpu
+            do
+                if [ `grep '^blacklist '$i'$' /etc/modprobe.d/pve-blacklist.conf|wc -l` = 0 ];then
+                    echo "blacklist "$i >> /etc/modprobe.d/pve-blacklist.conf
+                fi
+            done
+            #--iommu-groups--
+            if [ `find /sys/kernel/iommu_groups/ -type l|wc -l` = 0 ];then
+                if [ `grep 'pcie_acs_override=downstream' /etc/default/grub|wc -l` = 0 ];then
+                    sed -i.bak 's|iommu=on|iommu=on 'pcie_acs_override=downstream'|' /etc/default/grub
+                    {
+                    echo 50
+                    update-grub 2>&1 &
+                    echo 100
+                    sleep 1
+                    }|whiptail --gauge "installing..." 10 60 10
+                fi
             fi
+            whiptail --title "Success" --msgbox "
+    need to reboot to apply! Please reboot.  
+    安装好后需要重启系统，请稍后重启。
+            " 10 60
+        elif [ $1 = "dis" ];then
+            whiptail --title "Success" --msgbox "in" 10 60
+            clear
         fi
-        whiptail --title "Success" --msgbox "
-need to reboot to apply! Please reboot.  
-安装好后需要重启系统，请稍后重启。
-        " 10 60
     else
         configVideo
     fi
@@ -1631,7 +1644,7 @@ need to reboot to apply! Please reboot.
 
 disVideo(){
     clear
-
+    getVideo dis
 }
 addVideo(){
     getVideo
