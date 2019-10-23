@@ -1701,6 +1701,7 @@ $(echo $cards) \
                 do
                     if [ `grep $i $confPath$j|wc -l` != 0 ];then
                         confId=`echo $j|awk -F '.' '{print $1}'`
+                        echo $confId > confiId
                     fi
                 done
             done
@@ -1772,7 +1773,8 @@ Choose options:
                                 else
                                     pcid=0
                                 fi
-                                sed -i "/"$con"/a\hostpci"$pcid":"$i" ,x-vga=1" $confPath$vmid.conf
+                                i=`echo $i|sed 's/\"//g'`
+                                sed -i "/"$con"/a\hostpci"$pcid": "$i",x-vga=1" $confPath$vmid.conf
                             else
                                 whiptail --title "Warnning" --msgbox "
 You already configed!
