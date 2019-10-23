@@ -1692,6 +1692,7 @@ $(echo $cards) \
     if [ $exitstatus = 0 ];then
         #--config-id---
         if [ $DISTROS ];then
+            DISTROS=`echo $DISTROS|sed -n 's/\"//g'`
             confPath='/etc/pve/qemu-server/'
             ids=""
             for i in $DISTROS
