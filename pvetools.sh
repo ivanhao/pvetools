@@ -1595,7 +1595,9 @@ getVideo(){
     done
     rm cards
     DISTROS=$(whiptail --title "Video cards:" --checklist \
-"Choose cards to config?" 15 90 4 \
+"Choose cards to config(* mark means configed):
+选择显卡（标*号为已经配置过的）：
+" 15 90 4 \
 $(echo $cards) \
 3>&1 1>&2 2>&3)
     exitstatus=$?
@@ -1696,6 +1698,7 @@ $(echo $cards) \
             ids=""
             for i in $DISTROS
             do
+                echo $i >> DISTROS
                 for j in `ls $confPath`
                 do
                     if [ `grep $i $confPath$j|wc -l` != 0 ];then
@@ -1827,14 +1830,12 @@ configVideo(){
 if [ $L = "en" ];then
     x=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "Config PCI Video card Passthrough:" 25 60 15 \
     "a" "Config Video Card Passthrough" \
-    "c" "Config Video Card Passthrough to vm" \
-    "d" "Remove Video Card Passthrough to vm" \
+    "b" "Config Video Card Passthrough to vm" \
     3>&1 1>&2 2>&3)
 else
     x=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "配置PCI显卡直通:" 25 60 15 \
     "a" "配置物理机显卡直通支持。" \
-    "c" "添加配置显卡直通给虚拟机。" \
-    "d" "取消配置显卡直通给虚拟机。" \
+    "b" "配置显卡直通给虚拟机。" \
     3>&1 1>&2 2>&3)
 fi
 exitstatus=$?
@@ -1844,13 +1845,7 @@ if [ $exitstatus = 0 ]; then
         enVideo
         ;;
     b )
-        disVideo
-        ;;
-    c )
         addVideo
-        ;;
-    d )
-        rmVideo
         ;;
     esac
 else
@@ -1866,14 +1861,12 @@ if [ $L = "en" ];then
     "a" "Config IOMMU on." \
     "b" "Config IOMMU off." \
     "c" "Config Video Card Passthrough" \
-    "d" "Config Audio Card Passthrough" \
     3>&1 1>&2 2>&3)
 else
     x=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "配置硬件直通:" 25 60 15 \
     "a" "配置开启物理机硬件直通支持。" \
     "b" "配置关闭物理机硬件直通支持。" \
     "c" "配置显卡直通。" \
-    "d" "配置声卡直通。" \
     3>&1 1>&2 2>&3)
 fi
 exitstatus=$?
