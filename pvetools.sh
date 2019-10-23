@@ -1782,8 +1782,8 @@ You already configed!
                                 rmVideo $confId $confPath $i
                             fi
                             whiptail --title "Success" --msgbox "
-Configed!
-配置成功！
+Configed!Please reboot vm.
+配置成功！重启虚拟机后生效。
                             " 10 60
                         done
                     fi
