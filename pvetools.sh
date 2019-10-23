@@ -1698,6 +1698,7 @@ $(echo $cards) \
             ids=""
             for i in $DISTROS
             do
+
                 i=`echo $i|sed 's/\"//g'`
                 for j in `ls $confPath`
                 do
