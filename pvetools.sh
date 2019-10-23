@@ -1798,10 +1798,9 @@ Configed!Please reboot vm.
 Let tool auto switch vm?
 是否让工具自动帮你重启切换虚拟机？" 10 60)then
                                 {
-                                qm stop $confId
+                                qm stop $vmid
                                 echo 50
-                                vmid=`echo $vmid|sed 's/\"//g'`
-                                qm star $vmid
+                                qm start $confId
                                 echo 100
                                 sleep 1
                                 }|whiptail --gauge "restarting vms" 10 60 10
