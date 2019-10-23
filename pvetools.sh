@@ -1766,15 +1766,25 @@ Choose options:
                         do
                             if [ `cat $confPath$vmid.conf |sed  -n '/^hostpci/p'|grep $i|wc -l` = 0 ];then
                                 pcid=`cat $confPath$vmid.conf |sed  -n '/^hostpci/p'|awk -F ':' '{print $1}'|sort -u|grep '[0-9]*$' -o`
-                                pcid=$((pcid+1))
-                                sed -i "/"$con"/a\hostpci"$pcid": ,x-vga=1" $confPath$vmid.conf
+                                if [ $pcid ];then
+                                    pcid=$((pcid+1))
+                                else
+                                    pcid=0
+                                fi
+                                sed -i "/"$con"/a\hostpci"$pcid":"$i" ,x-vga=1" $confPath$vmid.conf
                             else
                                 whiptail --title "Warnning" --msgbox "
 You already configed!
 您已经配置过这个了!
                                 " 10 60
                             fi
-                            rmVideo $vmid $confPath $i
+                            if [ $confId ];then
+                                rmVideo $confId $confPath $i
+                            fi
+                            whiptail --title "Success" --msgbox "
+Configed!
+配置成功！
+                            " 10 60
                         done
                     fi
                 else
