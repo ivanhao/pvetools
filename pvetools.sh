@@ -1819,7 +1819,7 @@ Configed!
                         addVideo
                     fi
                 else
-                    configVideo
+                    addVideo
                 fi
             else
                 configVideo
