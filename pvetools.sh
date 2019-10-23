@@ -1760,6 +1760,7 @@ Choose options:
                         done
                         for op in $opt
                         do
+                            op=`echo $op|sed 's/\"//g'`
                             if [ $op = 'q35' ];then
                                 sed "/"$con"/a\machine\: q35" -i $confPath$vmid.conf
                             fi
