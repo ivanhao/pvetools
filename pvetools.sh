@@ -1818,6 +1818,7 @@ Configed!
                     else
                         addVideo
                     fi
+                    configVideo
                 else
                     addVideo
                 fi
