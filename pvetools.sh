@@ -1698,7 +1698,7 @@ $(echo $cards) \
             ids=""
             for i in $DISTROS
             do
-                echo $i >> DISTROS
+                i=`echo $i|sed 's/\"//g'`
                 for j in `ls $confPath`
                 do
                     if [ `grep $i $confPath$j|wc -l` != 0 ];then
