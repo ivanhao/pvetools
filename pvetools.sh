@@ -1771,6 +1771,7 @@ Choose options:
                                 else
                                     pcid=0
                                 fi
+                                i=`echo $i|sed 's/\"//g'`
                                 sed -i "/"$con"/a\hostpci"$pcid": "$i",x-vga=1" $confPath$vmid.conf
                             else
                                 whiptail --title "Warnning" --msgbox "
