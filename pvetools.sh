@@ -1800,6 +1800,7 @@ Let tool auto switch vm?
                                 {
                                 qm stop $confId
                                 echo 50
+                                vmid=`echo $vmid|sed 's/\"//g'`
                                 qm star $vmid
                                 echo 100
                                 sleep 1
