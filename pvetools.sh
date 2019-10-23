@@ -1804,7 +1804,7 @@ Let tool auto switch vm?
                                 qm star $vmid
                                 echo 100
                                 sleep 1
-                                }|whiptail --gauge 10 60 10
+                                }|whiptail --gauge "restarting vms" 10 60 10
                             whiptail --title "Success" --msgbox "
 Configed!
 配置成功！
