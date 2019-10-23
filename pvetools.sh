@@ -1786,7 +1786,7 @@ You already configed!
 Configed!Please reboot vm.
 配置成功！重启虚拟机后生效。
                             " 10 60
-                            addVideo
+                            configVideo
                         done
                     else
                         addVideo
