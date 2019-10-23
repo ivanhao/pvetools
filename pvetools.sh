@@ -1642,6 +1642,11 @@ $(echo $cards) \
                 sed -i.bak 's|quiet|quiet video=efifb:off|' /etc/default/grub 
                 update-grub
             fi
+            #--kvm-parameters--
+            if [ `cat /sys/module/kvm/parameters/ignore_msrs` = 'N' ];then
+                echo 1 > /sys/module/kvm/parameters/ignore_msrs
+                echo "options kvm ignore_msrs=Y">>/etc/modprobe.d/kvm.conf
+            fi
             {
             echo 30
             update-initramfs -u -k all
@@ -1655,6 +1660,8 @@ $(echo $cards) \
         else
             {
             echo "" > /etc/modprobe.d/vfio.conf
+            echo 0 > /sys/module/kvm/parameters/ignore_msrs
+            sed -i '/ignore_msrs=Y/d' /etc/modprobe.d/kvm.conf
             for i in nvidiafb nouveau nvidia radeon amdgpu
             do
                 sed -i '/'$i'/d' /etc/modprobe.d/pve-blacklist.conf 
@@ -1685,14 +1692,14 @@ $(echo $cards) \
     if [ $exitstatus = 0 ];then
         #--config-id---
         if [ $DISTROS ];then
+            confPath='/etc/pve/qemu-server/'
             ids=""
             for i in $DISTROS
             do
-                confPath='/etc/pve/qemu-server/'
                 for j in `ls $confPath`
                 do
-                    if [ `grep $i $confPath$j|wc -l` -gt 0 ];then
-                        confId=`$j|awk -F '.' '{print $1}'`
+                    if [ `grep $i $confPath$j|wc -l` != 0 ];then
+                        confId=`echo $j|awk -F '.' '{print $1}'`
                     fi
                 done
             done
@@ -1727,27 +1734,49 @@ $(echo $cards) \
                             break
                         fi
                     done
-                    whiptail --title "OK" --msgbox "ok" 10 60
-                    #if [ `qm showcmd $vmid|grep "+vmx"|wc -l` = 0 ];then
-                    #    args=`qm showcmd $vmid|grep "\-cpu [0-9a-zA-Z,+_]*" -o`
-                    #    for i in 'boot:' 'memory:' 'core:';do
-                    #        if [ `grep '^'$i /etc/pve/qemu-server/$vmid.conf|wc -l` -gt 0 ];then
-                    #            con=$i
-                    #            break
-                    #        fi
-                    #    done
-                    #    sed "/"$con"/a\args: $args,+vmx" -i /etc/pve/qemu-server/$vmid.conf
-                    #    #echo "args: "$args",+vmx" >> /etc/pve/qemu-server/$vmid.conf
-                    #    whiptail --title "Success" --msgbox "
-#            Nested OK.Please reboot your vm.
-#            您的虚拟机已经开启嵌套虚拟化支持。重启虚拟机后生效。
-                    #    " 10 60
-                    #else
-                    #    whiptail --title "Success" --msgbox "
-#            You alre#ady seted.Nothing to do.
-#            您的虚拟#机已经开启过嵌套虚拟化支持。
-                    #    " 10 60
-                    #fi
+                    if [ $vmid = $confId ];then
+                        whiptail --title "Warnning" --msgbox "
+You already configed!
+您已经配置过这个了!
+                        " 10 60
+                        addVideo
+                    fi
+                    opt=$(whiptail --scrolltext --title " PveTools   Version : 2.0.1 " --checklist "
+Choose options:
+选择选项：" 20 60 10 \
+                    "q35" "q35支持，gpu直通建议选择，独显留空" OFF \
+                    "x-vga" "主gpu，默认已选择" ON \
+                    3>&1 1>&2 2>&3)
+                    exitstatus=$?
+                    if [ $exitstatus = 0 ]; then
+                        for i in 'boot:' 'memory:' 'core:';do
+                            if [ `grep '^'$i $confPath$vmid.conf|wc -l` != 0 ];then
+                                con=$i
+                                break
+                            fi
+                        done
+                        for op in $opt
+                        do
+                            if [ $op = 'q35' ];then
+                                sed "/"$con"/a\machine\: q35" -i $confPath$vmid.conf
+                            fi
+                        done
+                        #--config-vmid.conf---
+                        for i in $DISTROS
+                        do
+                            if [ `cat $confPath$vmid.conf |sed  -n '/^hostpci/p'|grep $i|wc -l` = 0 ];then
+                                pcid=`cat $confPath$vmid.conf |sed  -n '/^hostpci/p'|awk -F ':' '{print $1}'|sort -u|grep '[0-9]*$' -o`
+                                pcid=$((pcid+1))
+                                sed -i "/"$con"/a\hostpci"$pcid": ,x-vga=1" $confPath$vmid.conf
+                            else
+                                whiptail --title "Warnning" --msgbox "
+You already configed!
+您已经配置过这个了!
+                                " 10 60
+                            fi
+                            rmVideo $vmid $confPath $i
+                        done
+                    fi
                 else
                     configVideo
                 fi
@@ -1766,7 +1795,19 @@ Please choose a card.
 }
 rmVideo(){
     clear
-
+    vmid=$1
+    confPath=$2
+    DISTROS=$3
+    for i in $vmid
+    do
+        sed -i '/q35/d' $confPath$vmid.conf
+        for i in $DISTROS
+            do
+                if [ `cat $confPath$vmid.conf |sed  -n '/^hostpci/p'|grep $i|wc -l` != 0 ];then
+                    sed -i '/'$i'/d' $confPath$vmid.conf
+                fi
+            done
+    done
 }
 configVideo(){
 if [ $L = "en" ];then
