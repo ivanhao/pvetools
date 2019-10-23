@@ -1794,7 +1794,23 @@ You already configed!
 Configed!Please reboot vm.
 配置成功！重启虚拟机后生效。
                             " 10 60
-                            configVideo
+                            if(whiptail --title "Yes/No" --yesno "
+Let tool auto switch vm?
+是否让工具自动帮你重启切换虚拟机？" 10 60)then
+                                {
+                                qm stop $confId
+                                echo 50
+                                qm star $vmid
+                                echo 100
+                                sleep 1
+                                }|whiptail --gauge 10 60 10
+                            whiptail --title "Success" --msgbox "
+Configed!
+配置成功！
+                            " 10 60
+                            else
+                                configVideo
+                            fi
                         done
                     else
                         addVideo
