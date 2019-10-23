@@ -1730,6 +1730,7 @@ $(echo $cards) \
         you choose: $vmid ,continue?
         你选的是：$vmid ，是否继续?
                     " 10 60)then
+                    echo $vmid>vmid
                     while [ true ]
                     do
                         if [ `echo "$vmid"|grep "^[0-9]*$"|wc -l` = 0 ];then
@@ -1741,7 +1742,7 @@ $(echo $cards) \
                             break
                         fi
                     done
-                    if [ $vmid = $confId ];then
+                    if [ $vmid -eq $confId ];then
                         whiptail --title "Warnning" --msgbox "
 You already configed!
 您已经配置过这个了!
@@ -1798,11 +1799,12 @@ Configed!Please reboot vm.
 Let tool auto switch vm?
 是否让工具自动帮你重启切换虚拟机？" 10 60)then
                                 {
-                                qm stop $confId
-                                qm start $confId
+                                #vmid=`echo $vmid|sed 's/\"//g'`
+                                vmid=`cat vmid`
                                 echo 50
-                                vmid=`echo $vmid|sed 's/\"//g'`
-                                qm stop $vmid
+                                qm stop $confId 
+                                qm stop $vmid 
+                                qm start $confId 
                                 qm start $vmid
                                 echo 100
                                 sleep 1
