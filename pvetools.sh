@@ -1620,7 +1620,7 @@ $(echo $cards) \
                 " 10 60)then
                     clear
                 else
-                    configVideo
+                   getVideo 
                 fi
             fi
             #--config-blacklist--
@@ -1641,6 +1641,7 @@ $(echo $cards) \
                     sleep 1
                     }|whiptail --gauge "installing..." 10 60 10
                 fi
+            fi
             #--video=efifb:off--
             if [ `grep 'video=efifb:off' /etc/default/grub|wc -l` = 0 ];then
                 sed -i.bak 's|quiet|quiet video=efifb:off|' /etc/default/grub 
