@@ -1622,7 +1622,7 @@ Continue?
             if [ `grep $ids'$' /etc/modprobe.d/vfio.conf|wc -l` = 0 ];then
                 echo "options vfio-pci ids=$ids" > /etc/modprobe.d/vfio.conf
             else
-                if(whiptail --title "Warnning" --yesno "
+                if(whiptail --defaultno --title "Warnning" --yesno "
     It seems you have already configed it before.Reconfig?
     您好像已经配置过这个了。重新配置？
                 " 10 60)then
