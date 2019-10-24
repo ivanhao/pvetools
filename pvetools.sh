@@ -1753,6 +1753,7 @@ You already configed!
 Choose options:
 选择选项：" 20 60 10 \
                     "q35" "q35支持，gpu直通建议选择，独显留空" OFF \
+                    "ovmf" "gpu直通选择"
                     "x-vga" "主gpu，默认已选择" ON \
                     3>&1 1>&2 2>&3)
                     exitstatus=$?
@@ -1768,6 +1769,9 @@ Choose options:
                             op=`echo $op|sed 's/\"//g'`
                             if [ $op = 'q35' ];then
                                 sed "/"$con"/a\machine\: q35" -i $confPath$vmid.conf
+                            fi
+                            if [ $op = 'ovmf' ];then
+                                sed "/"$con"/a\bios\: ovmf" -i $confPath$vmid.conf
                             fi
                         done
                         #--config-vmid.conf---
