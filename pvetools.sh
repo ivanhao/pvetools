@@ -2051,6 +2051,7 @@ Please choose a card.
     else
         configVideo
     fi
+}
 
 configVideo(){
 if [ $L = "en" ];then
