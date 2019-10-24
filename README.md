@@ -53,6 +53,8 @@ cd pvetools
 
 ## qq交流群: 878510703
 
+![qq](http://upload-images.jianshu.io/upload_images/4171480-e0204ead0fb41d5e.jpg)
+
 ## 如果觉得好的请捐赠一下^_^
 ![pay](./pay.jpg)
 
