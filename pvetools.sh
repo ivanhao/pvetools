@@ -1834,6 +1834,7 @@ Let tool auto switch usb?
                                             cat $confPath$confId.conf |grep '^usb'|sed 's/ //g'>usb
                                             sed -i '/^usb/d' $confPath$confId.conf
                                             for i in `cat usb`;do sed -i '/memory/a\'$i $confPath$vmid.conf;done
+                                            sed -i 's/:host/: host/g' $confPath$vmid.conf
                                             rm usb
                                         fi
                                     fi
