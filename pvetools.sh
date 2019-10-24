@@ -1829,7 +1829,7 @@ Let tool auto switch vm?
                                     if [ $usb ];then
                                         if(whiptail --title "Yes/No" --yesno "
 Let tool auto switch usb?
-是否切换usb设备？
+是否自动切换usb设备？
                                         " 10 60)then
                                             cat $confPath$confId.conf |grep '^usb'|sed 's/ //g'>usb
                                             sed -i '/^usb/d' $confPath$confId.conf
