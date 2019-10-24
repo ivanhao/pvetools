@@ -1671,7 +1671,6 @@ Continue?
     安装好后需要重启系统，请稍后重启。
             " 10 60
         else
-            {
             if(whiptail --title "Warnning" --yesno "
 Continue?
 请确认是否继续？
@@ -1680,6 +1679,7 @@ Continue?
             else
                 getVideo 
             fi
+            {
             echo "" > /etc/modprobe.d/vfio.conf
             echo 0 > /sys/module/kvm/parameters/ignore_msrs
             sed -i '/ignore_msrs=Y/d' /etc/modprobe.d/kvm.conf
