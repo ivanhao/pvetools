@@ -1614,7 +1614,7 @@ $(echo $cards) \
             if [ `grep $ids'$' /etc/modprobe.d/vfio.conf|wc -l` = 0 ];then
                 echo "options vfio-pci ids=$ids" > /etc/modprobe.d/vfio.conf
             else
-                if(whiptail --title "Warnning" --msgbox "
+                if(whiptail --title "Warnning" --yesno "
     It seems you have already configed it before.Reconfig?
     您好像已经配置过这个了。重新配置？
                 " 10 60)then
@@ -1641,7 +1641,6 @@ $(echo $cards) \
                     sleep 1
                     }|whiptail --gauge "installing..." 10 60 10
                 fi
-            fi
             #--video=efifb:off--
             if [ `grep 'video=efifb:off' /etc/default/grub|wc -l` = 0 ];then
                 sed -i.bak 's|quiet|quiet video=efifb:off|' /etc/default/grub 
