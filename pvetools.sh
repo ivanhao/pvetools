@@ -1821,7 +1821,6 @@ Configed!Please reboot vm.
                             if(whiptail --title "Yes/No" --yesno "
 Let tool auto switch vm?
 是否自动帮你重启切换虚拟机？" 10 60)then
-                                {
                                 #vmid=`echo $vmid|sed 's/\"//g'`
                                 vmid=`cat vmid`
                                 rm vmid
@@ -1840,6 +1839,7 @@ Let tool auto switch usb?
                                     fi
                                     qm stop $confId 
                                 fi
+                                {
                                 qm stop $vmid 
                                 echo 50
                                 if [ $confId ];then
