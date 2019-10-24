@@ -1604,6 +1604,14 @@ $(echo $cards) \
     if [ $exitstatus = 0 ];then
         #--config-id---
         if [ $DISTROS ];then
+            if(whiptail --title "Warnning" --yesno "
+Continue?
+请确认是否继续？
+            " 10 60)then
+                clear
+            else
+                getVideo 
+            fi
             ids=""
             for i in $DISTROS
             do
@@ -1665,8 +1673,8 @@ $(echo $cards) \
         else
             {
             if(whiptail --title "Warnning" --yesno "
-It seems you have already configed it before.Reconfig?
-您好像已经配置过这个了。重新配置？
+Continue?
+请确认是否继续？
             " 10 60)then
                 clear
             else
