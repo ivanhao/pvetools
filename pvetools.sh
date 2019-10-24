@@ -1614,11 +1614,14 @@ $(echo $cards) \
             if [ `grep $ids'$' /etc/modprobe.d/vfio.conf|wc -l` = 0 ];then
                 echo "options vfio-pci ids=$ids" > /etc/modprobe.d/vfio.conf
             else
-                whiptail --title "Warnning" --msgbox "
-    It seems you have already configed it before.
-    您好像已经配置过这个了。
-                    " 10 60
+                if(whiptail --title "Warnning" --msgbox "
+    It seems you have already configed it before.Reconfig?
+    您好像已经配置过这个了。重新配置？
+                " 10 60)then
+                    clear
+                else
                     configVideo
+                fi
             fi
             #--config-blacklist--
             for i in nvidiafb nouveau nvidia radeon amdgpu
