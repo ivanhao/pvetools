@@ -1772,7 +1772,7 @@ You already configed!
 Choose options:
 选择选项：" 20 60 10 \
                     "q35" "q35支持，gpu直通建议选择，独显留空" OFF \
-                    "ovmf" "gpu直通选择"
+                    "ovmf" "gpu直通选择" OFF \
                     "x-vga" "主gpu，默认已选择" ON \
                     3>&1 1>&2 2>&3)
                     exitstatus=$?
