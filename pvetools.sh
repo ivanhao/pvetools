@@ -1664,6 +1664,14 @@ $(echo $cards) \
             " 10 60
         else
             {
+            if(whiptail --title "Warnning" --yesno "
+It seems you have already configed it before.Reconfig?
+您好像已经配置过这个了。重新配置？
+            " 10 60)then
+                clear
+            else
+                getVideo 
+            fi
             echo "" > /etc/modprobe.d/vfio.conf
             echo 0 > /sys/module/kvm/parameters/ignore_msrs
             sed -i '/ignore_msrs=Y/d' /etc/modprobe.d/kvm.conf
