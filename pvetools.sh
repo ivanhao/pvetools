@@ -1820,15 +1820,31 @@ Configed!Please reboot vm.
                             " 10 60
                             if(whiptail --title "Yes/No" --yesno "
 Let tool auto switch vm?
-是否让工具自动帮你重启切换虚拟机？" 10 60)then
+是否自动帮你重启切换虚拟机？" 10 60)then
                                 {
                                 #vmid=`echo $vmid|sed 's/\"//g'`
                                 vmid=`cat vmid`
                                 rm vmid
-                                qm stop $confId 
+                                if [ $confId ];then
+                                    usb=`cat /etc/pve/qemu-server/115.conf |grep '^usb'|wc -l`
+                                    if [ $usb ];then
+                                        if(whiptail --title "Yes/No" --yesno "
+Let tool auto switch usb?
+是否切换usb设备？
+                                        " 10 60)then
+                                            cat $confPath$confId.conf |grep '^usb'|sed 's/ //g'>usb
+                                            sed -i '/^usb/d' $confPath$confId.conf
+                                            for i in `cat usb`;do sed -i '/memory/a\'$i $confPath$vmid.conf;done
+                                            rm usb
+                                        fi
+                                    fi
+                                    qm stop $confId 
+                                fi
                                 qm stop $vmid 
                                 echo 50
-                                qm start $confId 
+                                if [ $confId ];then
+                                    qm start $confId 
+                                fi
                                 qm start $vmid
                                 echo 100
                                 sleep 1
@@ -1877,6 +1893,165 @@ rmVideo(){
             done
     done
 }
+switchVideo(){
+    cards=`lspci |grep -e VGA`
+    cards=`echo $cards |awk -F '.' '{print $1" " }'``echo $cards|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'``echo ' OFF'`
+    DISTROS=$(whiptail --title "Video cards:" --checklist \
+"Choose cards to config?" 15 90 4 \
+$(echo $cards) \
+    3>&1 1>&2 2>&3)
+    exitstatus=$?
+    if [ $exitstatus = 0 ];then
+        #--config-id---
+        if [ $DISTROS ];then
+            confPath='/etc/pve/qemu-server/'
+            ids=""
+            for i in $DISTROS
+            do
+
+                i=`echo $i|sed 's/\"//g'`
+                for j in `ls $confPath`
+                do
+                    if [ `grep $i $confPath$j|wc -l` != 0 ];then
+                        confId=`echo $j|awk -F '.' '{print $1}'`
+                    fi
+                done
+            done
+            list=`qm list|awk 'NR>1{print $1":"$2".................."$3" "}'`
+            echo -n "">lsvm
+            ls=`for i in $list;do echo $i|awk -F ":" '{print $1" "$2" OFF"}'>>lsvm;done`
+            ls=`sed -i '/'$confId'/ s/OFF/ON/g' lsvm` 
+            ls=`cat lsvm`
+            rm lsvm
+            h=`echo $ls|wc -l`
+            let h=$h*1
+            if [ $h -lt 30 ];then
+                h=30
+            fi
+            list1=`echo $list|awk 'NR>1{print $1}'`
+            vmid=$(whiptail --scrolltext --title " PveTools   Version : 2.0.1 " --radiolist "
+        Choose vmid to set video card Passthrough:
+        选择需要配置显卡直通的vm：" 20 60 10 \
+            $(echo $ls) \
+            3>&1 1>&2 2>&3)
+            exitstatus=$?
+            if [ $exitstatus = 0 ]; then
+                if(whiptail --title "Yes/No" --yesno "
+        you choose: $vmid ,continue?
+        你选的是：$vmid ，是否继续?
+                    " 10 60)then
+                    echo $vmid>vmid
+                    while [ true ]
+                    do
+                        if [ `echo "$vmid"|grep "^[0-9]*$"|wc -l` = 0 ];then
+                            whiptail --title "Warnning" --msgbox "
+            输入格式错误，请重新输入：
+                            " 10 60
+                            addVideo
+                        else
+                            break
+                        fi
+                    done
+                    if [ $vmid -eq $confId ];then
+                        whiptail --title "Warnning" --msgbox "
+You already configed!
+您已经配置过这个了!
+                        " 10 60
+                        addVideo
+                    fi
+                    opt=$(whiptail --scrolltext --title " PveTools   Version : 2.0.1 " --checklist "
+Choose options:
+选择选项：" 20 60 10 \
+                    "q35" "q35支持，gpu直通建议选择，独显留空" OFF \
+                    "ovmf" "gpu直通选择" OFF \
+                    "x-vga" "主gpu，默认已选择" ON \
+                    3>&1 1>&2 2>&3)
+                    exitstatus=$?
+                    if [ $exitstatus = 0 ]; then
+                        for i in 'boot:' 'memory:' 'core:';do
+                            if [ `grep '^'$i $confPath$vmid.conf|wc -l` != 0 ];then
+                                con=$i
+                                break
+                            fi
+                        done
+                        for op in $opt
+                        do
+                            op=`echo $op|sed 's/\"//g'`
+                            if [ $op = 'q35' ];then
+                                sed "/"$con"/a\machine\: q35" -i $confPath$vmid.conf
+                            fi
+                            if [ $op = 'ovmf' ];then
+                                sed "/"$con"/a\bios\: ovmf" -i $confPath$vmid.conf
+                            fi
+                        done
+                        #--config-vmid.conf---
+                        for i in $DISTROS
+                        do
+                            if [ `cat $confPath$vmid.conf |sed  -n '/^hostpci/p'|grep $i|wc -l` = 0 ];then
+                                pcid=`cat $confPath$vmid.conf |sed  -n '/^hostpci/p'|awk -F ':' '{print $1}'|sort -u|grep '[0-9]*$' -o`
+                                if [ $pcid ];then
+                                    pcid=$((pcid+1))
+                                else
+                                    pcid=0
+                                fi
+                                i=`echo $i|sed 's/\"//g'`
+                                sed -i "/"$con"/a\hostpci"$pcid": "$i",x-vga=1" $confPath$vmid.conf
+                            else
+                                whiptail --title "Warnning" --msgbox "
+You already configed!
+您已经配置过这个了!
+                                " 10 60
+                            fi
+                            if [ $confId ];then
+                                rmVideo $confId $confPath $i
+                            fi
+                            whiptail --title "Success" --msgbox "
+Configed!Please reboot vm.
+配置成功！重启虚拟机后生效。
+                            " 10 60
+                            if(whiptail --title "Yes/No" --yesno "
+Let tool auto switch vm?
+是否让工具自动帮你重启切换虚拟机？" 10 60)then
+                                {
+                                #vmid=`echo $vmid|sed 's/\"//g'`
+                                vmid=`cat vmid`
+                                rm vmid
+                                qm stop $confId 
+                                qm stop $vmid 
+                                echo 50
+                                qm start $confId 
+                                qm start $vmid
+                                echo 100
+                                sleep 1
+                                }|whiptail --gauge "restarting vms" 10 60 10
+                            whiptail --title "Success" --msgbox "
+Configed!
+配置成功！
+                            " 10 60
+                            else
+                                configVideo
+                            fi
+                        done
+                    else
+                        addVideo
+                    fi
+                    configVideo
+                else
+                    addVideo
+                fi
+            else
+                configVideo
+            fi
+        else
+            whiptail --title "Warnning" --msgbox "
+Please choose a card.
+请选择一个显卡。" 10 60
+            addVideo
+        fi
+    else
+        configVideo
+    fi
+
 configVideo(){
 if [ $L = "en" ];then
     x=$(whiptail --title " PveTools   Version : 2.0.1 " --menu "Config PCI Video card Passthrough:" 25 60 15 \
