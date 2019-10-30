@@ -669,7 +669,7 @@ EOF
             ;;
         b | B )
         if(whiptail --title "Yes/No Box" --yesno "
-安装VIM并配置 'vim-for-server'(https://github.com/wklken/vim-for-server).
+安装VIM并配置 \'vim-for-server\'(https://github.com/wklken/vim-for-server).
 yes or no?
             " 12 60) then
             {
@@ -1321,7 +1321,7 @@ Your Proxmox VE version can not install!
             if [[ ! -f "$js" || ! -f "$pm" ]];then
                 whiptail --title "Warnning" --msgbox "
 您的Proxmox VE版本不支持此方式！
-Your Proxmox VE's version is not supported,Now quit!
+Your Proxmox VE\'s version is not supported,Now quit!
                 " 10 60
                 main
             fi
@@ -1353,7 +1353,7 @@ Sensors driver not found.
                 sensors
                 sleep 3
                 whiptail --title "Success" --msgbox "
-Install complete,if everything ok ,it's showed sensors.Next, restart you web.
+Install complete,if everything ok ,it\'s showed sensors.Next, restart you web.
 安装配置成功，如果没有意外，上面已经显示sensors。下一步会重启web界面，请不要惊慌。
                 " 20 60
             fi
@@ -2262,8 +2262,7 @@ fi
             sleep 1
             echo 100
             $(
-            git pull 2>&1 &\
-            && ./pvetools.sh
+            git pull && ./pvetools.sh
             )
             } |whiptail --gauge "updating when 100% type enter. 进度条满后回车" 10 60 0
             ;;
