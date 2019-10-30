@@ -518,8 +518,7 @@ Configed!
                 " 10 60
                 service smbd restart
             else
-                whiptail --title "Success" --msgbox "
-Already configed！
+                whiptail --title "Success" --msgbox "Already configed！
 已经配置过了！
                 " 10 60
             fi
