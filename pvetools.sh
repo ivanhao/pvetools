@@ -1073,7 +1073,7 @@ unsetVmN(){
         h=30
     fi
     list1=`echo $list|awk 'NR>1{print $1}'`
-    vmid=$(whiptail --scrolltext --title " PveTools   Version : 2.0.2 " --menu "
+    vmid=$(whiptail  --title " PveTools   Version : 2.0.2 " --menu "
 Choose vmid to unset nested:
 选择需要关闭嵌套虚拟化的vm：" 25 60 15 \
     $(echo $ls) \
@@ -1125,7 +1125,7 @@ setVmN(){
         h=30
     fi
     list1=`echo $list|awk 'NR>1{print $1}'`
-    vmid=$(whiptail --scrolltext --title " PveTools   Version : 2.0.2 " --menu "
+    vmid=$(whiptail  --title " PveTools   Version : 2.0.2 " --menu "
 Choose vmid to set nested:
 选择需要配置嵌套虚拟化的vm：" 25 60 15 \
     $(echo $ls) \
@@ -1737,7 +1737,7 @@ $(echo $cards) \
                 h=30
             fi
             list1=`echo $list|awk 'NR>1{print $1}'`
-            vmid=$(whiptail --scrolltext --title " PveTools   Version : 2.0.2 " --radiolist "
+            vmid=$(whiptail  --title " PveTools   Version : 2.0.2 " --radiolist "
         Choose vmid to set video card Passthrough:
         选择需要配置显卡直通的vm：" 20 60 10 \
             $(echo $ls) \
@@ -1767,7 +1767,7 @@ You already configed!
                         " 10 60
                         addVideo
                     fi
-                    opt=$(whiptail --scrolltext --title " PveTools   Version : 2.0.2 " --checklist "
+                    opt=$(whiptail  --title " PveTools   Version : 2.0.2 " --checklist "
 Choose options:
 选择选项：" 20 60 10 \
                     "q35" "q35支持，gpu直通建议选择，独显留空" OFF \
@@ -1929,7 +1929,7 @@ $(echo $cards) \
                 h=30
             fi
             list1=`echo $list|awk 'NR>1{print $1}'`
-            vmid=$(whiptail --scrolltext --title " PveTools   Version : 2.0.2 " --radiolist "
+            vmid=$(whiptail  --title " PveTools   Version : 2.0.2 " --radiolist "
         Choose vmid to set video card Passthrough:
         选择需要配置显卡直通的vm：" 20 60 10 \
             $(echo $ls) \
@@ -1959,7 +1959,7 @@ You already configed!
                         " 10 60
                         addVideo
                     fi
-                    opt=$(whiptail --scrolltext --title " PveTools   Version : 2.0.2 " --checklist "
+                    opt=$(whiptail  --title " PveTools   Version : 2.0.2 " --checklist "
 Choose options:
 选择选项：" 20 60 10 \
                     "q35" "q35支持，gpu直通建议选择，独显留空" OFF \
