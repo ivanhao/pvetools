@@ -2124,7 +2124,7 @@ chRoot(){
         if(whiptail --title "Yes/No" --yesno "
 Continue?
 是否继续？" --defaultno 10 60 )then
-            if [ `dpkg -l|grep schroot|wc -l` = 0 ];then
+            if [ ! -f "/usr/bin/schroot" ];then
                 whiptail --title "Warnning" --msgbox "you not installed schroot.
 您还没有安装schroot。" 10 60
                 if [ `ps aux|grep apt-get|wc -l` -gt 1 ];then
