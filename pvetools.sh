@@ -2141,19 +2141,17 @@ Continue?
             fi
             {
             echo 10
-            if [ -f "/etc/schroot/default/fstab" ];then
-                if [ `grep '^/run/udev' /etc/schroot/default/fstab|wc -l` != 0 ];then
-                    cat << EOF >> /etc/schroot/default/fstab
+            if [ `grep '^/run/udev' /etc/schroot/default/fstab|wc -l` != 0 ];then
+                cat << EOF >> /etc/schroot/default/fstab
 /run/udev       /run/udev       none    rw,bind         0       0 
 EOF
-                fi
-                if [ `grep '^/sys/fs/cgroup' /etc/schroot/default/fstab|wc -l` != 0 ];then
-                    cat << EOF >> /etc/schroot/default/fstab
+            fi
+            if [ `grep '^/sys/fs/cgroup' /etc/schroot/default/fstab|wc -l` != 0 ];then
+                cat << EOF >> /etc/schroot/default/fstab
 /sys/fs/cgroup  /sys/fs/cgroup  none    rw,rbind        0       0 
 EOF
-                fi
-                sed -i '/\/home/d' /etc/schroot/default/fstab
             fi
+            sed -i '/\/home/d' /etc/schroot/default/fstab
             if [ ! -f "/etc/schroot/chroot.d/alpine.conf" ] || [ `cat /etc/schroot/chroot.d/alpine.conf|wc -l` -lt 8 ];then
                 cat << EOF > /etc/schroot/chroot.d/alpine.conf
 [alpine]
