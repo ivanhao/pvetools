@@ -2198,13 +2198,14 @@ EOF
     }
     enterChroot(){
         clear
+        c=`schroot -l|awk -F ":" '{print $2"  "$1}'`
         if [ $L = "en" ];then
             x=$(whiptail --title " PveTools   Version : 2.0.2 " --menu "Enter chroot:" 25 60 15 \
-            $(schroot -l|grep ""|awk -f ":" '{print $2" "}') \
+            $(echo $c) \
             3>&1 1>&2 2>&3)
         else
             x=$(whiptail --title " PveTools   Version : 2.0.2 " --menu "进入chroot环境:" 25 60 15 \
-            $(schroot -l|grep ""|awk -f ":" '{print $2}" "') \
+            $(echo $c) \
             3>&1 1>&2 2>&3)
         fi
         exitstatus=$?
