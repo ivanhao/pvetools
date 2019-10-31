@@ -2183,6 +2183,12 @@ EOF
                     rm -rf alpine-minirootfs-3.10.3-x86_64.tar.gz
                     echo "http://mirrors.aliyun.com/alpine/latest-stable/main/" > /alpine/etc/apk/repositories \
                     && echo "http://mirrors.aliyun.com/alpine/latest-stable/community/"  >> /alpine/etc/apk/repositories
+                    cat << EOF >> /alpine/etc/profile
+echo "Welcome to alpine chroot."
+echo "Create by PveTools."
+echo "Author: 龙天ivan"
+echo "Github: https://github.com/ivanhao/pvetoools"
+EOF
                     schroot -c alpine apk update
                 fi
             fi
@@ -2210,10 +2216,10 @@ EOF
         fi
         exitstatus=$?
         if [ $exitstatus = 0 ]; then
-            case "$x" in
-            a )
-                ;;
-            esac
+            if [ $x ];then
+                schroot -c $x -d /root
+            fi
+            enterChroot
         fi
     }
     #--base-funcs-end--
