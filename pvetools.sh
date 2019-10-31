@@ -2125,7 +2125,7 @@ chRoot(){
 是否继续？" 10 60)then
             {
             echo 10
-            $(apt-get install schroot)
+            apt-get install schroot
             echo 50
             echo << EOF >> /etc/schroot/default/fstab
 /run/udev       /run/udev       none    rw,bind         0       0 
