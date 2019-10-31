@@ -1476,9 +1476,9 @@ Your hardware do not support PCI Passthrough(No IOMMU)
         chPassth
     fi
     if [ `cat /proc/cpuinfo|wc -l` = 0 ];then
-        iommu="amd_iommu=on video=efifb:off"
+        iommu="amd_iommu=on"
     else
-        iommu="intel_iommu=on video=efifb:off"
+        iommu="intel_iommu=on"
     fi
     if [ `grep $iommu /etc/default/grub|wc -l` = 0 ];then
         sed -i.bak 's|quiet|quiet '$iommu'|' /etc/default/grub 
@@ -2192,7 +2192,18 @@ if [ $exitstatus = 0 ]; then
         if [ $exitstatus = 0 ]; then
             case "$x" in
             a )
+                setChroot
                 ;;
+            c )
+                x=$(whiptail --title "Schroot List" --menu "Choose one to enter:
+选择进入：" 25 60 15 \
+            $(schroot -l|awk -F ":" '{print $2}')
+            3>&1 1>&2 2>&3)
+            exitstatus=$?
+            if [ $exitstatus = 0 ]; then
+                clear
+            fi
+
         esac
         fi
         ;;
