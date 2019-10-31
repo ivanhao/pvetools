@@ -2253,6 +2253,8 @@ if [ $exitstatus = 0 ]; then
         mount --make-rslave /alpine/sys/fs/cgroup
         umount -R /alpine/sys/fs/cgroup
         rm -rf /alpine
+        whiptail --title "Success" --msgbox "Done.
+删除成功" 10 60
 
 esac
 fi
