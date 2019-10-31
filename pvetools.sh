@@ -2142,14 +2142,20 @@ Continue?
             {
             echo 10
             if [ -f "/etc/schroot/default/fstab" ];then
-                echo << EOF >> /etc/schroot/default/fstab
+                if [ `grep '^/run/udev' /etc/schroot/default/fstab|wc -l` != 0 ];then
+                    cat << EOF >> /etc/schroot/default/fstab
 /run/udev       /run/udev       none    rw,bind         0       0 
+EOF
+                fi
+                if [ `grep '^/sys/fs/cgroup' /etc/schroot/default/fstab|wc -l` != 0 ];then
+                    cat << EOF >> /etc/schroot/default/fstab
 /sys/fs/cgroup  /sys/fs/cgroup  none    rw,rbind        0       0 
 EOF
+                fi
                 sed -i '/\/home/d' /etc/schroot/default/fstab
             fi
             if [ ! -f "/etc/schroot/chroot.d/alpine.conf" ] || [ `cat /etc/schroot/chroot.d/alpine.conf|wc -l` -lt 8 ];then
-                echo << EOF > /etc/schroot/chroot.d/alpine.conf
+                cat << EOF > /etc/schroot/chroot.d/alpine.conf
 [alpine]
 description=alpine 3.10.3
 directory=/alpine
@@ -2161,10 +2167,14 @@ type=directory
 shell=/bin/sh
 EOF
             fi
-            if [ -d "/alpine" ];then mkdir /alpine ;fi
+            if [ ! -d "/alpine" ];then 
+                mkdir /alpine 
+            else
+                clear
+            fi
             cd /alpine
             echo 50
-            wget http://dl-cdn.alpinelinux.org/alpine/v3.10/releases/x86_64/alpine-minirootfs-3.10.3-x86_64.tar.gz
+            wget --timeout 15 --waitretry 5 --tries 5 http://dl-cdn.alpinelinux.org/alpine/v3.10/releases/x86_64/alpine-minirootfs-3.10.3-x86_64.tar.gz
             tar -xvzf alpine-minirootfs-3.10.3-x86_64.tar.gz
             rm -rf alpine-minirootfs-3.10.3-x86_64.tar.gz
             echo "http://mirrors.aliyun.com/alpine/latest-stable/main/" > /alpine/etc/apk/repositories \
@@ -2187,11 +2197,13 @@ if [ $L = "en" ];then
     x=$(whiptail --title " PveTools   Version : 2.0.2 " --menu "Config chroot & docker etc:" 25 60 15 \
     "a" "Install & config base schroot." \
     "b" "Enter chroot." \
+    "c" "Remove all chroot." \
     3>&1 1>&2 2>&3)
 else
     x=$(whiptail --title " PveTools   Version : 2.0.2 " --menu "配置chroot环境和docker等:" 25 60 15 \
     "a" "安装配置基本的chroot环境（schroot 默认为alpine)。" \
     "b" "进入chroot。" \
+    "c" "彻底删除chroot。" \
     3>&1 1>&2 2>&3)
 fi
 exitstatus=$?
@@ -2233,6 +2245,7 @@ if [ $exitstatus = 0 ]; then
     b )
         ;;
     c )
+        apt-get -y autoremove schroot debootstrap
 esac
 fi
 
