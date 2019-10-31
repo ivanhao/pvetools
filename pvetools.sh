@@ -2139,12 +2139,12 @@ Continue?
                     apt-get -y install schroot
                 fi
             fi
-            if [ `grep '^/run/udev' /etc/schroot/default/fstab|wc -l` != 0 ];then
+            if [ `grep '\/run\/udev' /etc/schroot/default/fstab|wc -l` != 0 ];then
                 cat << EOF >> /etc/schroot/default/fstab
 /run/udev       /run/udev       none    rw,bind         0       0 
 EOF
             fi
-            if [ `grep '^/sys/fs/cgroup' /etc/schroot/default/fstab|wc -l` != 0 ];then
+            if [ `grep '\/sys\/fs\/cgroup' /etc/schroot/default/fstab|wc -l` != 0 ];then
                 cat << EOF >> /etc/schroot/default/fstab
 /sys/fs/cgroup  /sys/fs/cgroup  none    rw,rbind        0       0 
 EOF
@@ -2169,23 +2169,26 @@ EOF
                 clear
             fi
             cd /alpine
-            if [ `ls /alpine|wc -l` != 0 ];then
+            if [ `ls /alpine|wc -l` -gt 0 ];then
                 if(whiptail --title "Warnning" --yesno "files exist, remove and reinstall?
 已经存在文件，是否清空重装？" --defaultno 10 60)then
-                    wget --timeout 15 --waitretry 5 --tries 5 http://dl-cdn.alpinelinux.org/alpine/v3.10/releases/x86_64/alpine-minirootfs-3.10.3-x86_64.tar.gz
-                    tar -xvzf alpine-minirootfs-3.10.3-x86_64.tar.gz
-                    rm -rf alpine-minirootfs-3.10.3-x86_64.tar.gz
-                    echo "http://mirrors.aliyun.com/alpine/latest-stable/main/" > /alpine/etc/apk/repositories \
-                    && echo "http://mirrors.aliyun.com/alpine/latest-stable/community/"  >> /alpine/etc/apk/repositories
-                    cat << EOF >> /alpine/etc/profile
+                    continue
+                else
+                    setChroot
+                fi
+            fi
+            wget --timeout 15 --waitretry 5 --tries 5 http://dl-cdn.alpinelinux.org/alpine/v3.10/releases/x86_64/alpine-minirootfs-3.10.3-x86_64.tar.gz
+            tar -xvzf alpine-minirootfs-3.10.3-x86_64.tar.gz
+            rm -rf alpine-minirootfs-3.10.3-x86_64.tar.gz
+            echo "http://mirrors.aliyun.com/alpine/latest-stable/main/" > /alpine/etc/apk/repositories \
+            && echo "http://mirrors.aliyun.com/alpine/latest-stable/community/"  >> /alpine/etc/apk/repositories
+            cat << EOF >> /alpine/etc/profile
 echo "Welcome to alpine chroot."
 echo "Create by PveTools."
 echo "Author: 龙天ivan"
 echo "Github: https://github.com/ivanhao/pvetoools"
 EOF
-                    schroot -c alpine apk update
-                fi
-            fi
+            schroot -c alpine apk update
             whiptail --title "Success" --msgbox "Done.
 安装配置完成！" 10 60
             chRoot
