@@ -2125,7 +2125,7 @@ chRoot(){
 是否继续？" 10 60)then
             {
             echo 10
-            apt-get install schroot
+            apt-get -y install schroot
             echo 50
             if [ -f /etc/schroot/default/fstab ];then
                 echo << EOF >> /etc/schroot/default/fstab
@@ -2147,7 +2147,16 @@ EOF
             else
                 whiptail --title "Warnning" --msgbox "you not installed schroot!
 您还没有安装schroot!" 10 60
-                killall apt-get && apt-get install schroot
+                if [ `ps aux|grep apt-get|wc -l` -gt 1 ];then
+                    if(whiptail --title "Yes/No" --yesno "apt-get is running,kill it and install schroot?
+后台有apt-get正在运行，是否杀掉进行安装？" 10 60)then
+                        killall apt-get && apt-get -y install schroot
+                    else
+                        setChroot
+                    fi
+                else
+                    apt-get -y install schroot
+                fi
             fi
             mkdir /alpine && cd /alpine
             wget http://dl-cdn.alpinelinux.org/alpine/v3.10/releases/x86_64/alpine-minirootfs-3.10.3-x86_64.tar.gz
