@@ -2255,14 +2255,8 @@ if [ $exitstatus = 0 ]; then
                 setChroot
                 ;;
             c )
-                x=$(whiptail --title "Schroot List" --menu "Choose one to enter:
-选择进入：" 25 60 15 \
-            $(schroot -l|awk -F ":" '{print $2}')
-            3>&1 1>&2 2>&3)
-            exitstatus=$?
-            if [ $exitstatus = 0 ]; then
-                clear
-            fi
+                whiptail --title "Warnning" --msgbox "Not supported." 10 60
+                chroot
             esac
         else
             chRoot
