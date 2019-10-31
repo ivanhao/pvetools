@@ -2172,16 +2172,20 @@ EOF
             else
                 clear
             fi
-            cd /alpine
-            echo 50
-            wget --timeout 15 --waitretry 5 --tries 5 http://dl-cdn.alpinelinux.org/alpine/v3.10/releases/x86_64/alpine-minirootfs-3.10.3-x86_64.tar.gz
-            tar -xvzf alpine-minirootfs-3.10.3-x86_64.tar.gz
-            rm -rf alpine-minirootfs-3.10.3-x86_64.tar.gz
-            echo "http://mirrors.aliyun.com/alpine/latest-stable/main/" > /alpine/etc/apk/repositories \
-            && echo "http://mirrors.aliyun.com/alpine/latest-stable/community/"  >> /alpine/etc/apk/repositories
-            schroot -c alpine apk update
             echo 100
             }|whiptail --gauge "Configing..." 10 60 0
+            cd /alpine
+            if [ `ls /alpine|wc -l` != 0 ];then
+                if(whiptail --title "Warnning" --yesno "files exist, remove and reinstall?
+已经存在文件，是否清空重装？" --defaultno 10 60)then
+                    wget --timeout 15 --waitretry 5 --tries 5 http://dl-cdn.alpinelinux.org/alpine/v3.10/releases/x86_64/alpine-minirootfs-3.10.3-x86_64.tar.gz
+                    tar -xvzf alpine-minirootfs-3.10.3-x86_64.tar.gz
+                    rm -rf alpine-minirootfs-3.10.3-x86_64.tar.gz
+                    echo "http://mirrors.aliyun.com/alpine/latest-stable/main/" > /alpine/etc/apk/repositories \
+                    && echo "http://mirrors.aliyun.com/alpine/latest-stable/community/"  >> /alpine/etc/apk/repositories
+                    schroot -c alpine apk update
+                fi
+            fi
             whiptail --title "Success" --msgbox "Done.
 安装配置完成！" 10 60
             chRoot
@@ -2246,6 +2250,10 @@ if [ $exitstatus = 0 ]; then
         ;;
     c )
         apt-get -y autoremove schroot debootstrap
+        mount --make-rslave /alpine/sys/fs/cgroup
+        umount -R /alpine/sys/fs/cgroup
+        rm -rf /alpine
+
 esac
 fi
 
