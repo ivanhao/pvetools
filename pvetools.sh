@@ -2172,7 +2172,7 @@ EOF
             if [ `ls /alpine|wc -l` -gt 0 ];then
                 if(whiptail --title "Warnning" --yesno "files exist, remove and reinstall?
 已经存在文件，是否清空重装？" --defaultno 10 60)then
-                    continue
+                   clear 
                 else
                     setChroot
                 fi
