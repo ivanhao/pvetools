@@ -2121,18 +2121,34 @@ fi
 chRoot(){
     #--base-funcs-start--
     setChroot(){
-        if(whiptail --title "Yes/No" --yesno "Continue?
-是否继续？" 10 60)then
+        if(whiptail --title "Yes/No" --yesno "
+Continue?
+是否继续？" 10 60 )then
+            if [ `dpkg -l|grep schroot|wc -l` = 0 ];then
+                whiptail --title "Warnning" --msgbox "you not installed schroot.
+您还没有安装schroot。" 10 60
+                if [ `ps aux|grep apt-get|wc -l` -gt 1 ];then
+                    if(whiptail --title "Yes/No" --yesno "apt-get is running,killit and install schroot?
+后台有apt-get正在运行，是否杀掉进行安装？
+                    " 10 60);then
+                        killall apt-get && apt-get -y install schroot
+                    else
+                        setChroot
+                    fi
+                else
+                    apt-get -y install schroot
+                fi
+            fi
             {
             echo 10
-            apt-get -y install schroot
-            echo 50
             if [ -f /etc/schroot/default/fstab ];then
                 echo << EOF >> /etc/schroot/default/fstab
 /run/udev       /run/udev       none    rw,bind         0       0 
 /sys/fs/cgroup  /sys/fs/cgroup  none    rw,rbind        0       0 
 EOF
                 sed -i '/\/home/d' /etc/schroot/default/fstab
+            fi
+            if [ -f /etc/schroot/default/fstab ];then
                 echo << EOF > /etc/schroot/chroot.d/alpine.conf
 [alpine]
 description=alpine 3.10.3
@@ -2144,22 +2160,10 @@ root-groups=root
 type=directory
 shell=/bin/sh
 EOF
-            else
-                whiptail --title "Warnning" --msgbox "you not installed schroot!
-您还没有安装schroot!" 10 60
-                if [ `ps aux|grep apt-get|wc -l` -gt 1 ];then
-                    if(whiptail --title "Yes/No" --yesno "apt-get is running,kill it and install schroot?
-后台有apt-get正在运行，是否杀掉进行安装？" 10 60)then
-                        killall apt-get && apt-get -y install schroot
-                    else
-                        setChroot
-                    fi
-                else
-                    apt-get -y install schroot
-                fi
             fi
             if [ -d /alpine ];then mkdir /alpine ;fi
             cd /alpine
+            echo 50
             wget http://dl-cdn.alpinelinux.org/alpine/v3.10/releases/x86_64/alpine-minirootfs-3.10.3-x86_64.tar.gz
             tar -xvzf alpine-minirootfs-3.10.3-x86_64.tar.gz
             rm -rf alpine-minirootfs-3.10.3-x86_64.tar.gz
@@ -2167,8 +2171,8 @@ EOF
             && echo "http://mirrors.aliyun.com/alpine/latest-stable/community/"  >> /alpine/etc/apk/repositories
             schroot -c alpine apk update
             echo 100
-            }|whiptail --gauge "Installing..." 10 60 0
-            whiptail --title "Success" --msgbox "Done!
+            }|whiptail --gauge "Configing..." 10 60 0
+            whiptail --title "Success" --msgbox "Done.
 安装配置完成！" 10 60
             chRoot
         else
