@@ -2148,7 +2148,7 @@ Continue?
 EOF
                 sed -i '/\/home/d' /etc/schroot/default/fstab
             fi
-            if [ -f "/etc/schroot/chroot.d/alpine.conf" ] && [ `cat /etc/schroot/chroot.d/alpine.conf|wc -l` -lt 8 ];then
+            if [ ! -f "/etc/schroot/chroot.d/alpine.conf" ] || [ `cat /etc/schroot/chroot.d/alpine.conf|wc -l` -lt 8 ];then
                 echo << EOF > /etc/schroot/chroot.d/alpine.conf
 [alpine]
 description=alpine 3.10.3
