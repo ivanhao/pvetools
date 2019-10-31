@@ -2127,12 +2127,13 @@ chRoot(){
             echo 10
             apt-get install schroot
             echo 50
-            echo << EOF >> /etc/schroot/default/fstab
+            if [ -f /etc/schroot/default/fstab ];then
+                echo << EOF >> /etc/schroot/default/fstab
 /run/udev       /run/udev       none    rw,bind         0       0 
 /sys/fs/cgroup  /sys/fs/cgroup  none    rw,rbind        0       0 
 EOF
-            sed -i '/\/home/d' /etc/schroot/default/fstab
-            echo << EOF > /etc/schroot/chroot.d/alpine.conf
+                sed -i '/\/home/d' /etc/schroot/default/fstab
+                echo << EOF > /etc/schroot/chroot.d/alpine.conf
 [alpine]
 description=alpine 3.10.3
 directory=/alpine
@@ -2143,6 +2144,11 @@ root-groups=root
 type=directory
 shell=/bin/sh
 EOF
+            else
+                whiptail --title "Warnning" --msgbox "you not installed schroot!
+您还没有安装schroot!" 10 60
+                killall apt-get && apt-get install schroot
+            fi
             mkdir /alpine && cd /alpine
             wget http://dl-cdn.alpinelinux.org/alpine/v3.10/releases/x86_64/alpine-minirootfs-3.10.3-x86_64.tar.gz
             tar -xvzf alpine-minirootfs-3.10.3-x86_64.tar.gz
