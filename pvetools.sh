@@ -2196,6 +2196,25 @@ EOF
     installOs(){
         clear
     }
+    enterChroot(){
+        clear
+        if [ $L = "en" ];then
+            x=$(whiptail --title " PveTools   Version : 2.0.2 " --menu "Enter chroot:" 25 60 15 \
+            $(schroot -l|awk -f ":" '{print $2}') \
+            3>&1 1>&2 2>&3)
+        else
+            x=$(whiptail --title " PveTools   Version : 2.0.2 " --menu "进入chroot环境:" 25 60 15 \
+            $(schroot -l|awk -f ":" '{print $2}') \
+            3>&1 1>&2 2>&3)
+        fi
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+            case "$x" in
+            a )
+                ;;
+            esac
+        fi
+    }
     #--base-funcs-end--
 if [ $L = "en" ];then
     x=$(whiptail --title " PveTools   Version : 2.0.2 " --menu "Config chroot & docker etc:" 25 60 15 \
@@ -2217,13 +2236,13 @@ if [ $exitstatus = 0 ]; then
         if [ $L = "en" ];then
             x=$(whiptail --title " PveTools   Version : 2.0.2 " --menu "Config chroot & docker etc:" 25 60 15 \
             "a" "Config base schroot." \
-            "b" "Install OS(debian ubuntu etc.)." \
+#            "b" "Install OS(debian ubuntu etc.)." \
             "c" "Docker in alpine" \
             3>&1 1>&2 2>&3)
         else
             x=$(whiptail --title " PveTools   Version : 2.0.2 " --menu "配置chroot环境和docker等:" 25 60 15 \
             "a" "配置基本的chroot环境（schroot 默认为alpine)。" \
-            "b" "安装chroot操作系统(debian ubuntu系列）。" \
+#            "b" "安装chroot操作系统(debian ubuntu系列）。" \
             "c" "Docker（alpine）。" \
             3>&1 1>&2 2>&3)
         fi
@@ -2247,6 +2266,7 @@ if [ $exitstatus = 0 ]; then
         fi
         ;;
     b )
+        enterChroot
         ;;
     c )
         apt-get -y autoremove schroot debootstrap
