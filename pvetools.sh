@@ -2243,15 +2243,15 @@ if [ $exitstatus = 0 ]; then
         if [ $L = "en" ];then
             x=$(whiptail --title " PveTools   Version : 2.0.2 " --menu "Config chroot & docker etc:" 25 60 15 \
             "a" "Config base schroot." \
-#            "b" "Install OS(debian ubuntu etc.)." \
             "c" "Docker in alpine" \
             3>&1 1>&2 2>&3)
+#            "b" "Install OS(debian ubuntu etc.)." \
         else
             x=$(whiptail --title " PveTools   Version : 2.0.2 " --menu "配置chroot环境和docker等:" 25 60 15 \
             "a" "配置基本的chroot环境（schroot 默认为alpine)。" \
-#            "b" "安装chroot操作系统(debian ubuntu系列）。" \
             "c" "Docker（alpine）。" \
             3>&1 1>&2 2>&3)
+#            "b" "安装chroot操作系统(debian ubuntu系列）。" \
         fi
         exitstatus=$?
         if [ $exitstatus = 0 ]; then
