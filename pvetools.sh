@@ -2268,8 +2268,9 @@ if [ $exitstatus = 0 ]; then
             if [ $exitstatus = 0 ]; then
                 clear
             fi
-
-        esac
+            esac
+        else
+            chRoot
         fi
         ;;
     b )
