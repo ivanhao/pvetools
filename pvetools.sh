@@ -2139,8 +2139,6 @@ Continue?
                     apt-get -y install schroot
                 fi
             fi
-            {
-            echo 10
             if [ `grep '^/run/udev' /etc/schroot/default/fstab|wc -l` != 0 ];then
                 cat << EOF >> /etc/schroot/default/fstab
 /run/udev       /run/udev       none    rw,bind         0       0 
@@ -2170,8 +2168,6 @@ EOF
             else
                 clear
             fi
-            echo 100
-            }|whiptail --gauge "Configing..." 10 60 0
             cd /alpine
             if [ `ls /alpine|wc -l` != 0 ];then
                 if(whiptail --title "Warnning" --yesno "files exist, remove and reinstall?
@@ -2276,9 +2272,11 @@ if [ $exitstatus = 0 ]; then
         ;;
     c )
         apt-get -y autoremove schroot debootstrap
-        mount --make-rslave /alpine/sys/fs/cgroup
-        umount -R /alpine/sys/fs/cgroup
-        rm -rf /alpine
+        if [ -d "/alpine/sys/fs/cgroup" ];then
+            mount --make-rslave /alpine/sys/fs/cgroup
+            umount -R /alpine/sys/fs/cgroup
+            rm -rf /alpine
+        fi
         whiptail --title "Success" --msgbox "Done.
 删除成功" 10 60
 
