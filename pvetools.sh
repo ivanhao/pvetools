@@ -2158,7 +2158,8 @@ EOF
                     apt-get -y install schroot
                 fi
             fi
-            mkdir /alpine && cd /alpine
+            if [ -d /alpine ];then mkdir /alpine ;fi
+            cd /alpine
             wget http://dl-cdn.alpinelinux.org/alpine/v3.10/releases/x86_64/alpine-minirootfs-3.10.3-x86_64.tar.gz
             tar -xvzf alpine-minirootfs-3.10.3-x86_64.tar.gz
             rm -rf alpine-minirootfs-3.10.3-x86_64.tar.gz
@@ -2167,6 +2168,9 @@ EOF
             schroot -c alpine apk update
             echo 100
             }|whiptail --gauge "Installing..." 10 60 0
+            whiptail --title "Success" --msgbox "Done!
+安装配置完成！" 10 60
+            chRoot
         else
             chRoot
         fi
