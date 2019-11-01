@@ -2277,6 +2277,23 @@ EOF
             chRoot
         fi
     }
+    delChroot(){
+        if (whiptail --title "Yes/No" --yesno "Continue?
+是否继续?")then
+            checkSchroot
+            apt-get -y autoremove schroot debootstrap
+            if [ -d "/alpine/sys/fs/cgroup" ];then
+                mount --make-rslave /alpine/sys/fs/cgroup
+                umount -R /alpine/sys/fs/cgroup
+            fi
+            killall dockerd
+            rm -rf /alpine
+            whiptail --title "Success" --msgbox "Done.
+    删除成功" 10 60
+        else
+            chRoot
+        fi
+    }
     #--base-funcs-end--
 if [ $L = "en" ];then
     x=$(whiptail --title " PveTools   Version : 2.0.2 " --menu "Config chroot & docker etc:" 25 60 15 \
@@ -2301,18 +2318,10 @@ if [ $exitstatus = 0 ]; then
         enterChroot
         ;;
     c )
-        checkSchroot
-        apt-get -y autoremove schroot debootstrap
-        if [ -d "/alpine/sys/fs/cgroup" ];then
-            mount --make-rslave /alpine/sys/fs/cgroup
-            umount -R /alpine/sys/fs/cgroup
-        fi
-        killall dockerd
-        rm -rf /alpine
-        whiptail --title "Success" --msgbox "Done.
-删除成功" 10 60
-
+        delChroot
 esac
+else
+    main
 fi
 
 }
