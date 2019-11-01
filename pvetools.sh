@@ -2241,6 +2241,7 @@ EOF
         else
                 schroot -c alpine -d /root 
         fi
+        configChroot
     }
     checkSchroot(){
         if [ `ls /usr/bin|grep schroot|wc -l` = 0 ] || [ `schroot -l|wc -l` = 0 ];then
