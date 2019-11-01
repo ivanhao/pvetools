@@ -2215,8 +2215,10 @@ EOF
         if [ $exitstatus = 0 ]; then
             if [ $x ];then
                 schroot -c $x -d /root
+            else
+                chRoot
             fi
-            enterChroot
+            chRoot
         fi
     }
     docker(){
