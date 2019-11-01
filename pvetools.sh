@@ -2234,6 +2234,7 @@ EOF
                 cat << EOF >> /alpine/etc/profile
 echo "Docker installed."
 EOF
+                docker
             fi
         else
                 schroot -c alpine -d /root 
