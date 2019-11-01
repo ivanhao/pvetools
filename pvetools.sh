@@ -2140,11 +2140,13 @@ Continue?
                 fi
             fi
             if [ `grep '\/run\/udev' /etc/schroot/default/fstab|wc -l` = 0 ];then
+                sed '/^$/d' /etc/schroot/default/fstab
                 cat << EOF >> /etc/schroot/default/fstab
 /run/udev       /run/udev       none    rw,bind         0       0 
 EOF
             fi
             if [ `grep '\/sys\/fs\/cgroup' /etc/schroot/default/fstab|wc -l` = 0 ];then
+                sed '/^$/d' /etc/schroot/default/fstab
                 cat << EOF >> /etc/schroot/default/fstab
 /sys/fs/cgroup  /sys/fs/cgroup  none    rw,rbind        0       0 
 EOF
