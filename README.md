@@ -66,6 +66,14 @@ cd pvetools
 
 
 # [版本说明]
+##### v2.0.2
+发布时间：2019.10.31
+
+new feature:
+- 增加chroot功能，默认安装好Alpine
+- 增加docker功能，默认安装在Alpine中
+- bug修复
+
 ##### v2.0.1  
 发布时间：2019.10.24
 
