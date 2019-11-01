@@ -2222,6 +2222,7 @@ EOF
             else
                 chRoot
             fi
+        else
             chRoot
         fi
     }
