@@ -2234,7 +2234,7 @@ EOF
                 cat << EOF >> /alpine/etc/profile
 echo "Docker installed."
 EOF
-                docker
+                configChroot
             fi
         else
                 schroot -c alpine -d /root 
@@ -2247,24 +2247,7 @@ EOF
             chRoot
         fi
     }
-    #--base-funcs-end--
-if [ $L = "en" ];then
-    x=$(whiptail --title " PveTools   Version : 2.0.2 " --menu "Config chroot & docker etc:" 25 60 15 \
-    "a" "Install & config base schroot." \
-    "b" "Enter chroot." \
-    "c" "Remove all chroot." \
-    3>&1 1>&2 2>&3)
-else
-    x=$(whiptail --title " PveTools   Version : 2.0.2 " --menu "配置chroot环境和docker等:" 25 60 15 \
-    "a" "安装配置基本的chroot环境（schroot 默认为alpine)。" \
-    "b" "进入chroot。" \
-    "c" "彻底删除chroot。" \
-    3>&1 1>&2 2>&3)
-fi
-exitstatus=$?
-if [ $exitstatus = 0 ]; then
-    case "$x" in
-    a )
+    configChroot(){
         if [ $L = "en" ];then
             x=$(whiptail --title " PveTools   Version : 2.0.2 " --menu "Config chroot & docker etc:" 25 60 15 \
             "a" "Config base schroot." \
@@ -2290,6 +2273,26 @@ if [ $exitstatus = 0 ]; then
         else
             chRoot
         fi
+    }
+    #--base-funcs-end--
+if [ $L = "en" ];then
+    x=$(whiptail --title " PveTools   Version : 2.0.2 " --menu "Config chroot & docker etc:" 25 60 15 \
+    "a" "Install & config base schroot." \
+    "b" "Enter chroot." \
+    "c" "Remove all chroot." \
+    3>&1 1>&2 2>&3)
+else
+    x=$(whiptail --title " PveTools   Version : 2.0.2 " --menu "配置chroot环境和docker等:" 25 60 15 \
+    "a" "安装配置基本的chroot环境（schroot 默认为alpine)。" \
+    "b" "进入chroot。" \
+    "c" "彻底删除chroot。" \
+    3>&1 1>&2 2>&3)
+fi
+exitstatus=$?
+if [ $exitstatus = 0 ]; then
+    case "$x" in
+    a )
+        configChroot
         ;;
     b )
         enterChroot
