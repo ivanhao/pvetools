@@ -2282,7 +2282,7 @@ EOF
     }
     delChroot(){
         if (whiptail --title "Yes/No" --yesno "Continue?
-是否继续?")then
+是否继续?" 10 60)then
             checkSchroot
             apt-get -y autoremove schroot debootstrap
             if [ -d "/alpine/sys/fs/cgroup" ];then
