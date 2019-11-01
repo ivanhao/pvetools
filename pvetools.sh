@@ -2174,6 +2174,7 @@ EOF
             if [ `ls /alpine|wc -l` -gt 0 ];then
                 if(whiptail --title "Warnning" --yesno "files exist, remove and reinstall?
 已经存在文件，是否清空重装？" --defaultno 10 60)then
+                    killall dockerd
                     rm -rf /alpine/*
                 fi
             fi
@@ -2307,6 +2308,7 @@ if [ $exitstatus = 0 ]; then
             mount --make-rslave /alpine/sys/fs/cgroup
             umount -R /alpine/sys/fs/cgroup
         fi
+        killall dockerd
         rm -rf /alpine
         whiptail --title "Success" --msgbox "Done.
 删除成功" 10 60
