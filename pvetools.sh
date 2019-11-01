@@ -2173,11 +2173,9 @@ EOF
                 if(whiptail --title "Warnning" --yesno "files exist, remove and reinstall?
 已经存在文件，是否清空重装？" --defaultno 10 60)then
                     rm -rf /alpine/*
-                else
-                    setChroot
                 fi
             fi
-            wget --timeout 15 --waitretry 5 --tries 5 http://dl-cdn.alpinelinux.org/alpine/v3.10/releases/x86_64/alpine-minirootfs-3.10.3-x86_64.tar.gz
+            wget -c --timeout 15 --waitretry 5 --tries 5 http://dl-cdn.alpinelinux.org/alpine/v3.10/releases/x86_64/alpine-minirootfs-3.10.3-x86_64.tar.gz
             tar -xvzf alpine-minirootfs-3.10.3-x86_64.tar.gz
             rm -rf alpine-minirootfs-3.10.3-x86_64.tar.gz
             echo "http://mirrors.aliyun.com/alpine/latest-stable/main/" > /alpine/etc/apk/repositories \
