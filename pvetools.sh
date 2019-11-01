@@ -2121,6 +2121,7 @@ fi
 chRoot(){
     #--base-funcs-start--
     setChroot(){
+        clear
         if(whiptail --title "Yes/No" --yesno "
 Continue?
 是否继续？" --defaultno 10 60 )then
@@ -2199,6 +2200,7 @@ EOF
         clear
     }
     enterChroot(){
+        clear
         checkSchroot
         c=`schroot -l|awk -F ":" '{print $2"  "$1}'`
         if [ $L = "en" ];then
@@ -2221,6 +2223,7 @@ EOF
         fi
     }
     docker(){
+        clear
         checkSchroot
         if [ `schroot -c alpine -d /root ls /usr/bin|grep docker|wc -l` = 0 ];then
             if(whiptail --title "Warnning" --yesno "No docker found.Install?
