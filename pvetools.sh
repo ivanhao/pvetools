@@ -2219,6 +2219,19 @@ EOF
             enterChroot
         fi
     }
+    docker(){
+        if [ `schroot -c alpine -d /root ls /usr/bin|grep docker|wc -l` = 0 ];then
+            if(whiptail --title "Warnning" --yesno "No docker found.Install?
+您还没有安装docker,是否安装？" 10 60)then
+                schroot -c alpine -d /root apk update && apk add docker && nohup /usr/bin/dockerd > /dev/null 2>&1 &
+                cat << EOF >> /etc/profile
+echo "Docker installed."
+EOF
+            fi
+        else
+                schroot -c alpine -d /root 
+        fi
+    }
     #--base-funcs-end--
 if [ $L = "en" ];then
     x=$(whiptail --title " PveTools   Version : 2.0.2 " --menu "Config chroot & docker etc:" 25 60 15 \
@@ -2255,7 +2268,8 @@ if [ $exitstatus = 0 ]; then
                 setChroot
                 ;;
             c )
-                whiptail --title "Warnning" --msgbox "Not supported." 10 60
+                docker
+                #whiptail --title "Warnning" --msgbox "Not supported." 10 60
                 chroot
             esac
         else
