@@ -2236,7 +2236,6 @@ export DOCKER_RAMDISK=true
 echo "Docker installed."
 nohup /usr/bin/dockerd > /dev/null 2>&1 &
 EOF
-                schroot -c alpine -d /root nohup /usr/bin/dockerd > /dev/null 2>&1 &
                 configChroot
             fi
         else
