@@ -2200,7 +2200,11 @@ EOF
         clear
     }
     enterChroot(){
-        clear
+        if [ `ls /usr/bin|grep schroot|wc -l` = 0 ] || [ `schroot -l|wc -l` = 0 ];then
+            whiptail --title "Warnning" --msgbox "No schroot found.Install schroot first.
+您还没有安装schroot环境，请先安装。" 10 60 
+            chRoot
+        fi
         c=`schroot -l|awk -F ":" '{print $2"  "$1}'`
         if [ $L = "en" ];then
             x=$(whiptail --title " PveTools   Version : 2.0.2 " --menu "Enter chroot:" 25 60 15 \
@@ -2214,11 +2218,6 @@ EOF
         exitstatus=$?
         if [ $exitstatus = 0 ]; then
             if [ $x ];then
-                if [ `ls /usr/bin|grep schroot|wc -l` = 0 ] || [ `schroot -l|wc -l` = 0 ];then
-                    whiptail --title "Warnning" --msgbox "No schroot found.Install schroot first.
-        您还没有安装schroot环境，请先安装。" 10 60 
-                    chRoot
-                fi
                 schroot -c $x -d /root
             else
                 chRoot
