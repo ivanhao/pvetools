@@ -2176,6 +2176,8 @@ EOF
 已经存在文件，是否清空重装？" --defaultno 10 60)then
                     killall dockerd
                     rm -rf /alpine/*
+                else
+                    chRoot
                 fi
             fi
             wget -c --timeout 15 --waitretry 5 --tries 5 http://dl-cdn.alpinelinux.org/alpine/v3.10/releases/x86_64/alpine-minirootfs-3.10.3-x86_64.tar.gz
