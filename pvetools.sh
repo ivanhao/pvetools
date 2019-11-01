@@ -2223,7 +2223,7 @@ EOF
         if [ `schroot -c alpine -d /root ls /usr/bin|grep docker|wc -l` = 0 ];then
             if(whiptail --title "Warnning" --yesno "No docker found.Install?
 您还没有安装docker,是否安装？" 10 60)then
-                schroot -c alpine -d /root apk update && apk add docker && nohup /usr/bin/dockerd > /dev/null 2>&1 &
+                schroot -c alpine -d /root apk update
                 schroot -c alpine -d /root apk add docker
                 schroot -c alpine -d /root nohup /usr/bin/dockerd > /dev/null 2>&1 &
                 cat << EOF >> /etc/profile
