@@ -2399,10 +2399,9 @@ Choose disk type:
                         qm set $vmid --$t$did /dev/disk/by-id/$d
                         whiptail --title "Success" --msgbox "Done.
 配置完成" 10 60
-                        confDisk add
-                        confDisk add
+                        chQmdisk
                     else
-                        confDisk add
+                        chQmdisk
                     fi
                 fi
                 if [ $1 = 'rm' ];then
@@ -2417,13 +2416,13 @@ Choose disk:
                         qm set $vmid --delete $d
                         whiptail --title "Success" --msgbox "Done.
 配置完成" 10 60
-                        confDisk rm
+                        chQmdisk
                     else
-                        confDisk rm
+                        chQmdisk
                     fi
                 fi
             else
-                confDisk
+                chQmdisk
             fi
         fi
 
