@@ -2365,7 +2365,7 @@ you choose: $vmid ,continue?
                         whiptail --title "Warnning" --msgbox "
 输入格式错误，请重新输入：
                         " 10 60
-                        confDisk
+                        chQmdisk 
                     else
                         break
                     fi
@@ -2377,6 +2377,7 @@ Choose disk:
 选择硬盘：" 20 60 10 \
                     $(echo $disks) \
                     3>&1 1>&2 2>&3)
+                    exitstatus=$?
                     t=$(whiptail --title " PveTools Version : 2.0.3 " --checklist "
 Choose disk type:
 选择硬盘接口类型：" 20 60 10 \
@@ -2386,7 +2387,7 @@ Choose disk type:
                     3>&1 1>&2 2>&3)
                     exitstatus=$?
                     if [ $exitstatus = 0 ]; then
-                        did=`qm config $vmid|sed  -n '/^'$t'/p'|awk -F ':' '{print $1}'|sort -u|grep '[0-9]*$' -o`
+                        did=`qm config $vmid|sed -n '/^'$t'/p'|awk -F ':' '{print $1}'|sort -u|grep '[0-9]*$' -o`
                         if [ $did ];then
                             did=$((did+1))
                         else
