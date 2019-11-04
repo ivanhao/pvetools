@@ -2397,8 +2397,10 @@ Choose disk type:
                         d=`echo $d|sed 's/\"//g'`
                         for i in $d
                         do
-                            qm set $vmid --$t$did /dev/disk/by-id/$i
-                            did=$((did+1))
+                            if [ `qm config $vmid|grep $i|wc -l` = 0 ];then
+                                qm set $vmid --$t$did /dev/disk/by-id/$i
+                                did=$((did+1))
+                            fi
                         done
                         whiptail --title "Success" --msgbox "Done.
 配置完成" 10 60
