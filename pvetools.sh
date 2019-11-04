@@ -2371,7 +2371,8 @@ you choose: $vmid ,continue?
                     fi
                 done
                 if [ $1 = 'add' ];then
-                    disks=`ls -alh /dev/disk/by-id|awk '{print $11" "$9" OFF"}'|awk -F "/" '{print $3}'|sed '/^$/d'|sed '/wwn/d'|sed '/^dm/d'|sed '/lvm/d'`
+                    #disks=`ls -alh /dev/disk/by-id|awk '{print $11" "$9" OFF"}'|awk -F "/" '{print $3}'|sed '/^$/d'|sed '/wwn/d'|sed '/^dm/d'|sed '/lvm/d'`
+                    disks=`ls -alh /dev/disk/by-id|sed '/\.$/d'|sed '/^$/d'|awk 'NR>1{print $9" "$11" OFF"}'|sed 's/\.\.\///g'|sed '/wwn/d'|sed '/^dm/d'|sed '/lvm/d'`
                     d=$(whiptail --title " PveTools Version : 2.0.3 " --checklist "
 Choose disk:
 选择硬盘：" 20 60 10 \
@@ -2393,7 +2394,8 @@ Choose disk type:
                         else
                             did=0
                         fi
-                        d=`ls -alh /dev/disk/by-id|grep $d|awk 'NR==1{print $9}'`
+                        #d=`ls -alh /dev/disk/by-id|grep $d|awk 'NR==1{print $9}'`
+                        d=`echo $d|sed 's/\"//g'`
                         qm set $vmid --$t$did /dev/disk/by-id/$d
                         whiptail --title "Success" --msgbox "Done.
 配置完成" 10 60
