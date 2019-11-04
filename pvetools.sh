@@ -2338,7 +2338,6 @@ chQmdisk(){
         list=`qm list|awk 'NR>1{print $1":"$2".................."$3" "}'`
         echo -n "">lsvm
         ls=`for i in $list;do echo $i|awk -F ":" '{print $1" "$2" OFF"}'>>lsvm;done`
-        ls=`sed -i '/'$confId'/ s/OFF/ON/g' lsvm` 
         ls=`cat lsvm`
         rm lsvm
         h=`echo $ls|wc -l`
