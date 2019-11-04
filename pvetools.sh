@@ -2370,10 +2370,15 @@ you choose: $vmid ,continue?
                 done
                 if [ $1 = 'add' ];then
                     #disks=`ls -alh /dev/disk/by-id|awk '{print $11" "$9" OFF"}'|awk -F "/" '{print $3}'|sed '/^$/d'|sed '/wwn/d'|sed '/^dm/d'|sed '/lvm/d'`
+                    #added=`cat /etc/pve/qemu-server/$vmid.conf|grep -E '^ide[0-9]|^scsi[0-9]|^sata[0-9]'|awk -F ":" '{print $1" "$2$3"\r\n"}'`
                     disks=`ls -alh /dev/disk/by-id|sed '/\.$/d'|sed '/^$/d'|awk 'NR>1{print $9" "$11" OFF"}'|sed 's/\.\.\///g'|sed '/wwn/d'|sed '/^dm/d'|sed '/lvm/d'|sed '/nvme-nvme/d'`
                     d=$(whiptail --title " PveTools Version : 2.0.3 " --checklist "
+disk list:
+已添加的硬盘:
+$(cat /etc/pve/qemu-server/$vmid.conf|grep -E '^ide[0-9]|^scsi[0-9]|^sata[0-9]'|awk -F ":" '{print $1" "$2" "$3}')
+-----------------------
 Choose disk:
-选择硬盘：" 20 90 10 \
+选择硬盘：" 30 90 10 \
                     $(echo $disks) \
                     3>&1 1>&2 2>&3)
                     exitstatus=$?
@@ -2409,7 +2414,7 @@ Choose disk type:
                     fi
                 fi
                 if [ $1 = 'rm' ];then
-                    disks=`qm config $vmid|grep -E '^ide[0-9]|^scsi[0-9]|^sata[0-9]'|awk -F ":" '{print $1" "$2$3}'`
+                    disks=`qm config $vmid|grep -E '^ide[0-9]|^scsi[0-9]|^sata[0-9]'|awk -F ":" '{print $1" "$2$3" OFF"}'`
                     d=$(whiptail --title " PveTools Version : 2.0.3 " --checklist "
 Choose disk:
 选择硬盘：" 20 90 10 \
@@ -2417,7 +2422,11 @@ Choose disk:
                     3>&1 1>&2 2>&3)
                     exitstatus=$?
                     if [ $exitstatus = 0 ]; then
-                        qm set $vmid --delete $d
+                        for i in $d
+                        do
+                            i=`echo $i|sed 's/\"//g'`
+                            qm set $vmid --delete $i
+                        done
                         whiptail --title "Success" --msgbox "Done.
 配置完成" 10 60
                         chQmdisk
