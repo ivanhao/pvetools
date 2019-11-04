@@ -2337,7 +2337,7 @@ chQmdisk(){
     confDisk(){
         list=`qm list|awk 'NR>1{print $1":"$2".................."$3" "}'`
         echo -n "">lsvm
-        ls=`for i in $list;do echo $i|awk -F ":" '{print $1" "$2" OFF"}'>>lsvm;done`
+        ls=`for i in $list;do echo $i|awk -F ":" '{print $1" "$2}'>>lsvm;done`
         ls=`cat lsvm`
         rm lsvm
         h=`echo $ls|wc -l`
@@ -2346,7 +2346,7 @@ chQmdisk(){
             h=30
         fi
         list1=`echo $list|awk 'NR>1{print $1}'`
-        vmid=$(whiptail  --title " PveTools   Version : 2.0.3 " --radiolist "
+        vmid=$(whiptail  --title " PveTools   Version : 2.0.3 " --menu "
 Choose vmid to set disk:
 选择需要配置硬盘的vm：" 20 60 10 \
         $(echo $ls) \
@@ -2385,9 +2385,9 @@ Choose disk:
                     t=$(whiptail --title " PveTools Version : 2.0.3 " --menu "
 Choose disk type:
 选择硬盘接口类型：" 20 60 10 \
-                    "ide" "vm ide type" \
                     "sata" "vm sata type" \
                     "scsi" "vm scsi type" \
+                    "ide" "vm ide type" \
                     3>&1 1>&2 2>&3)
                     exits=$?
                     if [ $exitstatus = 0 ] && [ $exits = 0 ]; then
@@ -2401,8 +2401,15 @@ Choose disk type:
                         d=`echo $d|sed 's/\"//g'`
                         for i in $d
                         do
-                            if [ `qm config $vmid|grep $i|wc -l` = 0 ];then
-                                qm set $vmid --$t$did /dev/disk/by-id/$i
+                            if [ `cat /etc/pve/qemu-server/$vmid.conf|grep $i|wc -l` = 0 ];then
+                                #if [ $t = "ide" ] && [ `echo $i|grep "nvme"|wc -l` -gt 0 ];then
+                                if [ $t = "ide" ] && [ $did -gt 3 ];then
+                                    whiptail --title "Warnning" --msgbox "ide is greate then 3.
+ide的类型已经超过3个,请重选其他类型!" 10 60
+                                else
+                                    qm set $vmid --$t$did /dev/disk/by-id/$i 
+                                fi
+                                sleep 1 
                                 did=$((did+1))
                             fi
                         done
