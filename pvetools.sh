@@ -2378,7 +2378,7 @@ Choose disk:
                     $(echo $disks) \
                     3>&1 1>&2 2>&3)
                     exitstatus=$?
-                    t=$(whiptail --title " PveTools Version : 2.0.3 " --radiolist "
+                    t=$(whiptail --title " PveTools Version : 2.0.3 " --menu "
 Choose disk type:
 选择硬盘接口类型：" 20 60 10 \
                     "ide" "vm ide type" \
@@ -2393,7 +2393,8 @@ Choose disk type:
                         else
                             did=0
                         fi
-                        qm set $vmid --$t$did $d
+                        d=`ls -alh /dev/disk/by-id|grep $d|awk 'NR==1{print $9}'`
+                        qm set $vmid --$t$did /dev/disk/by-id/$d
                         whiptail --title "Success" --msgbox "Done.
 配置完成" 10 60
                         confDisk add
