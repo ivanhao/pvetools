@@ -2377,30 +2377,26 @@ Choose disk:
 选择硬盘：" 20 60 10 \
                     $(echo $disks) \
                     3>&1 1>&2 2>&3)
-                    exitstatus=$?
-                    if [ $exitstatus = 0 ]; then
-                        t=$(whiptail --title " PveTools Version : 2.0.3 " --checklist "
+                    t=$(whiptail --title " PveTools Version : 2.0.3 " --checklist "
 Choose disk type:
 选择硬盘接口类型：" 20 60 10 \
-                        "ide" "vm ide type"
-                        "sata" "vm sata type"
-                        "scsi" "vm scsi type"
-                        3>&1 1>&2 2>&3)
-                        exitstatus=$?
-                        if [ $exitstatus = 0 ]; then
-                            did=`qm config $vmid|sed  -n '/^'$t'/p'|awk -F ':' '{print $1}'|sort -u|grep '[0-9]*$' -o`
-                            if [ $did ];then
-                                did=$((did+1))
-                            else
-                                did=0
-                            fi
-                            qm set $vmid --$t$did $d
-                            whiptail --title "Success" --msgbox "Done.
-    配置完成" 10 60
-                            confDisk add
+                    "ide" "vm ide type" \
+                    "sata" "vm sata type" \
+                    "scsi" "vm scsi type" \
+                    3>&1 1>&2 2>&3)
+                    exitstatus=$?
+                    if [ $exitstatus = 0 ]; then
+                        did=`qm config $vmid|sed  -n '/^'$t'/p'|awk -F ':' '{print $1}'|sort -u|grep '[0-9]*$' -o`
+                        if [ $did ];then
+                            did=$((did+1))
                         else
-                            confDisk add
+                            did=0
                         fi
+                        qm set $vmid --$t$did $d
+                        whiptail --title "Success" --msgbox "Done.
+配置完成" 10 60
+                        confDisk add
+                        confDisk add
                     else
                         confDisk add
                     fi
