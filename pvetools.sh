@@ -2381,8 +2381,8 @@ Choose disk:
                     t=$(whiptail --title " PveTools Version : 2.0.3 " --checklist "
 Choose disk type:
 选择硬盘接口类型：" 20 60 10 \
-                    "ide" "vm ide type" \
-                    "sata" "vm sata type" \
+                    "ide" "vm ide type" "" \
+                    "sata" "vm sata type" "" \
                     "scsi" "vm scsi type" \
                     3>&1 1>&2 2>&3)
                     exitstatus=$?
