@@ -2357,7 +2357,6 @@ Choose vmid to set disk:
 you choose: $vmid ,continue?
 你选的是：$vmid ，是否继续?
                 " 10 60)then
-                echo $vmid>vmid
                 while [ true ]
                 do
                     if [ `echo "$vmid"|grep "^[0-9]*$"|wc -l` = 0 ];then
