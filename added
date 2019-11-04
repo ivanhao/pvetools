@@ -1,1 +1,0 @@
-ide2 none,media=cdrom ide3 /dev/disk/by-id/ata-ST500LT012-9WS142_S0V4AJ0G-part9,size=8M sata0 /dev/disk/by-id/nvme-INTEL_MEMPEK1W016GAL_PHBT831204ZG016D-part3,size=13865303552 sata1 /dev/disk/by-id/ata-ST500LT012-9WS142_S0V4AJ0G-part1,size=476931M scsi0 local-lvmvm-100-disk-0,size=1G
