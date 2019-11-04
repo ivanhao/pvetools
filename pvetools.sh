@@ -2374,7 +2374,7 @@ you choose: $vmid ,continue?
                     disks=`ls -alh /dev/disk/by-id|sed '/\.$/d'|sed '/^$/d'|awk 'NR>1{print $9" "$11" OFF"}'|sed 's/\.\.\///g'|sed '/wwn/d'|sed '/^dm/d'|sed '/lvm/d'|sed '/nvme-nvme/d'`
                     d=$(whiptail --title " PveTools Version : 2.0.3 " --checklist "
 Choose disk:
-选择硬盘：" 20 60 10 \
+选择硬盘：" 20 90 10 \
                     $(echo $disks) \
                     3>&1 1>&2 2>&3)
                     exitstatus=$?
@@ -2395,7 +2395,11 @@ Choose disk type:
                         fi
                         #d=`ls -alh /dev/disk/by-id|grep $d|awk 'NR==1{print $9}'`
                         d=`echo $d|sed 's/\"//g'`
-                        qm set $vmid --$t$did /dev/disk/by-id/$d
+                        for i in $d
+                        do
+                            qm set $vmid --$t$did /dev/disk/by-id/$i
+                            did=$((did+1))
+                        done
                         whiptail --title "Success" --msgbox "Done.
 配置完成" 10 60
                         chQmdisk
@@ -2407,7 +2411,7 @@ Choose disk type:
                     disks=`qm config $vmid|grep -E '^ide[0-9]|^scsi[0-9]|^sata[0-9]'|awk -F ":" '{print $1" "$2$3}'`
                     d=$(whiptail --title " PveTools Version : 2.0.3 " --checklist "
 Choose disk:
-选择硬盘：" 20 60 10 \
+选择硬盘：" 20 90 10 \
                     $(echo $disks) \
                     3>&1 1>&2 2>&3)
                     exitstatus=$?
