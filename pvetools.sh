@@ -2210,6 +2210,8 @@ EOF
         configChroot
     }
     dockerWeb(){
+        checkSchroot
+        checkDocker
         if [ ! -d "/alpine/opt/portainer" ] || [ `ls /alpine/opt/portainer|wc -l` -lt 3 ];then
             cd /alpine/opt
             wget -c https://github.com/portainer/portainer/releases/download/1.22.1/portainer-1.22.1-linux-amd64.tar.gz
@@ -2240,6 +2242,13 @@ EOF
         if [ `ls /usr/bin|grep schroot|wc -l` = 0 ] || [ `schroot -l|wc -l` = 0 ];then
             whiptail --title "Warnning" --msgbox "No schroot found.Install schroot first.
 您还没有安装schroot环境，请先安装。" 10 60 
+            chRoot
+        fi
+    }
+    checkDocker(){
+        if [ `ls /alpine/usr/bin|grep docker|wc -l` = 0 ];then
+            whiptail --title "Warnning" --msgbox "No docker found.Install docker first.
+您还没有安装docker环境，请先安装。" 10 60 
             chRoot
         fi
     }
