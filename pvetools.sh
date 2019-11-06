@@ -768,18 +768,32 @@ doSpindown(){
         chSpindown
     fi
 }
+chApm(){
+    clear
+    apm=$(
+    whiptail --title " PveTools   Version : 2.0.3 " --menu "Config hard disks APM & AAM:
+配置硬盘静音、降温：
+    " 25 60 15 \
+    "128" "Config hard drivers to auto spindown." \
+    "b" "Remove config hdspindown." \
+    "c" "Config pvestatd service(in case of spinup drives)." \
+    "d" "Config drivers aam\apm to low temp and quiet." \
+    3>&1 1>&2 2>&3)
+}
 
 if [ $L = "en" ];then
     OPTION=$(whiptail --title " PveTools   Version : 2.0.3 " --menu "Config hard disks spindown:" 25 60 15 \
-    "a" "Config hard drives to auto spindown." \
+    "a" "Config hard drivers to auto spindown." \
     "b" "Remove config hdspindown." \
     "c" "Config pvestatd service(in case of spinup drives)." \
+    "d" "Config drivers aam\apm to low temp and quiet." \
     3>&1 1>&2 2>&3)
 else
     OPTION=$(whiptail --title " PveTools   Version : 2.0.3 " --menu "配置硬盘自动休眠" 25 60 15 \
     "a" "配置硬盘自动休眠" \
     "b" "还原硬盘自动休眠配置" \
     "c" "配置pvestatd服务（防止休眠后马上被唤醒）。" \
+    "d" "设置硬盘静音、降温" \
     3>&1 1>&2 2>&3)
 fi
 if [ $1 ];then
@@ -2259,12 +2273,14 @@ EOF
         if [ $L = "en" ];then
             x=$(whiptail --title " PveTools   Version : 2.0.3 " --menu "Config chroot & docker etc:" 25 60 15 \
             "a" "Config base schroot." \
-            "c" "Docker in alpine" \
+            "b" "Docker in alpine" \
+            "c" "Portainer in alpine" \
             3>&1 1>&2 2>&3)
         else
             x=$(whiptail --title " PveTools   Version : 2.0.3 " --menu "配置chroot环境和docker等:" 25 60 15 \
             "a" "配置基本的chroot环境（schroot 默认为alpine)。" \
-            "c" "Docker（alpine）。" \
+            "b" "Docker（alpine）。" \
+            "c" "Docker配置界面（portainer in alpine）。" \
             3>&1 1>&2 2>&3)
         fi
         exitstatus=$?
@@ -2273,10 +2289,26 @@ EOF
             a )
                 setChroot
                 ;;
-            c )
+            b )
                 docker
                 #whiptail --title "Warnning" --msgbox "Not supported." 10 60
                 chroot
+                ;;
+            c )
+                if [ ! -d "/alpine/opt/portainer" ] || [ `ls /alpine/opt/portainer|wc -l` -lt 3 ];then
+                    cd /alpine/opt
+                    wget -c https://github.com/portainer/portainer/releases/download/1.22.1/portainer-1.22.1-linux-amd64.tar.gz
+                    tar xvpfz portainer-1.22.1-linux-amd64.tar.gz
+                    cat << EOF >> /alpine/etc/profile
+nohup /opt/portainer/portainer --template-file /opt/portainer/tempates.json>/dev/null 2>&1 &
+echo "Portainer installed." 
+EOF
+                    schroot -c alpine -d /root echo "Done."
+                else
+                    whiptail --title "Success" --msgbox "Already Configed.
+您已经配置过这个了。
+                    " 10 60
+                fi
             esac
         else
             chRoot
