@@ -2,7 +2,7 @@
 #############--proxmox tools--##########################
 #  Author : 龙天ivan
 #  Mail: ivanhao1984@qq.com
-#  Version: V2.0.1
+#  Version: V2.0.4
 #  Github: https://github.com/ivanhao/pvetools
 ########################################################
 
