@@ -66,11 +66,20 @@ cd pvetools
 
 
 # [版本说明]
+##### v2.0.4
+发布时间：2019.11.06
+
+new feature:
+- 增加docker的web界面（portainer)
+- 去除隐藏的命令输出，例如apt-get install的输出等。
+
+
 ##### v2.0.3
 发布时间：2019.11.04
 
 new feature:
 - 增加qm set映射物理硬盘的功能
+
 
 ##### v2.0.2
 发布时间：2019.11.01
