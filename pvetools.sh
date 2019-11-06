@@ -54,13 +54,7 @@ else
 fi
 
 #processing
-{
-    echo 50
-    sleep 1
-    $(apt -y install mailutils)
-    echo 100
-    sleep 1
-} | whiptail --gauge "Please wait while installing" 6 60 0
+    apt -y install mailutils
 }
 
 smbp(){
@@ -270,13 +264,7 @@ Wrong email format!!!   input xxxx@qq.com for example.retry:
             fi
         done
         if [[ ! -f /etc/mailname || `dpkg -l|grep mailutils|wc -l` = 0 ]];then
-            {
-                echo 50
-                sleep 1
-                $(apt -y install mailutils)
-                echo 100
-                sleep 1
-            } | whiptail --gauge "Please wait while installing" 10 60 0
+            apt -y install mailutils
         fi
         {
             echo 10
@@ -332,10 +320,10 @@ set max zfs ram 4(G) or 8(G) etc, just enter number or n?
         while [ true ]
         do
             if [[ "$x" =~ ^[1-9]+$ ]]; then
+                    update-initramfs -u
                 {
                     $(echo "options zfs zfs_arc_max=$[$x*1024*1024*1024]">/etc/modprobe.d/zfs.conf)
                     echo 10
-                    $(update-initramfs -u)
                     echo 70
                     sleep 1
                     #set rpool to list snapshots
@@ -362,16 +350,9 @@ Invalidate value.Please comfirm!
     Install zfs-zed to get email notification of zfs scrub?(Y/n):
     安装zfs-zed来发送zfs scrub的结果提醒邮件？(Y/n):
         " 10 60);then
-            {
-                echo 10
-                $(
-                    if [ `dpkg -l|grep zfs-zed|wc -l` = 0 ];then
-                        apt -y install zfs-zed
-                    fi
-                )
-                echo 100
-                sleep 1
-            }|whiptail --gauge "installing" 10 60 0
+            if [ `dpkg -l|grep zfs-zed|wc -l` = 0 ];then
+                apt -y install zfs-zed
+            fi
             whiptail --title "Success" --msgbox "
     Install complete!
     安装zfs-zed成功！
@@ -604,15 +585,13 @@ if [ $exitstatus = 0 ]; then
 Install vim & simply config display.Continue?
 安装VIM并简单配置，如配色行号等，基本是vim原味儿。是否继续？
             " 10 60) then
-            {
-            echo 10
-            $(
             if [ ! -f /root/.vimrc ] || [ `cat /root/.vimrc|wc -l` = 0 ] || [ `dpkg -l |grep vim|wc -l` = 0 ];then
                 apt -y install vim
             else
                 cp ~/.vimrc ~/.vimrc.bak
             fi
-            )
+            {
+            echo 10
             echo 50
             $(
             cat << EOF > ~/.vimrc
@@ -671,11 +650,9 @@ EOF
 安装VIM并配置 \'vim-for-server\'(https://github.com/wklken/vim-for-server).
 yes or no?
             " 12 60) then
+            apt -y install curl vim
             {
             echo 10
-            $(
-            apt -y install curl vim
-            )
             echo 80
             $(
             cp ~/.vimrc ~/.vimrc_bak
@@ -745,16 +722,14 @@ doSpindown(){
     Config hard drives to auto spindown?(Y/n):
     配置硬盘自动休眠？(Y/n):
     " 10 60) then
-    {
-        echo 10
         if [ `dpkg -l|grep git|wc -l` = 0 ];then
             apt -y install git
         fi
+        git clone https://github.com/ivanhao/hdspindown.git 
+    {
+        echo 10
         echo 50
         cd /root
-        $(
-            git clone https://github.com/ivanhao/hdspindown.git 2>&1 &
-        )
         echo 90
         cd hdspindown
         chmod +x *.sh
@@ -922,12 +897,9 @@ if(whiptail --title "Yes/No Box" --yesno "
 Install cpufrequtils to save power?
 安装配置CPU省电?
 " --defaultno 10 60) then
-{
-    echo 10
     if [ `dpkg -l|grep cpufrequtils|wc -l` = 0 ];then
         apt -y install cpufrequtils
     fi
-    echo 50
     if [ `grep "intel_pstate=disable" /etc/default/grub|wc -l` = 0 ];then
         sed -i.bak 's|quiet|quiet intel_pstate=disable|' /etc/default/grub 
         update-grub
@@ -935,9 +907,6 @@ Install cpufrequtils to save power?
     if [ ! -f /etc/default/cpufrequtils ];then
         cpufreq-info|grep -E "available|analyzing CPU|current"|sed -n "/analyz/,/analyz/p"|sed '$d'
     fi
-    echo 100
-    sleep 1
-}|whiptail --gauge "installing..." 10 60 0
     maxCpu
     minCpu
     cat << EOF > /etc/default/cpufrequtils
@@ -997,11 +966,7 @@ continue?
 Uninstall cpufrequtils?
 卸载cpufrequtils?
                 " 10 60 ) then
-            {
-                echo 20
                 apt -y remove cpufrequtils 2>&1 &
-                echo 10
-            }  |  whiptail --gauge "Uninstalling..." 10 60 0
             fi
             whiptail --title "Success" --msgbox "
 Done
@@ -1346,12 +1311,7 @@ You already installed,Now quit!
                 chSensors
             fi
             if [ ! -f "/usr/bin/sensors" ];then
-                {
-                    echo 50
                 apt-get -y install lm-sensors
-                    echo 100
-                    sleep 1
-                } | whiptail --gauge "installing lm-sensors" 10 60 0
             fi
             sensors-detect --auto > /tmp/sensors
             drivers=`sed -n '/Chip drivers/,/\#----cut here/p' /tmp/sensors|sed '/Chip /d'|sed '/cut/d'`
@@ -1454,11 +1414,11 @@ Uninstall?
     没有检测到安装，不需要卸载。
                 " 10 60
             else
+                apt-get -y remove lm-sensors
             {
                 mv $js.backup $js
                 mv $pm.backup $pm
                 echo 50
-                apt-get -y remove lm-sensors
                 echo 100
                 sleep 1
             }|whiptail --gauge "Uninstalling" 10 60 0
@@ -1496,12 +1456,7 @@ Your hardware do not support PCI Passthrough(No IOMMU)
     fi
     if [ `grep $iommu /etc/default/grub|wc -l` = 0 ];then
         sed -i.bak 's|quiet|quiet '$iommu'|' /etc/default/grub 
-    {
-        echo 50
-        update-grub 2>&1 &
-        echo 100
-        sleep 1
-        }|whiptail --gauge "installing..." 10 60 10
+        update-grub 
         if [ `grep "vfio" /etc/modules|wc -l` = 0 ];then
             cat <<EOF >> /etc/modules
 vfio
@@ -1548,10 +1503,10 @@ Your hardware do not support PCI Passthrough(No IOMMU)
 您还没有配置过该项" 10 60 
         chPassth
     else
+        update-grub
     {
         sed -i 's/ '$iommu'//g' /etc/default/grub 
         echo 30
-        update-grub 2>&1 &
         echo 80
         sed -i '/vfio/d' /etc/modules
         echo 100
@@ -1655,12 +1610,7 @@ Continue?
             if [ `find /sys/kernel/iommu_groups/ -type l|wc -l` = 0 ];then
                 if [ `grep 'pcie_acs_override=downstream' /etc/default/grub|wc -l` = 0 ];then
                     sed -i.bak 's|iommu=on|iommu=on 'pcie_acs_override=downstream'|' /etc/default/grub
-                    {
-                    echo 50
-                    update-grub 2>&1 &
-                    echo 100
-                    sleep 1
-                    }|whiptail --gauge "installing..." 10 60 10
+                    update-grub 
                 fi
             fi
             #--video=efifb:off--
@@ -1673,12 +1623,7 @@ Continue?
                 echo 1 > /sys/module/kvm/parameters/ignore_msrs
                 echo "options kvm ignore_msrs=Y">>/etc/modprobe.d/kvm.conf
             fi
-            {
-            echo 30
             update-initramfs -u -k all
-            echo 100
-            sleep 1
-            }|whiptail --gauge "configing" 10 60 10
             whiptail --title "Success" --msgbox "
     need to reboot to apply! Please reboot.  
     安装好后需要重启系统，请稍后重启。
@@ -1853,16 +1798,11 @@ Let tool auto switch usb?
                                     fi
                                     qm stop $confId 
                                 fi
-                                {
                                 qm stop $vmid 
-                                echo 50
                                 if [ $confId ];then
                                     qm start $confId 
                                 fi
                                 qm start $vmid
-                                echo 100
-                                sleep 1
-                                }|whiptail --gauge "restarting vms" 10 60 10
                             whiptail --title "Success" --msgbox "
 Configed!
 配置成功！
@@ -2026,22 +1966,17 @@ Configed!Please reboot vm.
                             if(whiptail --title "Yes/No" --yesno "
 Let tool auto switch vm?
 是否让工具自动帮你重启切换虚拟机？" 10 60)then
-                                {
                                 #vmid=`echo $vmid|sed 's/\"//g'`
                                 vmid=`cat vmid`
                                 rm vmid
                                 qm stop $confId 
                                 qm stop $vmid 
-                                echo 50
                                 qm start $confId 
                                 qm start $vmid
-                                echo 100
-                                sleep 1
-                                }|whiptail --gauge "restarting vms" 10 60 10
-                            whiptail --title "Success" --msgbox "
+                                whiptail --title "Success" --msgbox "
 Configed!
 配置成功！
-                            " 10 60
+                                " 10 60
                             else
                                 configVideo
                             fi
