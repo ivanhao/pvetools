@@ -2300,7 +2300,7 @@ EOF
                     wget -c https://github.com/portainer/portainer/releases/download/1.22.1/portainer-1.22.1-linux-amd64.tar.gz
                     tar xvpfz portainer-1.22.1-linux-amd64.tar.gz
                     cat << EOF >> /alpine/etc/profile
-nohup /opt/portainer/portainer --template-file /opt/portainer/tempates.json>/dev/null 2>&1 &
+nohup /opt/portainer/portainer --template-file /opt/portainer/templates.json > /dev/null 2>&1 &
 echo "Portainer installed." 
 EOF
                     schroot -c alpine -d /root echo "Done."
