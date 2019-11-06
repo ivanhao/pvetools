@@ -2303,15 +2303,17 @@ EOF
 nohup /opt/portainer/portainer --template-file /opt/portainer/templates.json > /dev/null 2>&1 &
 echo "Portainer installed." 
 EOF
-                    whiptail --title "Success" --msgbox "Already Configed.got to chroot alpine and keep in.
-您已经配置过这个了。
+                    whiptail --title "Success" --msgbox "Configed.got to chroot alpine and keep in.
+配置成功。
 请进入chroot alpine中使用。需要保持chroot的状态。
                     " 10 60
+                    chRoot
                 else
                     whiptail --title "Success" --msgbox "Already Configed.got to chroot alpine.
 您已经配置过这个了。
 请进入chroot alpine中使用。
                     " 10 60
+                    chRoot
                 fi
             esac
         else
