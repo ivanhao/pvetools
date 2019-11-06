@@ -2297,17 +2297,20 @@ EOF
             c )
                 if [ ! -d "/alpine/opt/portainer" ] || [ `ls /alpine/opt/portainer|wc -l` -lt 3 ];then
                     cd /alpine/opt
+                    wget -c https://github.com/portainer/portainer/releases/download/1.22.1/portainer-1.22.1-linux-amd64.tar.gz
+                    tar xvpfz portainer-1.22.1-linux-amd64.tar.gz
                     cat << EOF >> /alpine/etc/profile
+nohup /opt/portainer/portainer --template-file /opt/portainer/templates.json > /dev/null 2>&1 &
 echo "Portainer installed." 
 EOF
-                    schroot -c alpine -d /root docker volume create portainer_data
-                    schroot -c alpine -d /root  docker run -d -p 9000:9000 -p 8000:8000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer
-                    whiptail --title "Success" --msgbox "Done.
-配置完成。
+                    whiptail --title "Success" --msgbox "Already Configed.got to chroot alpine and keep in.
+您已经配置过这个了。
+请进入chroot alpine中使用。需要保持chroot的状态。
                     " 10 60
                 else
-                    whiptail --title "Success" --msgbox "Already Configed.
+                    whiptail --title "Success" --msgbox "Already Configed.got to chroot alpine.
 您已经配置过这个了。
+请进入chroot alpine中使用。
                     " 10 60
                 fi
             esac
