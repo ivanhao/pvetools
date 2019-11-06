@@ -2297,11 +2297,11 @@ EOF
             c )
                 if [ ! -d "/alpine/opt/portainer" ] || [ `ls /alpine/opt/portainer|wc -l` -lt 3 ];then
                     cd /alpine/opt
-                    docker volume create portainer_data
-                    docker run -d -p 9000:9000 -p 8000:8000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer
                     cat << EOF >> /alpine/etc/profile
 echo "Portainer installed." 
 EOF
+                    schroot -c alpine -d /root docker volume create portainer_data \
+                    && docker run -d -p 9000:9000 -p 8000:8000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer
                     whiptail --title "Success" --msgbox "Done.
 配置完成。
                     " 10 60
