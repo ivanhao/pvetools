@@ -2295,7 +2295,7 @@ EOF
         if [ `screen -ls|grep docker|wc -l` != 0 ];then
             screen -S docker -X quit
         fi
-        screen -S docker schroot -c alpine -d /root
+        screen -dmS docker schroot -c alpine -d /root
         whiptail --title "Success" --msgbox "Configed.go to http:/ip:9000 to use.
 配置成功。
 请进入http://ip:9000使用。
