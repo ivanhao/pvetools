@@ -2128,7 +2128,7 @@ EOF
                     killall dockerd
                     rm -rf /alpine/*
                 else
-                    chRoot
+                    configChroot
                 fi
             fi
             wget -c --timeout 15 --waitretry 5 --tries 5 http://dl-cdn.alpinelinux.org/alpine/v3.10/releases/x86_64/alpine-minirootfs-3.10.3-x86_64.tar.gz
@@ -2145,9 +2145,9 @@ EOF
             schroot -c alpine apk update
             whiptail --title "Success" --msgbox "Done.
 安装配置完成！" 10 60
-            chRoot
+            configChroot
         else
-            chRoot
+            configChroot
         fi
     }
     installOs(){
