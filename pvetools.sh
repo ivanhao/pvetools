@@ -2289,11 +2289,11 @@ EOF
         if (whiptail --title "Yes/No" --yesno "Continue?
 是否继续?" 10 60)then
             checkSchroot
+            for i in `schroot --list --all-sessions|awk -F ":" '{print $2}'`;do schroot -e -c $i;done
             apt-get -y autoremove schroot debootstrap
             if [ -d "/alpine/sys/fs/cgroup" ];then
                 mount --make-rslave /alpine/sys/fs/cgroup
                 umount -R /alpine/sys/fs/cgroup
-                for i in `schroot --list --all-sessions|awk -F ":" '{print $2}'`;do schroot -e -c $i;done
             fi
             killall portainer
             killall dockerd
