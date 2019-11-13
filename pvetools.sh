@@ -2098,6 +2098,7 @@ Continue?
 EOF
             fi
             if [ `grep '\/sys\/fs\/cgroup' /etc/schroot/default/fstab|wc -l` = 0 ];then
+                sed '/cgroup/d' /etc/schroot/default/fstab
                 cat << EOF >> /etc/schroot/default/fstab
 /sys/fs/cgroup  /sys/fs/cgroup  none    rw,rbind        0       0 
 EOF
