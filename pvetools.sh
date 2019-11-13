@@ -2146,6 +2146,8 @@ EOF
             schroot -c alpine apk update
             whiptail --title "Success" --msgbox "Done.
 安装配置完成！" 10 60
+            docker
+            dockerWeb
             configChroot
         else
             configChroot
