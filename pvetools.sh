@@ -2126,7 +2126,9 @@ EOF
             if [ `ls /alpine|wc -l` -gt 0 ];then
                 if(whiptail --title "Warnning" --yesno "files exist, remove and reinstall?
 已经存在文件，是否清空重装？" --defaultno 10 60)then
+                    for i in `schroot --list --all-sessions|awk -F ":" '{print $2}'`;do schroot -e -c $i;done
                     killall dockerd
+                    killall portainer
                     rm -rf /alpine/*
                 else
                     configChroot
