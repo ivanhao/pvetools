@@ -72,6 +72,7 @@ cd pvetools
 new feature:
 - 增加docker的web界面（portainer)
 - 去除隐藏的命令输出，例如apt-get install的输出等。
+- chroot优化
 
 
 ##### v2.0.3
