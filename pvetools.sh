@@ -2293,7 +2293,9 @@ EOF
             if [ -d "/alpine/sys/fs/cgroup" ];then
                 mount --make-rslave /alpine/sys/fs/cgroup
                 umount -R /alpine/sys/fs/cgroup
+                for i in `schroot --list --all-sessions|awk -F ":" '{print $2}'`;do schroot -e -c $i;done
             fi
+            killall portainer
             killall dockerd
             rm -rf /alpine
             whiptail --title "Success" --msgbox "Done.
