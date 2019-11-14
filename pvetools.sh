@@ -2215,7 +2215,8 @@ EOF
                 if [ ! -d "/alpine/etc/docker" ];then
                     mkdir /alpine/etc/docker
                 fi
-                cat << EOF > /alpine/etc/docker/daemon.json
+                if [ $L = "en" ];then
+                    cat << EOF > /alpine/etc/docker/daemon.json
 {
     "registry-mirrors": [
         "https://dockerhub.azk8s.cn",
@@ -2224,6 +2225,7 @@ EOF
     ]
 }
 EOF
+                fi
             else
                 configChroot
             fi
