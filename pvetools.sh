@@ -2110,7 +2110,7 @@ EOF
                 clear
             fi
             cd /alpine
-            if [ `ls /alpine|wc -l` -gt 0 ];then
+            if [ `ls /alpine/bin|wc -l` -gt 0 ];then
                 if(whiptail --title "Warnning" --yesno "files exist, remove and reinstall?
 已经存在文件，是否清空重装？" --defaultno 10 60)then
                     for i in `schroot --list --all-sessions|awk -F ":" '{print $2}'`;do schroot -e -c $i;done
@@ -2126,7 +2126,10 @@ EOF
             else
                 alpineUrl='https://mirrors.aliyun.com/alpine/v3.10/releases/x86_64'
             fi
-            version=`wget $alpineUrl -q -O -|grep minirootfs|grep -o '[0-9]*\.[0-9]*\.[0-9]*'|sort -u -r|awk 'NR==1{print $1}'`
+            version=`wget $alpineUrl/ -q -O -|grep minirootfs|grep -o '[0-9]*\.[0-9]*\.[0-9]*'|sort -u -r|awk 'NR==1{print $1}'`
+            echo $alpineUrl
+            echo $version 
+            sleep 3
             wget -c --timeout 15 --waitretry 5 --tries 5 $alpineUrl/alpine-minirootfs-$version-x86_64.tar.gz
             tar -xvzf alpine-minirootfs-$version-x86_64.tar.gz
             rm -rf alpine-minirootfs-$version-x86_64.tar.gz
@@ -2201,6 +2204,18 @@ export DOCKER_RAMDISK=true
 echo "Docker installed."
 nohup /usr/bin/dockerd > /dev/null 2>&1 &
 EOF
+                if [ ! -d "/alpine/etc/docker" ];then
+                    mkdir /alpine/etc/docker
+                fi
+                cat << EOF > /alpine/etc/docker/daemon.json
+{
+    "registry-mirrors": [
+        "https://dockerhub.azk8s.cn",
+        "https://reg-mirror.qiniu.com",
+        "https://registry.docker-cn.com"
+    ]
+}
+EOF
             else
                 configChroot
             fi
@@ -2223,31 +2238,43 @@ EOF
     dockerWeb(){
         checkSchroot
         checkDocker
-        if [ ! -d "/alpine/opt/portainer" ] || [ `ls /alpine/opt/portainer|wc -l` -lt 3 ];then
-            cd /alpine/opt
-            wget -c https://github.com/portainer/portainer/releases/download/1.22.1/portainer-1.22.1-linux-amd64.tar.gz
-            tar xvpfz portainer-1.22.1-linux-amd64.tar.gz
+        checkDockerWeb
+#        if [ ! -d "/alpine/opt/portainer" ] || [ `ls /alpine/opt/portainer|wc -l` -lt 3 ];then
+#            cd /alpine/opt
+#            wget -c https://github.com/portainer/portainer/releases/download/1.22.1/portainer-1.22.1-linux-amd64.tar.gz
+#            tar xvpfz portainer-1.22.1-linux-amd64.tar.gz
+        if [ `cat /alpine/etc/profile|grep portainer|wc -l` = 0 ];then
             cat << EOF >> /alpine/etc/profile
-nohup /opt/portainer/portainer --template-file /opt/portainer/templates.json > /dev/null 2>&1 &
+if [ ! -d "/root/portainer_data" ];then
+    mkdir /root/portainer_data
+fi
+sleep 5
+if [ \`docker ps -a|grep portainer|wc -l\` = 0 ];then
+docker run -d -p 9000:9000 -p 8000:8000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v /root/portainer_data:/data portainer/portainer 
+else
+docker start portainer > /dev/null
+fi
 echo "Portainer installed." 
 EOF
-        else
-            whiptail --title "Success" --msgbox "Already Configed.got to chroot alpine.
-您已经配置过这个了。
-请进入chroot alpine中使用。
-            " 10 60
         fi
-        if [ -f "/usr/bin/screen" ];then
+#        else
+#            whiptail --title "Success" --msgbox "Already Configed.got to chroot alpine.
+#您已经配置过这个了。
+#请进入chroot alpine中使用。
+#            " 10 60
+#        fi
+        if [ ! -f "/usr/bin/screen" ];then
             apt-get install screen -y
         fi
-        if [ `screen -ls|grep docker|wc -l` != 0 ];then
-            screen -S docker -X quit
+        chrootReDaemon
+        sleep 5
+        if [ `schroot -c alpine -d /root docker images|grep portainer|wc -l` = 0 ];then
+            schroot -c alpine -d /root docker pull portainer/portainer 
         fi
-        screen -dmS docker schroot -c alpine -d /root
-        whiptail --title "Success" --msgbox "Configed.go to http:/ip:9000 to use.
-配置成功。
-请进入http://ip:9000使用。
-        " 10 60
+        if [ `schroot -c alpine -d /root docker ps -a|grep portainer|wc -l` = 0 ];then
+            schroot -c alpine -d /root docker run -d -p 9000:9000 -p 8000:8000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v /root/portainer_data:/data portainer/portainer 
+        fi
+        checkDockerWeb
     }
     checkSchroot(){
         if [ `ls /usr/bin|grep schroot|wc -l` = 0 ] || [ `schroot -l|wc -l` = 0 ];then
@@ -2262,6 +2289,39 @@ EOF
 您还没有安装docker环境，请先安装。" 10 60 
             chRoot
         fi
+    }
+    checkDockerWeb(){
+        if [ `schroot -c alpine -d /root docker images|grep portainer|wc -l` != 0 ];then
+            whiptail --title "Warnning" --msgbox "DockerWeb found.Quit. 
+您已经安装dockerWeb环境。
+请进入http://ip:9000使用。
+" 10 60 
+            chRoot
+        fi
+    }
+    chrootReDaemon(){
+        if [ `screen -ls|grep docker|wc -l` != 0 ];then
+            for i in `screen -ls|grep docker|awk -F " " '{print $1}'|awk -F "." '{print $1}'`
+            do
+                screen -S $i -X quit
+            done
+        fi
+        screen -dmS docker schroot -c alpine -d /root
+    }
+    checkChrootDaemon(){
+        if [ `screen -ls|grep docker|wc -l` = 0 ];then
+            screen -dmS docker schroot -c alpine -d /root
+            whiptail --title "Warnning" --msgbox "Chroot daemon started.
+已经为您开启chroot后台运行环境。
+" 10 60 
+        else
+            if(whiptail --title "Warnning" --yesno "Chroot daemon already runngin.Restart?
+chroot后台运行环境已经运行，需要重启吗？
+                " --defaultno 10 60)then
+            chrootReDaemon
+            fi
+        fi
+        chRoot
     }
     configChroot(){
         if [ $L = "en" ];then
@@ -2298,7 +2358,7 @@ EOF
     }
     delChroot(){
         if (whiptail --title "Yes/No" --yesno "Continue?
-是否继续?" 10 60)then
+是否继续?" --defaultno 10 60)then
             checkSchroot
             for i in `schroot --list --all-sessions|awk -F ":" '{print $2}'`;do schroot -e -c $i;done
             apt-get -y autoremove schroot debootstrap
@@ -2320,13 +2380,15 @@ if [ $L = "en" ];then
     x=$(whiptail --title " PveTools   Version : 2.0.5 " --menu "Config chroot & docker etc:" 25 60 15 \
     "a" "Install & config base schroot." \
     "b" "Enter chroot." \
-    "c" "Remove all chroot." \
+    "c" "Chroot daemon manager" \
+    "d" "Remove all chroot." \
     3>&1 1>&2 2>&3)
 else
     x=$(whiptail --title " PveTools   Version : 2.0.5 " --menu "配置chroot环境和docker等:" 25 60 15 \
     "a" "安装配置基本的chroot环境（schroot 默认为alpine)。" \
     "b" "进入chroot。" \
-    "c" "彻底删除chroot。" \
+    "c" "Chroot后台管理。" \
+    "d" "彻底删除chroot。" \
     3>&1 1>&2 2>&3)
 fi
 exitstatus=$?
@@ -2339,6 +2401,9 @@ if [ $exitstatus = 0 ]; then
         enterChroot
         ;;
     c )
+        checkChrootDaemon
+        ;;
+    d )
         delChroot
 esac
 else
