@@ -78,6 +78,9 @@ cd pvetools
 
 new feature:
 - chroot优化,增加对alpine版本的判断，优化速度
+- 中文环境下包的下载全改到国内服务器
+- docker配置国内源
+- portainer改用docker pull的方式拉取镜像（之前使用tar包部署，github上下载包太慢）
 
 
 ##### v2.0.4
