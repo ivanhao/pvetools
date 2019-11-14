@@ -2203,6 +2203,14 @@ EOF
 export DOCKER_RAMDISK=true
 echo "Docker installed."
 nohup /usr/bin/dockerd > /dev/null 2>&1 &
+for i in {1..10}
+do
+if [ \`ps aux|grep dockerd|wc -l\` = 0 ];then
+    nohup /usr/bin/dockerd > /dev/null 2>&1 &
+else
+    break
+fi
+done
 EOF
                 if [ ! -d "/alpine/etc/docker" ];then
                     mkdir /alpine/etc/docker
@@ -2307,18 +2315,27 @@ EOF
             done
         fi
         screen -dmS docker schroot -c alpine -d /root
+        whiptail --title "Success" --msgbox "Chroot daemon done." 10 60
     }
     checkChrootDaemon(){
         if [ `screen -ls|grep docker|wc -l` = 0 ];then
             screen -dmS docker schroot -c alpine -d /root
-            whiptail --title "Warnning" --msgbox "Chroot daemon started.
+            if [ `screen -ls|grep docker|wc -l` != 0 ];then
+                whiptail --title "Warnning" --msgbox "Chroot daemon started.
 已经为您开启chroot后台运行环境。
-" 10 60 
+                " 10 60 
+                chRoot
+            else
+                checkChrootDaemon
+            fi
         else
             if(whiptail --title "Warnning" --yesno "Chroot daemon already runngin.Restart?
 chroot后台运行环境已经运行，需要重启吗？
                 " --defaultno 10 60)then
-            chrootReDaemon
+                chrootReDaemon
+                checkChrootDaemon
+            else
+                chRoot
             fi
         fi
         chRoot
