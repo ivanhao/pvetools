@@ -23,6 +23,7 @@ cd pvetools
 ./pvetools.sh
 ```
 请按上面的方式来安装，不建议直接下载单sh脚本使用，因为那样更新的功能会无法使用！
+如果网络无法使用，可以下载zip包拷入系统中使用。
 
 ### 卸载
 1. 删除下载的pvetools目录
@@ -66,6 +67,13 @@ cd pvetools
 
 
 # [版本说明]
+##### v2.0.5
+发布时间：2019.11.14
+
+new feature:
+- chroot优化,增加对alpine版本的判断，优化速度
+
+
 ##### v2.0.4
 发布时间：2019.11.06
 
@@ -108,15 +116,22 @@ new feature:
 
 ##### for english user:
 
+Use root accout to run.
+
 ```
 export LC_ALL=en_US.UTF-8
 apt update && apt -y install git && git clone https://github.com/ivanhao/pvetools.git
 cd pvetools
 ./pvetools.sh
 ```
+>If update error,you can remove enterprise source by : `rm /etc/apt/sources.list.d/pve-enterprise.list` and retry.
 
 ### Uninstall 
 1. delete pvetools folder
+
+### Run
+cd to pvetools folder,and type:`./pvetools.sh`
+* you should `chmod +x pvetools.sh` first.
 
 
 
