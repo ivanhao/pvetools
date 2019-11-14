@@ -2202,10 +2202,9 @@ EOF
                 cat << EOF >> /alpine/etc/profile
 export DOCKER_RAMDISK=true
 echo "Docker installed."
-nohup /usr/bin/dockerd > /dev/null 2>&1 &
 for i in {1..10}
 do
-if [ \`ps aux|grep dockerd|wc -l\` = 0 ];then
+if [ \`ps aux|grep dockerd|wc -l\` -gt 1 ];then
     nohup /usr/bin/dockerd > /dev/null 2>&1 &
 else
     break
@@ -2258,7 +2257,6 @@ EOF
 if [ ! -d "/root/portainer_data" ];then
     mkdir /root/portainer_data
 fi
-sleep 5
 if [ \`docker ps -a|grep portainer|wc -l\` = 0 ];then
 docker run -d -p 9000:9000 -p 8000:8000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v /root/portainer_data:/data portainer/portainer 
 else
