@@ -81,6 +81,8 @@ new feature:
 - 中文环境下包的下载全改到国内服务器
 - docker配置国内源
 - portainer改用docker pull的方式拉取镜像（之前使用tar包部署，github上下载包太慢）
+- 增加chroot后台管理功能，检测chroot的运行
+- 删除代码目录中的图片，改成简书图片链接
 
 
 ##### v2.0.4
