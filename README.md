@@ -50,7 +50,9 @@ cd pvetools
 #### 配置邮件说明：
 
 只有以下界面需要用tab键选成红框的内容,其他的一律无脑回车即可。
-[图片上传失败...(image-bd8932-1573696909550)]
+
+![mail](https://upload-images.jianshu.io/upload_images/4171480-2ee76fb89c0f253e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 
 
 #### 如果这个脚本帮到你了，麻烦点一下右上角的star小星星^_^
