@@ -39,9 +39,10 @@ cd pvetools
 
 ### 主界面
 
-![main](https://upload-images.jianshu.io/upload_images/4171480-b42e98a6ddb84d9c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![main](https://upload-images.jianshu.io/upload_images/4171480-501e3adb625c82fb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-![main1](https://upload-images.jianshu.io/upload_images/4171480-31d225599bde97b3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![main1](https://upload-images.jianshu.io/upload_images/4171480-0c2a32681fde9a40.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 
 
 根据需要选择对应的选项即可。
@@ -132,9 +133,10 @@ cd pvetools
 ### Interface
 1. main
 
-![main](https://upload-images.jianshu.io/upload_images/4171480-b42e98a6ddb84d9c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![main](https://upload-images.jianshu.io/upload_images/4171480-501e3adb625c82fb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
-![main1](https://upload-images.jianshu.io/upload_images/4171480-a6131f468efdc57a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![main1](https://upload-images.jianshu.io/upload_images/4171480-26d8c4796c76d64b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 
 
 ### Uninstall 
