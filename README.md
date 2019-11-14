@@ -39,15 +39,17 @@ cd pvetools
 
 ### 主界面
 
-![main](./main.png)
-![main](./main1.png)
+![main](https://upload-images.jianshu.io/upload_images/4171480-b42e98a6ddb84d9c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![main1](https://upload-images.jianshu.io/upload_images/4171480-31d225599bde97b3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 
 根据需要选择对应的选项即可。
 
 #### 配置邮件说明：
 
 只有以下界面需要用tab键选成红框的内容,其他的一律无脑回车即可。
-![mail](./mail.png)
+[图片上传失败...(image-bd8932-1573696909550)]
 
 
 #### 如果这个脚本帮到你了，麻烦点一下右上角的star小星星^_^
@@ -57,7 +59,8 @@ cd pvetools
 ![qq](http://upload-images.jianshu.io/upload_images/4171480-e0204ead0fb41d5e.jpg)
 
 ## 如果觉得好的请捐赠一下^_^
-![pay](./pay.jpg)
+![alipay](https://upload-images.jianshu.io/upload_images/4171480-04c3ebb5c11cfdf9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 
 感谢捐赠人员！
 
@@ -125,6 +128,13 @@ cd pvetools
 ./pvetools.sh
 ```
 >If update error,you can remove enterprise source by : `rm /etc/apt/sources.list.d/pve-enterprise.list` and retry.
+
+### Interface
+1. main
+![main](https://upload-images.jianshu.io/upload_images/4171480-b42e98a6ddb84d9c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
+![main1](https://upload-images.jianshu.io/upload_images/4171480-a6131f468efdc57a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 
 ### Uninstall 
 1. delete pvetools folder
