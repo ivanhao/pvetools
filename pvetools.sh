@@ -1449,7 +1449,7 @@ Your hardware do not support PCI Passthrough(No IOMMU)
 " 10 60
         chPassth
     fi
-    if [ `cat /proc/cpuinfo|wc -l` = 0 ];then
+    if [ `cat /proc/cpuinfo|grep Intel|wc -l` = 0 ];then
         iommu="amd_iommu=on"
     else
         iommu="intel_iommu=on"
