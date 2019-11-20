@@ -2205,9 +2205,9 @@ echo "Docker installed."
 for i in {1..10}
 do
 if [ \`ps aux|grep dockerd|wc -l\` -gt 1 ];then
-    nohup /usr/bin/dockerd > /dev/null 2>&1 &
-else
     break
+else
+    nohup /usr/bin/dockerd > /dev/null 2>&1 &
 fi
 done
 EOF
