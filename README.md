@@ -78,6 +78,7 @@ cd pvetools
 
 new feature:
 - 增加常用工具，此版本增加了局域网扫描
+- 修复dockerd启动bug
 
 
 
