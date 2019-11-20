@@ -67,7 +67,7 @@ if [ $exitstatus = 0 ]; then
     while [ true ]
     do
         if [[ ! `echo $m|grep "^[0-9a-zA-Z.-@]*$"` ]] || [[ $m = '^M' ]];then
-            whiptail --title "Success" --msgbox "
+            whiptail --title "Warnning" --msgbox "
 Wrong format!!!   input again:
 密码格式不对！！！请重新输入：
             " 10 60
@@ -2571,44 +2571,60 @@ Choose disk:
 }
 
 
-#manyTools(){
-#    clear
-#    nMap(){
-#        clear
-#        map=$(whiptail --title "nmap tools." --inputbox "
-#Input the Ip address.(192.168.1.0/24)
-#输入局域网ip地址段。（例子：192.168.1.0/24)
-#        " 10 60 \
-#        "192.168.1.0/24" \
-#        3>&1 1>&2 2>&3)
-#        exitstatus=$?
-#        if [ $exitstatus = 0 ]; then
-#            whiptail --title "nmap tools." --msgbox "
-#echo $map
-#            " 10 60
-#        else
-#            manyTools
-#        fi
-#    }
-#    if [ $L = "en" ];then
-#        x=$(whiptail --title " PveTools   Version : 2.0.6 " --menu "Many Tools:" 25 60 15 \
-#        "a" "Local network scans(nmap)." \
-#        3>&1 1>&2 2>&3)
-#    else
-#        x=$(whiptail --title " PveTools   Version : 2.0.6 " --menu "常用的工具:" 25 60 15 \
-#        "a" "局域网扫描。" \
-#        3>&1 1>&2 2>&3)
-#    fi
-#    exitstatus=$?
-#    if [ $exitstatus = 0 ]; then
-#        case "$x" in
-#        a )
-#            nMap
-#            ;;
-#        esac
-#    fi
+manyTools(){
+    clear
+    nMap(){
+        clear
+        if [ ! -f "/usr/bin/nmap" ];then
+            apt-get install nmap -y
+        fi
+        map=$(whiptail --title "nmap tools." --inputbox "
+Input the Ip address.(192.168.1.0/24)
+输入局域网ip地址段。（例子：192.168.1.0/24)
+        " 10 60 \
+        "" \
+        3>&1 1>&2 2>&3)
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+            while [ true ]
+            do
+                if [ ! `echo $map|grep "^[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*\/[0-9]*$"` ];then
+                    whiptail --title "Warnning" --msgbox "
+Wrong format!!!   input again:
+格式不对！！！请重新输入：
+                    " 10 60
+                    nMap
+                else
+                    break
+                fi
+            done
+            maps=`nmap -sP $map`
+            whiptail --title "nmap tools." --msgbox "
+$maps
+            " --scrolltext 30 60
+        else
+            manyTools
+        fi
+    }
+    if [ $L = "en" ];then
+        x=$(whiptail --title " PveTools   Version : 2.0.6 " --menu "Many Tools:" 25 60 15 \
+        "a" "Local network scans(nmap)." \
+        3>&1 1>&2 2>&3)
+    else
+        x=$(whiptail --title " PveTools   Version : 2.0.6 " --menu "常用的工具:" 25 60 15 \
+        "a" "局域网扫描。" \
+        3>&1 1>&2 2>&3)
+    fi
+    exitstatus=$?
+    if [ $exitstatus = 0 ]; then
+        case "$x" in
+        a )
+            nMap
+            ;;
+        esac
+    fi
 
-#}
+}
 #----------------------functions--end------------------#
 
 
@@ -2668,7 +2684,7 @@ Github: https://github.com/ivanhao/pvetools
     "k" "配置开启嵌套虚拟化" \
     "l" "去除订阅提示" \
     "m" "配置chroot环境和docker等" \
-    "n" "常用的工具" \ 
+    "n" "常用的工具" \
     "u" "升级该pvetools脚本到最新版本" \
     "L" "Change Language" \
     3>&1 1>&2 2>&3)
