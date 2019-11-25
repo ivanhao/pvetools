@@ -2779,7 +2779,7 @@ fi
             main
             ;;
         c )
-            chSamba
+            sambaOrNfs
             main
             ;;
         d )
