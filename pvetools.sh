@@ -1675,8 +1675,22 @@ disVideo(){
     getVideo dis
 }
 addVideo(){
-    cards=`lspci |grep -e VGA`
-    cards=`echo $cards |awk -F '.' '{print $1" " }'``echo $cards|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'``echo ' OFF'`
+    #cards=`lspci |grep -e VGA`
+    #cards=`echo $cards |awk -F '.' '{print $1" " }'``echo $cards|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'``echo ' OFF'`
+    if [ -f "cards" ];then
+        rm cards
+    fi
+    if [ -f "cards-out" ];then
+        rm cards-out
+    fi
+    lspci |grep -e VGA > cards
+    for card in `cat cards`
+    do
+        `echo $card |awk -F '.' '{print $1" " }'``echo $card|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'``echo ' OFF'` >> cards-out
+    done
+    cat cards-out > cards
+    rm cards-out
+    rm cards
     DISTROS=$(whiptail --title "Video cards:" --checklist \
 "Choose cards to config?" 15 90 4 \
 $(echo $cards) \
@@ -1862,8 +1876,22 @@ rmVideo(){
     done
 }
 switchVideo(){
-    cards=`lspci |grep -e VGA`
-    cards=`echo $cards |awk -F '.' '{print $1" " }'``echo $cards|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'``echo ' OFF'`
+    #cards=`lspci |grep -e VGA`
+    #cards=`echo $cards |awk -F '.' '{print $1" " }'``echo $cards|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'``echo ' OFF'`
+    if [ -f "cards" ];then
+        rm cards
+    fi
+    if [ -f "cards-out" ];then
+        rm cards-out
+    fi
+    lspci |grep -e VGA > cards
+    for card in `cat cards`
+    do
+        `echo $card |awk -F '.' '{print $1" " }'``echo $card|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'``echo ' OFF'` >> cards-out
+    done
+    cat cards-out > cards
+    rm cards-out
+    rm cards
     DISTROS=$(whiptail --title "Video cards:" --checklist \
 "Choose cards to config?" 15 90 4 \
 $(echo $cards) \
