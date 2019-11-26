@@ -1554,7 +1554,6 @@ enVideo(){
 }
 
 getVideo(){
-    #cards=`lspci |grep -e VGA`
     if [ -f "cards" ];then
         rm cards
     fi
@@ -1562,20 +1561,19 @@ getVideo(){
         rm cards-out
     fi
     lspci |grep -e VGA > cards
-    for card in `cat cards`
+    cat cards|while read line
     do
-        `echo $card |awk -F '.' '{print $1" " }'``echo $card|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'``echo ' OFF'` >> cards-out
+        c=`echo $line |awk -F '.' '{print $1" " }'``echo $line|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'``echo ' OFF'`
+        echo $c >> cards-out
     done
-    #cards=`echo $cards |awk -F '.' '{print $1" " }'``echo $cards|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'``echo ' OFF'`
     cat cards-out > cards
-    rm cards-out
     id=`cat /etc/modprobe.d/vfio.conf|grep -o "ids=[0-9a-zA-Z,:]*"|awk -F "=" '{print $2}'|sed  's/,/ /g'|sort -u`
     n=`for i in $id;do lspci -n -d $i|awk -F "." '{print $1}';done|sort -u` 
     for i in $n
     do
         cards=`sed -n '/'$i'/ s/OFF/ON/p' cards`
     done
-    rm cards
+    rm cards*
     DISTROS=$(whiptail --title "Video cards:" --checklist \
 "Choose cards to config(* mark means configed):
 选择显卡（标*号为已经配置过的）：
@@ -1675,8 +1673,6 @@ disVideo(){
     getVideo dis
 }
 addVideo(){
-    #cards=`lspci |grep -e VGA`
-    #cards=`echo $cards |awk -F '.' '{print $1" " }'``echo $cards|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'``echo ' OFF'`
     if [ -f "cards" ];then
         rm cards
     fi
@@ -1684,13 +1680,13 @@ addVideo(){
         rm cards-out
     fi
     lspci |grep -e VGA > cards
-    for card in `cat cards`
+    cat cards|while read line
     do
-        `echo $card |awk -F '.' '{print $1" " }'``echo $card|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'``echo ' OFF'` >> cards-out
+        c=`echo $line |awk -F '.' '{print $1" " }'``echo $line|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'``echo ' OFF'`
+        echo $c >> cards-out
     done
-    cat cards-out > cards
-    rm cards-out
-    rm cards
+    cards=`cat cards-out`
+    rm cards*
     DISTROS=$(whiptail --title "Video cards:" --checklist \
 "Choose cards to config?" 15 90 4 \
 $(echo $cards) \
@@ -1876,8 +1872,6 @@ rmVideo(){
     done
 }
 switchVideo(){
-    #cards=`lspci |grep -e VGA`
-    #cards=`echo $cards |awk -F '.' '{print $1" " }'``echo $cards|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'``echo ' OFF'`
     if [ -f "cards" ];then
         rm cards
     fi
@@ -1885,13 +1879,13 @@ switchVideo(){
         rm cards-out
     fi
     lspci |grep -e VGA > cards
-    for card in `cat cards`
+    cat cards|while read line
     do
-        `echo $card |awk -F '.' '{print $1" " }'``echo $card|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'``echo ' OFF'` >> cards-out
+        c=`echo $line |awk -F '.' '{print $1" " }'``echo $line|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'``echo ' OFF'`
+        echo $c >> cards-out
     done
-    cat cards-out > cards
-    rm cards-out
-    rm cards
+    cards=`cat cards-out`
+    rm cards*
     DISTROS=$(whiptail --title "Video cards:" --checklist \
 "Choose cards to config?" 15 90 4 \
 $(echo $cards) \
