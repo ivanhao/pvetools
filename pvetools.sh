@@ -1554,9 +1554,21 @@ enVideo(){
 }
 
 getVideo(){
-    cards=`lspci |grep -e VGA`
-    cards=`echo $cards |awk -F '.' '{print $1" " }'``echo $cards|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'``echo ' OFF'`
-    echo $cards > cards
+    #cards=`lspci |grep -e VGA`
+    if [ -f "cards" ];then
+        rm cards
+    fi
+    if [ -f "cards-out" ];then
+        rm cards-out
+    fi
+    lspci |grep -e VGA > cards
+    for card in `cat cards`
+    do
+        `echo $card |awk -F '.' '{print $1" " }'``echo $card|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'``echo ' OFF'` >> cards-out
+    done
+    #cards=`echo $cards |awk -F '.' '{print $1" " }'``echo $cards|awk -F ': ' '{for (i=2;i<=NF;i++)printf("%s_", $i);print ""}'|sed 's/ /_/g'``echo ' OFF'`
+    cat cards-out > cards
+    rm cards-out
     id=`cat /etc/modprobe.d/vfio.conf|grep -o "ids=[0-9a-zA-Z,:]*"|awk -F "=" '{print $2}'|sed  's/,/ /g'|sort -u`
     n=`for i in $id;do lspci -n -d $i|awk -F "." '{print $1}';done|sort -u` 
     for i in $n
