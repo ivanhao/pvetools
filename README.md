@@ -16,7 +16,7 @@ for english user,please look the end of readme.
 
 在终端中按行分别执行以下内容：
 
->pve6.0需要先删除企业源：`rm /etc/apt/sources.list.d/pve-enterprise.list`
+>强烈建议先删除企业源：`rm /etc/apt/sources.list.d/pve-enterprise.list` 
 
 ```
 export LC_ALL=en_US.UTF-8
