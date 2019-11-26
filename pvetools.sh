@@ -313,8 +313,8 @@ chZfs(){
 setMen(){
     x=$(whiptail --title "Config mail" --inputbox "
 set max zfs ram 4(G) or 8(G) etc, just enter number or n?
-设置最大zfs内存（zfs_arc_max),比如4G或8G等, 只需要输入纯数字即可，比如4G输入4?
-    " 10 60    3>&1 1>&2 2>&3)
+设置最大zfs内存（zfs_arc_max),比如4(G)或8(G)等, 只需要输入纯数字即可，比如4G输入4?
+    " 20 60    3>&1 1>&2 2>&3)
     exitstatus=$?
     if [ $exitstatus = 0 ]; then
         while [ true ]
@@ -351,12 +351,14 @@ Invalidate value.Please comfirm!
     安装zfs-zed来发送zfs scrub的结果提醒邮件？(Y/n):
         " 10 60);then
             if [ `dpkg -l|grep zfs-zed|wc -l` = 0 ];then
-                apt -y install zfs-zed
+                apt-get -y install zfs-zed
             fi
             whiptail --title "Success" --msgbox "
     Install complete!
     安装zfs-zed成功！
             " 10 60
+        else
+            chZfs
         fi
     else
         main
