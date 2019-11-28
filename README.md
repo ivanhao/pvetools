@@ -83,6 +83,16 @@ cd pvetools
 
 
 # [版本说明]
+##### v2.0.8
+
+发布时间：2019.11.28
+
+new feature:
+
+*   增加chroot自定义安装路径的功能。
+*   增加chroot docker迁移的功能。
+ ![wiki](https://github.com/ivanhao/pvetools/wiki/m--1-%E9%85%8D%E7%BD%AEdocker-web%E7%95%8C%E9%9D%A2)
+
 ##### v2.0.7
 
 发布时间：2019.11.25
