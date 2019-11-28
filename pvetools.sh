@@ -2121,7 +2121,8 @@ Input path:
                 break
             fi
         done
-        return $x
+        echo $x
+        return $?
     fi
 }
 
@@ -2160,8 +2161,7 @@ EOF
 EOF
             fi
             sed -i '/\/home/d' /etc/schroot/default/fstab
-            checkPath / #common function
-            chrootp=$?
+            chrootp=$(checkPath /)
             if [ $chroop = 0 ];then
                 chRoot
             else
