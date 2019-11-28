@@ -2161,8 +2161,8 @@ EOF
 EOF
             fi
             sed -i '/\/home/d' /etc/schroot/default/fstab
-            chrootp=$(checkPath /)
-            chrootp=$chrootp"/alpine"
+            checkPath /
+            chrootp=${x%/}"/alpine"
             echo $chrootp > /etc/schroot/chrootp
             if [ ! -d $chrootp ];then 
                 mkdir $chrootp
