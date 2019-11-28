@@ -2324,11 +2324,21 @@ EOF
         checkDockerWeb
     }
     checkSchroot(){
-        $chrootp=`cat /etc/schroot/chrootp`
         if [ `ls /usr/bin|grep schroot|wc -l` = 0 ] || [ `schroot -l|wc -l` = 0 ];then
             whiptail --title "Warnning" --msgbox "No schroot found.Install schroot first.
 您还没有安装schroot环境，请先安装。" 10 60 
             chRoot
+        else
+            if [ -f "/etc/schroot/chrootp" ];then
+                $chrootp=`cat /etc/schroot/chrootp`
+            else
+                if [ -d "/alpine" ];then
+                    $chrootp=/alpine
+                else
+                    whiptail --title "Warnning" --msgbox "Chroot path not found!
+没有检测到chroot安装目录！" 10 60 
+                fi
+            fi
         fi
     }
     checkDocker(){
@@ -2413,6 +2423,34 @@ chroot后台运行环境已经运行，需要重启吗？
             chRoot
         fi
     }
+    mvChrootp(){
+        if (whiptail --title "Yes/No" --yesno "Continue?
+是否继续?" --defaultno 10 60)then
+            checkSchroot
+            chrootpNew=$(whiptail --title "Choose a path" --inputbox "
+Current Path:
+当前路径：
+$(echo $chrootp)
+---------------------------------
+Input new chroot path:
+请输入迁移的新路径：" 20 60)
+            for i in `schroot --list --all-sessions|awk -F ":" '{print $2}'`;do schroot -e -c $i;done
+            if [ -d "$chrootp/sys/fs/cgroup" ];then
+                mount --make-rslave $chrootp/sys/fs/cgroup
+                umount -R $chrootp/sys/fs/cgroup
+            fi
+            killall portainer
+            killall dockerd
+            rsync -a -r -v $chrootp $chrootpNew
+            sync
+            sync
+            rm -rf $chrootp
+            whiptail --title "Success" --msgbox "Done.
+迁移成功" 10 60
+        else
+            chRoot
+        fi
+    }
     delChroot(){
         if (whiptail --title "Yes/No" --yesno "Continue?
 是否继续?" --defaultno 10 60)then
@@ -2425,7 +2463,7 @@ chroot后台运行环境已经运行，需要重启吗？
             fi
             killall portainer
             killall dockerd
-            rm -rf /alpine
+            rm -rf $chrootp
             whiptail --title "Success" --msgbox "Done.
     删除成功" 10 60
         else
