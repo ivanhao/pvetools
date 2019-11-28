@@ -2330,10 +2330,10 @@ EOF
             chRoot
         else
             if [ -f "/etc/schroot/chrootp" ];then
-                $chrootp=`cat /etc/schroot/chrootp`
+                chrootp=`cat /etc/schroot/chrootp`
             else
                 if [ -d "/alpine" ];then
-                    $chrootp="/alpine"
+                    chrootp="/alpine"
                 else
                     whiptail --title "Warnning" --msgbox "Chroot path not found!
 没有检测到chroot安装目录！" 10 60 
@@ -2438,23 +2438,30 @@ Current Path:
 $(echo $chrootp)
 ---------------------------------
 Input new chroot path:
-请输入迁移的新路径：" 20 60)
-            echo $chrootpNew > /etc/schroot/chrootp
-            for i in `schroot --list --all-sessions|awk -F ":" '{print $2}'`;do schroot -e -c $i;done
-            if [ -d "$chrootp/sys/fs/cgroup" ];then
-                mount --make-rslave $chrootp/sys/fs/cgroup
-                umount -R $chrootp/sys/fs/cgroup
+请输入迁移的新路径：" 20 60 \
+"" \
+        3>&1 1>&2 2>&3)
+        exitstatus=$?
+            if [ $exitstatus = 0 ]; then
+                echo $chrootpNew > /etc/schroot/chrootp
+                for i in `schroot --list --all-sessions|awk -F ":" '{print $2}'`;do schroot -e -c $i;done
+                if [ -d "$chrootp/sys/fs/cgroup" ];then
+                    mount --make-rslave $chrootp/sys/fs/cgroup
+                    umount -R $chrootp/sys/fs/cgroup
+                fi
+                killall portainer
+                killall dockerd
+                rsync -a -r -v $chrootp $chrootpNew
+                sync
+                sync
+                rm -rf $chrootp
+                sed -i 's/'$chrootp'/'$schrootpNew'/g' /etc/schroot/chroot.d/alpine.conf
+                whiptail --title "Success" --msgbox "Done.
+    迁移成功" 10 60
+                checkChrootDaemon
+            else
+                configChroot
             fi
-            killall portainer
-            killall dockerd
-            rsync -a -r -v $chrootp $chrootpNew
-            sync
-            sync
-            rm -rf $chrootp
-            sed -i 's/'$chrootp'/'$schrootpNew'/g' /etc/schroot/chroot.d/alpine.conf
-            whiptail --title "Success" --msgbox "Done.
-迁移成功" 10 60
-            checkChrootDaemon
         else
             chRoot
         fi
