@@ -2475,7 +2475,7 @@ Input new chroot path:
                         break
                     fi
                 done
-                chrootpNew=$chrootpNew"/alpine"
+                chrootpNew=${chrootpNew%/}"/alpine"
                 echo $chrootpNew > /etc/schroot/chrootp
                 for i in `schroot --list --all-sessions|awk -F ":" '{print $2}'`;do schroot -e -c $i;done
                 if [ -d "$chrootp/sys/fs/cgroup" ];then
