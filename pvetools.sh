@@ -2333,7 +2333,7 @@ EOF
                 $chrootp=`cat /etc/schroot/chrootp`
             else
                 if [ -d "/alpine" ];then
-                    $chrootp=/alpine
+                    $chrootp="/alpine"
                 else
                     whiptail --title "Warnning" --msgbox "Chroot path not found!
 没有检测到chroot安装目录！" 10 60 
