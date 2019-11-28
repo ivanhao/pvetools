@@ -2162,12 +2162,8 @@ EOF
             fi
             sed -i '/\/home/d' /etc/schroot/default/fstab
             chrootp=$(checkPath /)
-            if [ $chroop = 0 ];then
-                chRoot
-            else
-                chrootp=$chrootp"/alpine"
-                echo $chrootp > /etc/schroot/chrootp
-            fi
+            chrootp=$chrootp"/alpine"
+            echo $chrootp > /etc/schroot/chrootp
             if [ ! -d $chrootp ];then 
                 mkdir $chrootp
             else
