@@ -2142,6 +2142,7 @@ EOF
             sed -i '/\/home/d' /etc/schroot/default/fstab
             chrootp=$(whiptail --title "Choose a path" --inputbox "Input path to install:
 请输入安装路径(默认为根目录/)：" 10 60 "/")
+            chrootp=$chrootp"/alpine"
             echo $chrootp > /etc/schroot/chrootp
             if [ ! -d $chrootp ];then 
                 mkdir $chrootp
@@ -2453,6 +2454,7 @@ Input new chroot path:
                         break
                     fi
                 done
+                chrootpNew=$chrootpNew"/alpine"
                 echo $chrootpNew > /etc/schroot/chrootp
                 for i in `schroot --list --all-sessions|awk -F ":" '{print $2}'`;do schroot -e -c $i;done
                 if [ -d "$chrootp/sys/fs/cgroup" ];then
@@ -2465,7 +2467,7 @@ Input new chroot path:
                 sync
                 sync
                 rm -rf $chrootp
-                sed -i 's/'$chrootp'/'$schrootpNew'/g' /etc/schroot/chroot.d/alpine.conf
+                sed -i 's/'$chrootp'/'$chrootpNew'/g' /etc/schroot/chroot.d/alpine.conf
                 whiptail --title "Success" --msgbox "Done.
     迁移成功" 10 60
                 checkChrootDaemon
