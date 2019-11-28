@@ -2461,7 +2461,7 @@ Input new chroot path:
                 fi
                 killall portainer
                 killall dockerd
-                rsync -a -r -v $chrootp $chrootpNew
+                rsync -a -r -R -v $chrootp $chrootpNew
                 sync
                 sync
                 rm -rf $chrootp
