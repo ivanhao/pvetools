@@ -2107,7 +2107,7 @@ checkPath(){
     x=$(whiptail --title "Choose a path" --inputbox "
 Input path:
 请输入路径：" 10 60 \
-    "" \
+    $1 \
     3>&1 1>&2 2>&3)
     exitstatus=$?
     if [ $exitstatus = 0 ]; then
@@ -2160,10 +2160,14 @@ EOF
 EOF
             fi
             sed -i '/\/home/d' /etc/schroot/default/fstab
-            checkPath #common function
+            checkPath / #common function
             chrootp=$?
-            chrootp=$chrootp"/alpine"
-            echo $chrootp > /etc/schroot/chrootp
+            if [ $chroop = 0 ];then
+                chRoot
+            else
+                chrootp=$chrootp"/alpine"
+                echo $chrootp > /etc/schroot/chrootp
+            fi
             if [ ! -d $chrootp ];then 
                 mkdir $chrootp
             else
