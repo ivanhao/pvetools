@@ -2103,7 +2103,27 @@ else
 fi
 }
 
-
+checkPath(){
+    x=$(whiptail --title "Choose a path" --inputbox "
+Input path:
+请输入路径：" 10 60 \
+    "" \
+    3>&1 1>&2 2>&3)
+    exitstatus=$?
+    if [ $exitstatus = 0 ]; then
+        while [ true ]
+        do
+            if [ ! -d $chrootpNew ];then
+                whiptail --title "Warnning" --msgbox "Path not found.
+没有检测到路径，请重新输入" 10 60
+                checkPath
+            else
+                break
+            fi
+        done
+        return $x
+    fi
+}
 
 chRoot(){
     #--base-funcs-start--
@@ -2140,26 +2160,10 @@ EOF
 EOF
             fi
             sed -i '/\/home/d' /etc/schroot/default/fstab
-            chrootp=$(whiptail --title "Choose a path" --inputbox "Input path to install:
-请输入安装路径(默认为根目录/)：" 10 60 "/" \
-        3>&1 1>&2 2>&3)
-            exitstatus=$?
-            if [ $exitstatus = 0 ]; then
-                while [ true ]
-                do
-                    if [ ! -d $chrootpNew ];then
-                        whiptail --title "Warnning" --msgbox "Path not found.
-没有检测到路径，请重新输入" 10 60
-                        chrootp=$(whiptail --title "Choose a path" --inputbox "Input path to install:
-                        请输入安装路径(默认为根目录/)：" 10 60 "/" \
-                        3>&1 1>&2 2>&3)
-                    else
-                        break
-                    fi
-                done
-                chrootp=$chrootp"/alpine"
-                echo $chrootp > /etc/schroot/chrootp
-            fi
+            checkPath #common function
+            chrootp=$?
+            chrootp=$chrootp"/alpine"
+            echo $chrootp > /etc/schroot/chrootp
             if [ ! -d $chrootp ];then 
                 mkdir $chrootp
             else
