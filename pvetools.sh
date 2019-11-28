@@ -2441,8 +2441,18 @@ Input new chroot path:
 请输入迁移的新路径：" 20 60 \
 "" \
         3>&1 1>&2 2>&3)
-        exitstatus=$?
+            exitstatus=$?
             if [ $exitstatus = 0 ]; then
+                while [ true ]
+                do
+                    if [ ! -d $chrootpNew ];then
+                        whiptail --title "Warnning" --msgbox "Path not found.
+没有检测到路径，请重新输入" 10 60
+                        mvChrootp
+                    else
+                        break
+                    fi
+                done
                 echo $chrootpNew > /etc/schroot/chrootp
                 for i in `schroot --list --all-sessions|awk -F ":" '{print $2}'`;do schroot -e -c $i;done
                 if [ -d "$chrootp/sys/fs/cgroup" ];then
