@@ -2335,6 +2335,7 @@ EOF
             else
                 if [ -d "/alpine" ];then
                     chrootp="/alpine"
+                    echo $chrootp > /etc/schroot/chrootp
                 else
                     whiptail --title "Warnning" --msgbox "Chroot path not found!
 没有检测到chroot安装目录！" 10 60 
@@ -2463,11 +2464,12 @@ Input new chroot path:
                 fi
                 killall portainer
                 killall dockerd
-                rsync -a -r -R -v $chrootp $chrootpNew
+                rsync -a -r -v $chrootp"/" $chrootpNew
                 sync
                 sync
+                sleep 3
                 rm -rf $chrootp
-                sed -i 's/'$chrootp'/'$chrootpNew'/g' /etc/schroot/chroot.d/alpine.conf
+                sed -i 's#'$chrootp'#'$chrootpNew'#g' /etc/schroot/chroot.d/alpine.conf
                 whiptail --title "Success" --msgbox "Done.
     迁移成功" 10 60
                 checkChrootDaemon
