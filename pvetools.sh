@@ -2439,6 +2439,7 @@ $(echo $chrootp)
 ---------------------------------
 Input new chroot path:
 请输入迁移的新路径：" 20 60)
+            echo $chrootpNew > /etc/schroot/chrootp
             for i in `schroot --list --all-sessions|awk -F ":" '{print $2}'`;do schroot -e -c $i;done
             if [ -d "$chrootp/sys/fs/cgroup" ];then
                 mount --make-rslave $chrootp/sys/fs/cgroup
