@@ -2396,12 +2396,14 @@ chroot后台运行环境已经运行，需要重启吗？
             "a" "Config base schroot." \
             "b" "Docker in alpine" \
             "c" "Portainer in alpine" \
+            "d" "Change chroot path" \
             3>&1 1>&2 2>&3)
         else
             x=$(whiptail --title " PveTools   Version : 2.0.8 " --menu "配置chroot环境和docker等:" 25 60 15 \
             "a" "配置基本的chroot环境（schroot 默认为alpine)。" \
             "b" "Docker（alpine）。" \
             "c" "Docker配置界面（portainer in alpine）。" \
+            "d" "迁移chroot目录到其他路径。" \
             3>&1 1>&2 2>&3)
         fi
         exitstatus=$?
@@ -2418,6 +2420,9 @@ chroot后台运行环境已经运行，需要重启吗？
             c )
                 dockerWeb
                 chRoot
+                ;;
+            d )
+                mvChrootp
             esac
         else
             chRoot
@@ -2445,8 +2450,10 @@ Input new chroot path:
             sync
             sync
             rm -rf $chrootp
+            sed -i 's/'$chrootp'/'$schrootpNew'/g' /etc/schroot/chroot.d/alpine.conf
             whiptail --title "Success" --msgbox "Done.
 迁移成功" 10 60
+            checkChrootDaemon
         else
             chRoot
         fi
