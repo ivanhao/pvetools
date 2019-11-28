@@ -2113,7 +2113,7 @@ Input path:
     if [ $exitstatus = 0 ]; then
         while [ true ]
         do
-            if [ ! -d $chrootpNew ];then
+            if [ ! -d $x ];then
                 whiptail --title "Warnning" --msgbox "Path not found.
 没有检测到路径，请重新输入" 10 60
                 checkPath
