@@ -503,7 +503,7 @@ Configed!
                 " 10 60
                 #--2.0.9 add group
                 chgrp -R samba $x
-                chmod g+w $x
+                chmod -R g+w $x
                 service smbd restart
             else
                 whiptail --title "Success" --msgbox "Already configed！
