@@ -546,10 +546,10 @@ Name not exist!:
             done
             if [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` != 0 ];then
                 oldgrp=`sed -n "/\[${n}\]/,/${n} end/p" /etc/samba/smb.conf |grep oldgrp|awk '{print $3}'`
-                echo $oldgrp > oldgrp
                 x=`grep -E "^path = [0-9a-zA-Z/-.]*${n}" /etc/samba/smb.conf|awk '{print $3}'`
-                echo $x > x
-                chgrp -R $oldgrp $x
+                if [ $oldgrp ];then
+                    chgrp -R $oldgrp $x
+                fi
                 sed "/\[${n}\]/,/${n} end/d" /etc/samba/smb.conf -i 
                 whiptail --title "Success" --msgbox "
 Configed!
