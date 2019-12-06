@@ -678,16 +678,20 @@ yes or no?
             安装配置完成！
                     " 10 60
                     ;;
-                1 )
+                1 | "" )
                     apt -y install git vim
+                    rm -rf vim-for-server
                     git clone https://github.com/wklken/vim-for-server.git
                     mv ~/.vimrc ~/.vimrc_bak
-                    ln -s vim-for-server/vimrc ~/.vimrc
+                    mv vim-for-server/vimrc ~/.vimrc
+                    rm -rf vim-for-server
                     whiptail --title "Success" --msgbox "
             Install & config complete!
             安装配置完成！
                     " 10 60
                     ;;
+                * )
+                    chVim
             esac
 
         else
