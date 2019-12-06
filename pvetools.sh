@@ -662,20 +662,33 @@ EOF
 安装VIM并配置 \'vim-for-server\'(https://github.com/wklken/vim-for-server).
 yes or no?
             " 12 60) then
-            apt -y install curl vim
-            {
-            echo 10
-            echo 80
-            $(
-            cp ~/.vimrc ~/.vimrc_bak
-            curl https://raw.githubusercontent.com/wklken/vim-for-server/master/vimrc > ~/.vimrc
-            )
-            echo 100
-        }|whiptail --gauge "installing" 10 60
-            whiptail --title "Success" --msgbox "
-    Install & config complete!
-    安装配置完成！
-            " 10 60
+            echo "Use curl or git? If one not work,change to another."
+            echo "选择git或curl，如果一个方式不行可以换一个。"
+            echo "1 ) git"
+            echo "2 ) curl"
+            echo "Please choose:"
+            read x
+            case $x in 
+                2 )
+                    apt -y install curl vim
+                    cp ~/.vimrc ~/.vimrc_bak
+                    curl https://raw.githubusercontent.com/wklken/vim-for-server/master/vimrc > ~/.vimrc
+                    whiptail --title "Success" --msgbox "
+            Install & config complete!
+            安装配置完成！
+                    " 10 60
+                    ;;
+                1 )
+                    apt -y install git vim
+                    git clone https://github.com/wklken/vim-for-server.git
+                    ln -s vim-for-server/vimrc ~/.vimrc
+                    whiptail --title "Success" --msgbox "
+            Install & config complete!
+            安装配置完成！
+                    " 10 60
+                    ;;
+            esac
+
         else
             chVim
         fi
