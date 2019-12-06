@@ -681,6 +681,7 @@ yes or no?
                 1 )
                     apt -y install git vim
                     git clone https://github.com/wklken/vim-for-server.git
+                    mv ~/.vimrc ~/.vimrc_bak
                     ln -s vim-for-server/vimrc ~/.vimrc
                     whiptail --title "Success" --msgbox "
             Install & config complete!
