@@ -113,18 +113,18 @@ if [ ! $sver ];then
     您的版本不支持！无法继续。" 10 60
     main
 fi
+    #"a" "Automation mode." \
+    #"a" "无脑模式" \
 if [ $L = "en" ];then
     OPTION=$(whiptail --title " PveTools   Version : 2.0.9 " --menu "Config apt source:" 25 60 15 \
-    "a" "Automation mode." \
-    "b" "Change to ustc.edu.cn." \
+    "b" "Change to cn source." \
     "c" "Disable enterprise." \
     "d" "Undo Change." \
     "q" "Main menu." \
     3>&1 1>&2 2>&3)
 else
     OPTION=$(whiptail --title " PveTools   Version : 2.0.9 " --menu "配置apt镜像源:" 25 60 15 \
-    "a" "无脑模式" \
-    "b" "更换为国内ustc.edu.cn源" \
+    "b" "更换为国内源" \
     "c" "关闭企业更新源" \
     "d" "还原配置" \
     "q" "返回主菜单" \
@@ -171,35 +171,65 @@ a | A )
     fi
     ;;
 	b | B  )
-        if (whiptail --title "Yes/No Box" --yesno "修改更新源为ustc.edu.cn(包括ceph))?" 10 60) then
-        if [ `grep "ustc.edu.cn" /etc/apt/sources.list|wc -l` = 0 ];then
-            cp /etc/apt/sources.list /etc/apt/sources.list.bak
-            cp /etc/apt/sources.list.d/ceph.list /etc/apt/sources.list.d/ceph.list.bak
-            #sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
-            echo "deb https://mirrors.ustc.edu.cn/debian/ $sver main contrib non-free
-    deb-src https://mirrors.ustc.edu.cn/debian/ $sver main contrib non-free
-    deb https://mirrors.ustc.edu.cn/debian/ $sver-updates main contrib non-free
-    deb-src https://mirrors.ustc.edu.cn/debian/ $sver-updates main contrib non-free
-    deb https://mirrors.ustc.edu.cn/debian/ $sver-backports main contrib non-free
-    deb-src https://mirrors.ustc.edu.cn/debian/ $sver-backports main contrib non-free
-    deb https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-free
-    deb-src https://mirrors.ustc.edu.cn/debian-security/ $sver/updates main contrib non-free" > /etc/apt/sources.list
-            #修改 ceph镜像更新源
-            echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/ceph-luminous $sver main" > /etc/apt/sources.list.d/ceph.list
-            whiptail --title "Success" --msgbox " apt source has been changed successfully!
-            软件源已更换成功！" 10 60
-            apt-get update
-            apt-get -y install net-tools
-            whiptail --title "Success" --msgbox " apt source has been changed successfully!
-            软件源已更换成功！" 10 60
+        if [ $L = "en" ];then
+            OPTION=$(whiptail --title " PveTools   Version : 2.0.9 " --menu "Config apt source:" 25 60 15 \
+            "a" "aliyun.com" \
+            "b" "ustc.edu.cn" \
+            "q" "Main menu." \
+            3>&1 1>&2 2>&3)
         else
-            whiptail --title "Success" --msgbox " Already changed apt source to ustc.edu.cn!
-            已经更换apt源为 ustc.edu.cn" 10 60
+            OPTION=$(whiptail --title " PveTools   Version : 2.0.9 " --menu "配置apt镜像源:" 25 60 15 \
+            "a" "aliyun.com" \
+            "b" "ustc.edu.cn" \
+            "q" "返回主菜单" \
+            3>&1 1>&2 2>&3)
         fi
-        chSource
-    fi
-    ;;
-c | C  )
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+            case "$OPTION" in
+                a )
+                    ss="aliyun.com"
+                    ;;
+                b)
+                    ss="ustc.edu.cn"
+                    ;;
+                q )
+                    chSource
+            esac
+            if (whiptail --title "Yes/No Box" --yesno "修改更新源为$ss(包括ceph))?" 10 60) then
+                if [ `grep $ss /etc/apt/sources.list|wc -l` = 0 ];then
+                    cp /etc/apt/sources.list /etc/apt/sources.list.bak
+                    cp /etc/apt/sources.list.d/ceph.list /etc/apt/sources.list.d/ceph.list.bak
+                    #sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
+                    echo "deb https://mirrors.$ss/debian/ $sver main contrib non-free
+        deb-src https://mirrors.$ss/debian/ $sver main contrib non-free
+        deb https://mirrors.$ss/debian/ $sver-updates main contrib non-free
+        deb-src https://mirrors.$ss/debian/ $sver-updates main contrib non-free
+        deb https://mirrors.$ss/debian/ $sver-backports main contrib non-free
+        deb-src https://mirrors.$ss/debian/ $sver-backports main contrib non-free
+        deb https://mirrors.$ss/debian-security/ $sver/updates main contrib non-free
+        deb-src https://mirrors.$ss/debian-security/ $sver/updates main contrib non-free" > /etc/apt/sources.list
+                    #修改 ceph镜像更新源
+                    echo "deb http://mirrors.$ss/proxmox/debian/ceph-luminous $sver main" > /etc/apt/sources.list.d/ceph.list
+                    whiptail --title "Success" --msgbox " apt source has been changed successfully!
+                    软件源已更换成功！" 10 60
+                    apt-get update
+                    apt-get -y install net-tools
+                    whiptail --title "Success" --msgbox " apt source has been changed successfully!
+                    软件源已更换成功！" 10 60
+                else
+                    whiptail --title "Success" --msgbox " Already changed apt source to $ss!
+                    已经更换apt源为 $ss" 10 60
+                fi
+            else
+                chSource
+            fi
+            chSource
+        else
+            chSource
+        fi
+        ;;
+    c | C  )
     if (whiptail --title "Yes/No Box" --yesno "禁用企业订阅更新源?" 10 60) then
         #sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
         if [ -f /etc/apt/sources.list.d/pve-no-sub.list ];then
