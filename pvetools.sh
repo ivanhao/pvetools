@@ -9,7 +9,7 @@
 #js whiptail --title "Success" --msgbox "c" 10 60
 if [ `export|grep 'LC_ALL'|wc -l` = 0 ];then
     if [ `grep "LC_ALL" /etc/profile|wc -l` = 0 ];then
-        echo "export LC_ALL=\"en_US.UTF-8\"" >> /etc/profile
+        echo "export LC_ALL='en_US.UTF-8'" >> /etc/profile
     fi
 fi
 if [ `grep "alias ll" /etc/profile|wc -l` = 0 ];then
