@@ -9,7 +9,7 @@
 #js whiptail --title "Success" --msgbox "c" 10 60
 if [ `export|grep 'LC_ALL'|wc -l` = 0 ];then
     if [ `grep "LC_ALL" /etc/profile|wc -l` = 0 ];then
-        echo "export LC_ALL=en_US.UTF-8" >> /etc/profile
+        echo "export LC_ALL=\"en_US.UTF-8\"" >> /etc/profile
     fi
 fi
 if [ `grep "alias ll" /etc/profile|wc -l` = 0 ];then
@@ -255,7 +255,7 @@ d | D )
     cp /etc/apt/sources.list.bak /etc/apt/sources.list
     cp /etc/apt/sources.list.d/pve-no-sub.list.bak /etc/apt/sources.list.d/pve-no-sub.list
     cp /etc/apt/sources.list.d/pve-enterprise.list.bak /etc/apt/sources.list.d/pve-enterprise.list
-    cp /etc/apt/sources.list.d/ceph.list.bak /etc/apt/sources.list.d/ceph.list
+    #cp /etc/apt/sources.list.d/ceph.list.bak /etc/apt/sources.list.d/ceph.list
     whiptail --title "Success" --msgbox "apt source has been changed successfully!
     软件源已更换成功！" 10 60
     chSource
