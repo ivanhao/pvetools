@@ -196,10 +196,10 @@ a | A )
                 q )
                     chSource
             esac
-            if (whiptail --title "Yes/No Box" --yesno "修改更新源为$ss(包括ceph))?" 10 60) then
+            if (whiptail --title "Yes/No Box" --yesno "修改更新源为$ss?" 10 60) then
                 if [ `grep $ss /etc/apt/sources.list|wc -l` = 0 ];then
                     cp /etc/apt/sources.list /etc/apt/sources.list.bak
-                    cp /etc/apt/sources.list.d/ceph.list /etc/apt/sources.list.d/ceph.list.bak
+                    #cp /etc/apt/sources.list.d/ceph.list /etc/apt/sources.list.d/ceph.list.bak
                     #sver=`cat /etc/apt/sources.list|awk 'NR==1{print $3}'`
                     echo "deb https://mirrors.$ss/debian/ $sver main contrib non-free
         deb-src https://mirrors.$ss/debian/ $sver main contrib non-free
@@ -210,7 +210,7 @@ a | A )
         deb https://mirrors.$ss/debian-security/ $sver/updates main contrib non-free
         deb-src https://mirrors.$ss/debian-security/ $sver/updates main contrib non-free" > /etc/apt/sources.list
                     #修改 ceph镜像更新源
-                    echo "deb http://mirrors.$ss/proxmox/debian/ceph-luminous $sver main" > /etc/apt/sources.list.d/ceph.list
+                    #echo "deb http://mirrors.$ss/proxmox/debian/ceph-luminous $sver main" > /etc/apt/sources.list.d/ceph.list
                     whiptail --title "Success" --msgbox " apt source has been changed successfully!
                     软件源已更换成功！" 10 60
                     apt-get update
