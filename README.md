@@ -99,7 +99,7 @@ cd pvetools
 
 new feature:
 
-* 增加在pve中直接安装omv[omvInPve](https://github.com/ivanhao/omvinpve)。
+* 增加在pve中直接安装omv( [omvInPve](https://github.com/ivanhao/omvinpve))。
  
 ##### v2.0.9
 
