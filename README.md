@@ -93,6 +93,14 @@ cd pvetools
 
 
 # [版本说明]
+##### v2.1.0
+
+发布时间：2019.12.09
+
+new feature:
+
+* 增加在pve中直接安装omv[omvInPve](https://github.com/ivanhao/omvinpve)。
+ 
 ##### v2.0.9
 
 发布时间：2019.12.04
