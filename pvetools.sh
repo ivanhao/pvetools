@@ -2863,6 +2863,28 @@ sambaOrNfs(){
 
 
 }
+
+omvInPve(){
+    if(whiptail --title "Yes/No" --yesno "Install omv in proxmox ve directlly?
+将要在proxmox ve中直接安装omv,请确认是否继续：" 10 60);then
+        if [ -f "/usr/sbin/omv-engined" ];then
+            if(whiptail --title "Yes/No" --yesno "Already installed omv in proxmox ve.Reinstall?
+已经检测到安装了omv,请确认是否重装？" 10 60);then
+                echo "reinstalling..."
+            else
+                main
+            fi
+        fi
+        apt-get -y install git
+        cd ~
+        git clone https://github.com/ivanhao/omvinpve
+        cd omvinpve
+        ./OmvInPve.sh
+        main
+    else
+        main
+    fi
+}
 #----------------------functions--end------------------#
 
 
@@ -2903,6 +2925,7 @@ Please choose:" 25 60 15 \
     "l" "Remove subscribe notice." \
     "m" "Config chroot & docker etc." \
     "n" "Many tools." \
+    "o" "Install Omv In Pve." \
     "u" "Upgrade this script to new version." \
     "L" "Change Language." \
     3>&1 1>&2 2>&3)
@@ -2923,6 +2946,7 @@ Github: https://github.com/ivanhao/pvetools
     "l" "去除订阅提示" \
     "m" "配置chroot环境和docker等" \
     "n" "常用的工具" \
+    "o" "直接安装Omv(OmvInPve)" \
     "u" "升级该pvetools脚本到最新版本" \
     "L" "Change Language" \
     3>&1 1>&2 2>&3)
@@ -3013,6 +3037,9 @@ fi
         n )
             manyTools
             main
+            ;;
+        o )
+            omvInPve
             ;;
         u )
             {
