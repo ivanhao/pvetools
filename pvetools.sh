@@ -522,8 +522,8 @@ browseable = yes
 path = $x
 guest ok = no
 read only = no
-create mask = 0700
-directory mask = 0700
+create mask = 0750
+directory mask = 0750
 ; oldgrp $oldgrp 
 ;  $n end
 EOF
