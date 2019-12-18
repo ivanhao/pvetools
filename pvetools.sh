@@ -2,7 +2,7 @@
 #############--proxmox tools--##########################
 #  Author : 龙天ivan
 #  Mail: ivanhao1984@qq.com
-#  Version: v2.1.1
+#  Version: v2.1.2
 #  Github: https://github.com/ivanhao/pvetools
 ########################################################
 
@@ -116,14 +116,14 @@ fi
     #"a" "Automation mode." \
     #"a" "无脑模式" \
 if [ $L = "en" ];then
-    OPTION=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "Config apt source:" 25 60 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "Config apt source:" 25 60 15 \
     "b" "Change to cn source." \
     "c" "Disable enterprise." \
     "d" "Undo Change." \
     "q" "Main menu." \
     3>&1 1>&2 2>&3)
 else
-    OPTION=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "配置apt镜像源:" 25 60 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "配置apt镜像源:" 25 60 15 \
     "b" "更换为国内源" \
     "c" "关闭企业更新源" \
     "d" "还原配置" \
@@ -172,13 +172,13 @@ a | A )
     ;;
 	b | B  )
         if [ $L = "en" ];then
-            OPTION=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "Config apt source:" 25 60 15 \
+            OPTION=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "Config apt source:" 25 60 15 \
             "a" "aliyun.com" \
             "b" "ustc.edu.cn" \
             "q" "Main menu." \
             3>&1 1>&2 2>&3)
         else
-            OPTION=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "配置apt镜像源:" 25 60 15 \
+            OPTION=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "配置apt镜像源:" 25 60 15 \
             "a" "aliyun.com" \
             "b" "ustc.edu.cn" \
             "q" "返回主菜单" \
@@ -412,17 +412,19 @@ chSamba(){
 #config samba
 clear
 if [ $L = "en" ];then
-    OPTION=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "Config samba:" 25 60 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "Config samba:" 25 60 15 \
     "a" "Install samba and config user." \
     "b" "Add folder to share." \
     "c" "Delete folder to share." \
+    "d" "Config recycle" \
     "q" "Main menu." \
     3>&1 1>&2 2>&3)
 else
-    OPTION=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "配置samba:" 25 60 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "配置samba:" 25 60 15 \
     "a" "安装配置samba并配置好samba用户" \
     "b" "添加共享文件夹" \
     "c" "删除共享文件夹" \
+    "d" "配置回收站" \
     "q" "返回主菜单" \
     3>&1 1>&2 2>&3)
 fi
@@ -531,7 +533,7 @@ EOF
 Configed!
 配置成功！
                 " 10 60
-                #--2.1.1 add group
+                #--2.1.2 add group
                 chgrp -R samba $x
                 chmod -R g+w $x
                 service smbd restart
@@ -594,6 +596,81 @@ Configed!
     }
         delFolder
         ;;
+    d )
+        enSmbRecycle(){
+            if [ ! -f '/etc/samba/smb.conf' ];then
+                whiptail --title "Warnning" --msgbox "You should install samba first!
+请先安装samba！" 10 60
+            else
+                if [ `cat /etc/samba/smb.conf |egrep '.*vfs.*object.*recycle'|wc -l` != 0 ];then
+                    whiptail --title "Warnning" --msgbox "Already configed!
+已经配置过了！" 10 60
+                else
+                    cat << EOF > ./recycle
+# --recycle-start--
+vfs object = recycle
+recycle:repository = ./deleted
+recycle:keeptree = Yes
+recycle:versions = Yes
+recycle:maxsixe = 0
+recycle:exclude = *.tmp
+# --recycle-end--
+EOF
+                    n=`sed '/\[global\]/' /etc/samba/smb.conf -n|sed -n '$p'`
+                    cp /etc/samba/smb.conf /etc/samba/smb.conf.bak
+                    sed -i '/\[global\]/r ./recycle' /etc/samba/smb.conf
+                    rm ./recycle
+                    systemctl restart smbd
+                    whiptail --title "Success" --msgbox "Done.
+配置完成" 10 60
+                fi
+            fi
+        }
+        disSmbRecycle(){
+            if [ ! -f '/etc/samba/smb.conf' ];then
+                whiptail --title "Warnning" --msgbox "You should install samba first!
+请先安装samba！" 10 60
+            else
+                if [ `cat /etc/samba/smb.conf |grep -E '.*vfs.*object.*recycle'|wc -l` = 0 ];then
+                    whiptail --title "Warnning" --msgbox "Already configed!
+已经配置过了！" 10 60
+                else
+                    cp /etc/samba/smb.conf /etc/samba/smb.conf.bak
+                    sed -i '/.*recycle.*/d' /etc/samba/smb.conf
+                    systemctl restart smbd
+                    whiptail --title "Success" --msgbox "Done.
+配置完成" 10 60
+                fi
+            fi
+        }
+        smbRecycle(){
+            if [ $L = "en" ];then
+                x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "Config samba recycle:" 12 60 4 \
+                "a" "Enable samba recycle." \
+                "b" "Disable samba recycle." \
+                3>&1 1>&2 2>&3)
+            else
+                x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "配置samba回收站！" 12 60 4 \
+                "a" "开启samba回收站。" \
+                "b" "关闭samba回收站。" \
+                3>&1 1>&2 2>&3)
+            fi
+            exitstatus=$?
+            if [ $exitstatus = 0 ]; then
+                case "$x" in 
+                    a )
+                        enSmbRecycle
+                        ;;
+                    b )
+                        disSmbRecycle
+                        ;;
+                esac
+            else
+                smbRecycle
+            fi
+        }
+        smbRecycle
+        ;;
 
     q )
         main
@@ -607,13 +684,13 @@ fi
 chVim(){
 #config vim
 if [ $L = "en" ];then
-    x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "Config VIM:" 12 60 4 \
+    x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "Config VIM:" 12 60 4 \
     "a" "Install vim & simply config display." \
     "b" "Install vim & config 'vim-for-server'." \
     "c" "Uninstall." \
     3>&1 1>&2 2>&3)
 else
-    x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "安装配置VIM！" 12 60 4 \
+    x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "安装配置VIM！" 12 60 4 \
     "a" "安装VIM并简单配置，如配色行号等。" \
     "b" "安装VIM并配置'vim-for-server'。" \
     "c" "还原配置。" \
@@ -806,7 +883,7 @@ doSpindown(){
 chApm(){
     clear
     apm=$(
-    whiptail --title " PveTools   Version : 2.1.1 " --menu "Config hard disks APM & AAM:
+    whiptail --title " PveTools   Version : 2.1.2 " --menu "Config hard disks APM & AAM:
 配置硬盘静音、降温：
     " 25 60 15 \
     "128" "Config hard drivers to auto spindown." \
@@ -817,14 +894,14 @@ chApm(){
 }
 
 if [ $L = "en" ];then
-    OPTION=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "Config hard disks spindown:" 25 60 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "Config hard disks spindown:" 25 60 15 \
     "a" "Config hard drivers to auto spindown." \
     "b" "Remove config hdspindown." \
     "c" "Config pvestatd service(in case of spinup drives)." \
     "d" "Config drivers aam\apm to low temp and quiet." \
     3>&1 1>&2 2>&3)
 else
-    OPTION=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "配置硬盘自动休眠" 25 60 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "配置硬盘自动休眠" 25 60 15 \
     "a" "配置硬盘自动休眠" \
     "b" "还原硬盘自动休眠配置" \
     "c" "配置pvestatd服务（防止休眠后马上被唤醒）。" \
@@ -985,12 +1062,12 @@ fi
 }
 #-------------chCpu--main---------------
 if [ $L = "en" ];then
-    OPTION=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "Config Cpufrequtils:" 25 60 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "Config Cpufrequtils:" 25 60 15 \
     "a" "Config cpufrequtils to save power." \
     "b" "Remove config." \
     3>&1 1>&2 2>&3)
 else
-    OPTION=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "安装配置CPU省电" 25 60 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "安装配置CPU省电" 25 60 15 \
     "a" "安装配置CPU省电" \
     "b" "还原配置" \
     3>&1 1>&2 2>&3)
@@ -1043,12 +1120,12 @@ fi
 chSubs(){
 clear
 if [ $L = "en" ];then
-    OPTION=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "Config Cpufrequtils:" 25 60 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "Config Cpufrequtils:" 25 60 15 \
     "a" "Remove subscribe notice." \
     "b" "Unset config." \
     3>&1 1>&2 2>&3)
 else
-    OPTION=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "安装配置CPU省电" 25 60 15 \
+    OPTION=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "安装配置CPU省电" 25 60 15 \
     "a" "去除订阅提示" \
     "b" "还原配置" \
     3>&1 1>&2 2>&3)
@@ -1112,7 +1189,7 @@ unsetVmN(){
         h=30
     fi
     list1=`echo $list|awk 'NR>1{print $1}'`
-    vmid=$(whiptail  --title " PveTools   Version : 2.1.1 " --menu "
+    vmid=$(whiptail  --title " PveTools   Version : 2.1.2 " --menu "
 Choose vmid to unset nested:
 选择需要关闭嵌套虚拟化的vm：" 25 60 15 \
     $(echo $ls) \
@@ -1164,7 +1241,7 @@ setVmN(){
         h=30
     fi
     list1=`echo $list|awk 'NR>1{print $1}'`
-    vmid=$(whiptail  --title " PveTools   Version : 2.1.1 " --menu "
+    vmid=$(whiptail  --title " PveTools   Version : 2.1.2 " --menu "
 Choose vmid to set nested:
 选择需要配置嵌套虚拟化的vm：" 25 60 15 \
     $(echo $ls) \
@@ -1214,14 +1291,14 @@ you choose: $vmid ,continue?
     fi
 }
 if [ $L = "en" ];then
-    x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "Config Nested:" 25 60 15 \
+    x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "Config Nested:" 25 60 15 \
     "a" "Enable nested" \
     "b" "Set vm to nested" \
     "c" "Unset vm nested" \
     "d" "Disable nested" \
     3>&1 1>&2 2>&3)
 else
-    x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "配置嵌套虚拟化:" 25 60 15 \
+    x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "配置嵌套虚拟化:" 25 60 15 \
     "a" "开启嵌套虚拟化" \
     "b" "开启某个虚拟机的嵌套虚拟化" \
     "c" "关闭某个虚拟机的嵌套虚拟化" \
@@ -1316,12 +1393,12 @@ chSensors(){
 #for i in `sed -n '/Chip drivers/,/\#----cut here/p' /tmp/sensors|sed '/Chip /d'|sed '/cut/d'`;do modprobe $i;done
 clear
 if [ $L = "en" ];then
-    x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "Config lm-sensors & proxmox ve display:" 25 60 15 \
+    x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "Config lm-sensors & proxmox ve display:" 25 60 15 \
     "a" "Install." \
     "b" "Uninstall." \
     3>&1 1>&2 2>&3)
 else
-    x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "配置samba:" 25 60 15 \
+    x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "配置samba:" 25 60 15 \
     "a" "安装配置温度显示" \
     "b" "删除配置" \
     3>&1 1>&2 2>&3)
@@ -1778,7 +1855,7 @@ $(echo $cards) \
                 h=30
             fi
             list1=`echo $list|awk 'NR>1{print $1}'`
-            vmid=$(whiptail  --title " PveTools   Version : 2.1.1 " --radiolist "
+            vmid=$(whiptail  --title " PveTools   Version : 2.1.2 " --radiolist "
         Choose vmid to set video card Passthrough:
         选择需要配置显卡直通的vm：" 20 60 10 \
             $(echo $ls) \
@@ -1808,7 +1885,7 @@ You already configed!
                         " 10 60
                         addVideo
                     fi
-                    opt=$(whiptail  --title " PveTools   Version : 2.1.1 " --checklist "
+                    opt=$(whiptail  --title " PveTools   Version : 2.1.2 " --checklist "
 Choose options:
 选择选项：" 20 60 10 \
                     "q35" "q35支持，gpu直通建议选择，独显留空" OFF \
@@ -1977,7 +2054,7 @@ $(echo $cards) \
                 h=30
             fi
             list1=`echo $list|awk 'NR>1{print $1}'`
-            vmid=$(whiptail  --title " PveTools   Version : 2.1.1 " --radiolist "
+            vmid=$(whiptail  --title " PveTools   Version : 2.1.2 " --radiolist "
         Choose vmid to set video card Passthrough:
         选择需要配置显卡直通的vm：" 20 60 10 \
             $(echo $ls) \
@@ -2007,7 +2084,7 @@ You already configed!
                         " 10 60
                         addVideo
                     fi
-                    opt=$(whiptail  --title " PveTools   Version : 2.1.1 " --checklist "
+                    opt=$(whiptail  --title " PveTools   Version : 2.1.2 " --checklist "
 Choose options:
 选择选项：" 20 60 10 \
                     "q35" "q35支持，gpu直通建议选择，独显留空" OFF \
@@ -2098,12 +2175,12 @@ Please choose a card.
 
 configVideo(){
 if [ $L = "en" ];then
-    x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "Config PCI Video card Passthrough:" 25 60 15 \
+    x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "Config PCI Video card Passthrough:" 25 60 15 \
     "a" "Config Video Card Passthrough" \
     "b" "Config Video Card Passthrough to vm" \
     3>&1 1>&2 2>&3)
 else
-    x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "配置PCI显卡直通:" 25 60 15 \
+    x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "配置PCI显卡直通:" 25 60 15 \
     "a" "配置物理机显卡直通支持。" \
     "b" "配置显卡直通给虚拟机。" \
     3>&1 1>&2 2>&3)
@@ -2127,14 +2204,14 @@ fi
 #--------------funcs-end----------------
 
 if [ $L = "en" ];then
-    x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "Config PCI Passthrough:" 25 60 15 \
+    x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "Config PCI Passthrough:" 25 60 15 \
     "a" "Config IOMMU on." \
     "b" "Config IOMMU off." \
     "c" "Config Video Card Passthrough" \
     "d" "Config qm set disks." \
     3>&1 1>&2 2>&3)
 else
-    x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "配置硬件直通:" 25 60 15 \
+    x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "配置硬件直通:" 25 60 15 \
     "a" "配置开启物理机硬件直通支持。" \
     "b" "配置关闭物理机硬件直通支持。" \
     "c" "配置显卡直通。" \
@@ -2290,11 +2367,11 @@ EOF
         checkSchroot
         c=`schroot -l|awk -F ":" '{print $2"  "$1}'`
         if [ $L = "en" ];then
-            x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "Enter chroot:" 25 60 15 \
+            x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "Enter chroot:" 25 60 15 \
             $(echo $c) \
             3>&1 1>&2 2>&3)
         else
-            x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "进入chroot环境:" 25 60 15 \
+            x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "进入chroot环境:" 25 60 15 \
             $(echo $c) \
             3>&1 1>&2 2>&3)
         fi
@@ -2472,14 +2549,14 @@ chroot后台运行环境已经运行，需要重启吗？
     }
     configChroot(){
         if [ $L = "en" ];then
-            x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "Config chroot & docker etc:" 25 60 15 \
+            x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "Config chroot & docker etc:" 25 60 15 \
             "a" "Config base schroot." \
             "b" "Docker in alpine" \
             "c" "Portainer in alpine" \
             "d" "Change chroot path" \
             3>&1 1>&2 2>&3)
         else
-            x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "配置chroot环境和docker等:" 25 60 15 \
+            x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "配置chroot环境和docker等:" 25 60 15 \
             "a" "配置基本的chroot环境（schroot 默认为alpine)。" \
             "b" "Docker（alpine）。" \
             "c" "Docker配置界面（portainer in alpine）。" \
@@ -2579,14 +2656,14 @@ Input new chroot path:
     }
     #--base-funcs-end--
 if [ $L = "en" ];then
-    x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "Config chroot & docker etc:" 25 60 15 \
+    x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "Config chroot & docker etc:" 25 60 15 \
     "a" "Install & config base schroot." \
     "b" "Enter chroot." \
     "c" "Chroot daemon manager" \
     "d" "Remove all chroot." \
     3>&1 1>&2 2>&3)
 else
-    x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "配置chroot环境和docker等:" 25 60 15 \
+    x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "配置chroot环境和docker等:" 25 60 15 \
     "a" "安装配置基本的chroot环境（schroot 默认为alpine)。" \
     "b" "进入chroot。" \
     "c" "Chroot后台管理。" \
@@ -2629,7 +2706,7 @@ chQmdisk(){
             h=30
         fi
         list1=`echo $list|awk 'NR>1{print $1}'`
-        vmid=$(whiptail  --title " PveTools   Version : 2.1.1 " --menu "
+        vmid=$(whiptail  --title " PveTools   Version : 2.1.2 " --menu "
 Choose vmid to set disk:
 选择需要配置硬盘的vm：" 20 60 10 \
         $(echo $ls) \
@@ -2655,7 +2732,7 @@ you choose: $vmid ,continue?
                     #disks=`ls -alh /dev/disk/by-id|awk '{print $11" "$9" OFF"}'|awk -F "/" '{print $3}'|sed '/^$/d'|sed '/wwn/d'|sed '/^dm/d'|sed '/lvm/d'`
                     #added=`cat /etc/pve/qemu-server/$vmid.conf|grep -E '^ide[0-9]|^scsi[0-9]|^sata[0-9]'|awk -F ":" '{print $1" "$2$3"\r\n"}'`
                     disks=`ls -alh /dev/disk/by-id|sed '/\.$/d'|sed '/^$/d'|awk 'NR>1{print $9" "$11" OFF"}'|sed 's/\.\.\///g'|sed '/wwn/d'|sed '/^dm/d'|sed '/lvm/d'|sed '/nvme-nvme/d'`
-                    d=$(whiptail --title " PveTools Version : 2.1.1 " --checklist "
+                    d=$(whiptail --title " PveTools Version : 2.1.2 " --checklist "
 disk list:
 已添加的硬盘:
 $(cat /etc/pve/qemu-server/$vmid.conf|grep -E '^ide[0-9]|^scsi[0-9]|^sata[0-9]'|awk -F ":" '{print $1" "$2" "$3}')
@@ -2665,7 +2742,7 @@ Choose disk:
                     $(echo $disks) \
                     3>&1 1>&2 2>&3)
                     exitstatus=$?
-                    t=$(whiptail --title " PveTools Version : 2.1.1 " --menu "
+                    t=$(whiptail --title " PveTools Version : 2.1.2 " --menu "
 Choose disk type:
 选择硬盘接口类型：" 20 60 10 \
                     "sata" "vm sata type" \
@@ -2705,7 +2782,7 @@ ide的类型已经超过3个,请重选其他类型!" 10 60
                 fi
                 if [ $1 = 'rm' ];then
                     disks=`qm config $vmid|grep -E '^ide[0-9]|^scsi[0-9]|^sata[0-9]'|awk -F ":" '{print $1" "$2$3" OFF"}'`
-                    d=$(whiptail --title " PveTools Version : 2.1.1 " --checklist "
+                    d=$(whiptail --title " PveTools Version : 2.1.2 " --checklist "
 Choose disk:
 选择硬盘：" 20 90 10 \
                     $(echo $disks) \
@@ -2731,12 +2808,12 @@ Choose disk:
 
     }
     if [ $L = "en" ];then
-        x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "Config qm set disks:" 25 60 15 \
+        x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "Config qm set disks:" 25 60 15 \
         "a" "set disk to vm." \
         "b" "unset disk to vm." \
         3>&1 1>&2 2>&3)
     else
-        x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "配置qm set 物理硬盘给虚拟机:" 25 60 15 \
+        x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "配置qm set 物理硬盘给虚拟机:" 25 60 15 \
         "a" "添加硬盘给虚拟机。" \
         "b" "删除虚拟机里的硬盘。" \
         3>&1 1>&2 2>&3)
@@ -2793,17 +2870,21 @@ $maps
     }
     setDns(){
         clear
+        dname=`cat /etc/resolv.conf|grep 'nameserver'`
         if [ `cat /etc/resolv.conf|grep 'nameserver'|wc -l` != 0 ];then
             if [ $L = "en" ];then
-                d=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "DNS - Many Tools:
+                d=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "DNS - Many Tools:
 Detect exist nameserver,Please choose:
                 " 25 60 15 \
                 "a" "Add nameserver." \
                 "b" "Replace nameserver." \
                 3>&1 1>&2 2>&3)
             else
-                d=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "DNS - 常用的工具:
-检测到已经配置有dns服务器，请选择以下操作：
+                d=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "DNS - 常用的工具:
+检测到已经配置有dns服务器: \
+$(for i in $dname;do echo $i ;done)  \
+------------------------------ \
+请选择以下操作：
                 " 25 60 15 \
                 "a" "添加dns." \
                 "b" "替换dns." \
@@ -2815,12 +2896,12 @@ Detect exist nameserver,Please choose:
             fi
         fi
         if [ $L = "en" ];then
-            x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "DNS - Many Tools:" 25 60 15 \
+            x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "DNS - Many Tools:" 25 60 15 \
             "a" "8.8.8.8(google)." \
             "b" "223.5.5.5(alidns)." \
             3>&1 1>&2 2>&3)
         else
-            x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "DNS - 常用的工具:" 25 60 15 \
+            x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "DNS - 常用的工具:" 25 60 15 \
             "a" "8.8.8.8(谷歌)." \
             "b" "223.5.5.5(阿里)." \
             3>&1 1>&2 2>&3)
@@ -2860,12 +2941,12 @@ Detect exist nameserver,Please choose:
     }
 
     if [ $L = "en" ];then
-        x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "Many Tools:" 25 60 15 \
+        x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "Many Tools:" 25 60 15 \
         "a" "Local network scans(nmap)." \
         "b" "Set DNS." \
         3>&1 1>&2 2>&3)
     else
-        x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "常用的工具:" 25 60 15 \
+        x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "常用的工具:" 25 60 15 \
         "a" "局域网扫描。" \
         "b" "配置DNS。" \
         3>&1 1>&2 2>&3)
@@ -2885,11 +2966,11 @@ Detect exist nameserver,Please choose:
 }
 chNFS(){
     if [ $L = "en" ];then
-        x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "NFS:" 25 60 15 \
+        x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "NFS:" 25 60 15 \
         "a" "Install nfs server." \
         3>&1 1>&2 2>&3)
     else
-        x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "NFS:" 25 60 15 \
+        x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "NFS:" 25 60 15 \
         "a" "安装NFS服务器。" \
         3>&1 1>&2 2>&3)
     fi
@@ -2913,12 +2994,12 @@ chNFS(){
 }
 sambaOrNfs(){
     if [ $L = "en" ];then
-        x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "Samba or NFS:" 25 60 15 \
+        x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "Samba or NFS:" 25 60 15 \
         "a" "samba." \
         "b" "NFS" \
         3>&1 1>&2 2>&3)
     else
-        x=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "Samba or NFS:" 25 60 15 \
+        x=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "Samba or NFS:" 25 60 15 \
         "a" "samba." \
         "b" "NFS" \
         3>&1 1>&2 2>&3)
@@ -2982,7 +3063,7 @@ omvInPve(){
 main(){
 clear
 if [ $L = "en" ];then
-    OPTION=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "
+    OPTION=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "
 Github: https://github.com/ivanhao/pvetools
 Please choose:" 25 60 15 \
     "b" "Config apt source(change to ustc.edu.cn and so on)." \
@@ -3003,7 +3084,7 @@ Please choose:" 25 60 15 \
     "L" "Change Language." \
     3>&1 1>&2 2>&3)
 else
-    OPTION=$(whiptail --title " PveTools   Version : 2.1.1 " --menu "
+    OPTION=$(whiptail --title " PveTools   Version : 2.1.2 " --menu "
 Github: https://github.com/ivanhao/pvetools
 请选择相应的配置：" 25 60 15 \
     "b" "配置apt源(更换为ustc.edu.cn,去除企业源等)" \
