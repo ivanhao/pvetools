@@ -1,8 +1,0 @@
-# --recycle-start--
-vfs object = recycle
-recycle:repository = ./deleted
-recycle:keeptree = Yes
-recycle:versions = Yes
-recycle:maxsixe = 0
-recycle:exclude = *.tmp
-# --recycle-end--
