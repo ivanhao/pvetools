@@ -101,7 +101,7 @@ cd pvetools
 
 new feature:
 
-* 增加samba加收站配置
+* 增加samba回收站配置
  
 ##### v2.1.1
 
