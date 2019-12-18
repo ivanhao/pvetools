@@ -160,10 +160,10 @@ a | A )
             apt-get update
             apt-get -y install net-tools
             whiptail --title "Success" --msgbox " apt source has been changed successfully!
-            软件源已更换成功！" 10 60
+软件源已更换成功！" 10 60
         else
             whiptail --title "Success" --msgbox " Already changed apt source to ustc.edu.cn!
-            已经更换apt源为 ustc.edu.cn" 10 60
+已经更换apt源为 ustc.edu.cn" 10 60
         fi
         if [ ! $1 ];then
             chSource
@@ -219,7 +219,7 @@ a | A )
                     软件源已更换成功！" 10 60
                 else
                     whiptail --title "Success" --msgbox " Already changed apt source to $ss!
-                    已经更换apt源为 $ss" 10 60
+已经更换apt源为 $ss" 10 60
                 fi
             else
                 chSource
@@ -2443,29 +2443,20 @@ EOF
         checkSchroot
         checkDocker
         checkDockerWeb
-#        if [ ! -d "$chrootp/opt/portainer" ] || [ `ls $chrootp/opt/portainer|wc -l` -lt 3 ];then
-#            cd $chrootp/opt
-#            wget -c https://github.com/portainer/portainer/releases/download/1.22.1/portainer-1.22.1-linux-amd64.tar.gz
-#            tar xvpfz portainer-1.22.1-linux-amd64.tar.gz
         if [ `cat $chrootp/etc/profile|grep portainer|wc -l` = 0 ];then
             cat << EOF >> $chrootp/etc/profile
 if [ ! -d "/root/portainer_data" ];then
     mkdir /root/portainer_data
 fi
 if [ \`docker ps -a|grep portainer|wc -l\` = 0 ];then
-docker run -d -p 9000:9000 -p 8000:8000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v /root/portainer_data:/data portainer/portainer 
+    docker run -d -p 9000:9000 -p 8000:8000 --name portainer --restart always -v /var/run/docker.sock:/var/run/docker.sock -v /root/portainer_data:/data portainer/portainer 
 else
-docker start portainer > /dev/null
+    docker start portainer > /dev/null
 fi
 echo "Portainer installed." 
 EOF
         fi
-#        else
-#            whiptail --title "Success" --msgbox "Already Configed.got to chroot alpine.
-#您已经配置过这个了。
-#请进入chroot alpine中使用。
-#            " 10 60
-#        fi
+
         if [ ! -f "/usr/bin/screen" ];then
             apt-get install screen -y
         fi
@@ -3196,14 +3187,16 @@ fi
             omvInPve
             ;;
         u )
-            {
-            echo 50
-            sleep 1
-            echo 100
-            $(
-            git pull && ./pvetools.sh
-            )
-            } |whiptail --gauge "updating when 100% type enter. 进度条满后回车" 10 60 0
+            git pull 
+            echo "Now go to main interface:"
+            echo "即将回主界面。。。"
+            echo "3"
+            sleep 1 
+            echo "2"
+            sleep 1 
+            echo "1"
+            sleep 1 
+            ./pvetools.sh
             ;;
         L )
             if (whiptail --title "Yes/No Box" --yesno "Change Language?
