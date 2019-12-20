@@ -609,7 +609,7 @@ Configed!
                     cat << EOF > ./recycle
 # --recycle-start--
 vfs object = recycle
-recycle:repository = ./deleted
+recycle:repository = ./.deleted
 recycle:keeptree = Yes
 recycle:versions = Yes
 recycle:maxsixe = 0
