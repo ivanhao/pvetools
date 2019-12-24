@@ -424,7 +424,7 @@ chSamba(){
                         cat << EOF > ./recycle
 # $2--recycle-start--
 vfs object = recycle
-recycle:repository = $1/.deleted/%U
+recycle:repository = $1/.deleted
 recycle:keeptree = Yes
 recycle:versions = Yes
 recycle:maxsixe = 0
@@ -435,6 +435,17 @@ EOF
                         cp /etc/samba/smb.conf /etc/samba/smb.conf.bak
                         sed -i '/\['$2'\]/r ./recycle' /etc/samba/smb.conf
                         rm ./recycle
+                        cat << EOF >> /etc/samba/smb.conf
+[$2-recycle]
+comment = All 
+browseable = yes
+path = $1/.deleted
+guest ok = no
+read only = no
+create mask = 0750
+directory mask = 0750
+;  $2-recycle end
+EOF
                         systemctl restart smbd
                         whiptail --title "Success" --msgbox "Done.
     配置完成" 10 60
@@ -455,6 +466,7 @@ EOF
                 else
                     cp /etc/samba/smb.conf /etc/samba/smb.conf.bak
                     sed -i '/.*'$1'.*recycle.*start/,/.*'$1'.*end/d' /etc/samba/smb.conf
+                    sed "/\[${1}\-recycle\]/,/${n}\-recycle end/d" /etc/samba/smb.conf -i 
                     systemctl restart smbd
                     whiptail --title "Success" --msgbox "Done.
 配置完成" 10 60
@@ -463,6 +475,7 @@ EOF
         }
 
 clear
+#$(grep -E "^\[[0-9a-zA-Z.-]*\]$|^path" /etc/samba/smb.conf|awk 'NR>3{print $0}'|sed 's/path/        path/'|grep -v '-recycle')
 if [ $L = "en" ];then
     OPTION=$(whiptail --title " PveTools   Version : 2.1.3 " --menu "Config samba:" 25 60 15 \
     "a" "Install samba and config user." \
@@ -528,7 +541,7 @@ if [ $exitstatus = 0 ]; then
 Exist share folders:
 已有的共享目录：
 ----------------------------------------
-$(grep -E "^\[[0-9a-zA-Z.-]*\]$|^path" /etc/samba/smb.conf|awk 'NR>3{print $0}'|sed 's/path/        path/')
+$(grep -Ev "-recycle|.deleted$" /etc/samba/smb.conf|grep -E "^\[[0-9a-zA-Z.-]*\]$|^path"|sed 's/path/        path/'|awk 'NR>3{print $0}')
 ----------------------------------------
 Input share folder path(like /root):
 输入共享文件夹的路径(只需要输入/root类似的路径):
@@ -614,7 +627,7 @@ Configed!
 Exist share folders:
 已有的共享目录：
 ----------------------------------------
-$(grep -E "^\[[0-9a-zA-Z.-]*\]$|^path" /etc/samba/smb.conf|awk 'NR>3{print $0}'|sed 's/path/        path/')
+$(grep -Ev "-recycle|.deleted$" /etc/samba/smb.conf|grep -E "^\[[0-9a-zA-Z.-]*\]$|^path"|sed 's/path/        path/'|awk 'NR>3{print $0}')
 ----------------------------------------
 Input share folder name(type words in []):
 输入共享文件夹的名称(只需要输入[]中的名字):
@@ -675,11 +688,11 @@ Configed!
                             else
                                 let h=$h*5
                             fi
-                            n=$(whiptail --title "Remove Samba Share folder" --inputbox "
+                            n=$(whiptail --title "Remove Samba recycle" --inputbox "
 Exist share folders:
 已有的共享目录：
 ----------------------------------------
-$(grep -E "^\[[0-9a-zA-Z.-]*\]$|^path" /etc/samba/smb.conf|awk 'NR>3{print $0}'|sed 's/path/        path/')
+$(grep -Ev "-recycle|.deleted$" /etc/samba/smb.conf|grep -E "^\[[0-9a-zA-Z.-]*\]$|^path"|sed 's/path/        path/'|awk 'NR>3{print $0}')
 ----------------------------------------
 Input share folder name(type words in []):
 输入共享文件夹的名称(只需要输入[]中的名字):
@@ -719,11 +732,11 @@ Name not exist!:
                             else
                                 let h=$h*5
                             fi
-                            n=$(whiptail --title "Remove Samba Share folder" --inputbox "
+                            n=$(whiptail --title "Remove Samba recycle" --inputbox "
 Exist share folders:
 已有的共享目录：
 ----------------------------------------
-$(grep -E "^\[[0-9a-zA-Z.-]*\]$|^path" /etc/samba/smb.conf|awk 'NR>3{print $0}'|sed 's/path/        path/')
+$(grep -Ev "-recycle|.deleted$" /etc/samba/smb.conf|grep -E "^\[[0-9a-zA-Z.-]*\]$|^path"|sed 's/path/        path/'|awk 'NR>3{print $0}')
 ----------------------------------------
 Input share folder name(type words in []):
 输入共享文件夹的名称(只需要输入[]中的名字):
@@ -738,11 +751,18 @@ Name not exist!:
                                     " 10 60
                                     disSmbRecycle
                                 done
-                                if [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` != 0 ];then
-                                    delSmbRecycle $n
-                                    service smbd restart
+                                if [ `ls /mnt/8t/.deleted/|wc -l` != 0 ];then
+                                    if(whiptail --title "Warnning" --yesno "recycle not empty, you should clear it first.continue?
+回收站中存在文件，建议先清空，是否确认要继续？" 10 60);then
+                                        if [ `grep "^\[${n}\]$" /etc/samba/smb.conf|wc -l` != 0 ];then
+                                            delSmbRecycle $n
+                                            service smbd restart
+                                        fi
+                                        disSmbRecycle
+                                    else
+                                        disSmbRecycle
+                                    fi
                                 fi
-                                disSmbRecycle
                             else
                                 smbRecycle
                             fi
@@ -750,11 +770,9 @@ Name not exist!:
                         disSmbRecycle
                         ;;
                     c )
-                        whiptail --title "Clear Recycle" --msgbox "Use shell and go to share folder,
-execute 'rm .deleted -r' to clear recycle.
-工具不提供删资料和格盘功能，
-请在shell下进入到共享文件夹,执行'rm .deleted -r' 。" 10 60
-                        smbRecycle
+                            whiptail --title "Clear Recycle" --msgbox "Go to share folder which name end with '-recycle' to clear,
+请在名字带有'-recycle'的共享文件夹中清理
+" 10 60
                 esac
             else
                 chSamba
