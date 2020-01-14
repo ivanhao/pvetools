@@ -1038,11 +1038,11 @@ doSpindown(){
         if [ `dpkg -l|grep git|wc -l` = 0 ];then
             apt -y install git
         fi
+        cd /root
         git clone https://github.com/ivanhao/hdspindown.git 
     {
         echo 10
         echo 50
-        cd /root
         echo 90
         cd hdspindown
         chmod +x *.sh
