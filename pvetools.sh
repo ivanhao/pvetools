@@ -3156,6 +3156,16 @@ $(for i in $dname;do echo $i ;done)  \
         ./tcp.sh
         cd $op
     }
+    v2ray(){
+        op=`pwd`
+        cd ~
+        git clone https://github.com/ivanhao/ivan-v2ray
+        chmod +x ~/ivan-v2ray/install.sh
+        ~/ivan-v2ray/install.sh
+        echo "Enter to continue."
+        cd $op
+        read x
+    }
 
     if [ $L = "en" ];then
         x=$(whiptail --title " PveTools   Version : 2.1.4 " --menu "Many Tools:" 25 60 15 \
@@ -3164,6 +3174,7 @@ $(for i in $dname;do echo $i ;done)  \
         "c" "Free Memory." \
         "d" "net speedtest" \
         "e" "bbr\\bbr+" \
+        "f" "config v2ray" \
         3>&1 1>&2 2>&3)
     else
         x=$(whiptail --title " PveTools   Version : 2.1.4 " --menu "常用的工具:" 25 60 15 \
@@ -3171,7 +3182,8 @@ $(for i in $dname;do echo $i ;done)  \
         "b" "配置DNS。" \
         "c" "释放内存。" \
         "d" "speedtest测速" \
-        "e" "bbr\\bbr+" \
+        "e" "安装bbr\\bbr+" \
+        "f" "配置v2ray" \
         3>&1 1>&2 2>&3)
     fi
     exitstatus=$?
@@ -3191,6 +3203,9 @@ $(for i in $dname;do echo $i ;done)  \
             ;;
         e )
             bbr
+            ;;
+        f )
+            v2ray
             ;;
         esac
     fi
