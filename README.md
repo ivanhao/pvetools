@@ -104,7 +104,7 @@ cd pvetools
 
 new feature:
 
-* 常用工具中增加释放内存、speedtest、bbr\bbr+功能
+* 常用工具中增加释放内存、speedtest、bbr\bbr+、v2ray功能
  
 ##### v2.1.3
 
