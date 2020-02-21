@@ -3136,18 +3136,42 @@ $(for i in $dname;do echo $i ;done)  \
             manyTools
         fi
     }
+    speedTest(){
+        op=`pwd`
+        cd ~
+        git clone https://github.com/sivel/speedtest-cli.git
+        chmod +x ~/speedtest-cli/speedtest.py
+        python ~/speedtest-cli/speedtest.py
+        echo "Enter to continue."
+        cd $op
+        read x
+    }
+    bbr(){
+        op=`pwd`
+        if [ ! -d "/opt/bbr" ];then 
+            mkdir /opt/bbr
+        fi
+        cp ./plugins/tcp.sh /opt/bbr
+        cd /opt/bbr
+        ./tcp.sh
+        cd $op
+    }
 
     if [ $L = "en" ];then
         x=$(whiptail --title " PveTools   Version : 2.1.4 " --menu "Many Tools:" 25 60 15 \
         "a" "Local network scans(nmap)." \
         "b" "Set DNS." \
         "c" "Free Memory." \
+        "d" "net speedtest" \
+        "e" "bbr\\bbr+" \
         3>&1 1>&2 2>&3)
     else
         x=$(whiptail --title " PveTools   Version : 2.1.4 " --menu "常用的工具:" 25 60 15 \
         "a" "局域网扫描。" \
         "b" "配置DNS。" \
         "c" "释放内存。" \
+        "d" "speedtest测速" \
+        "e" "bbr\\bbr+" \
         3>&1 1>&2 2>&3)
     fi
     exitstatus=$?
@@ -3161,6 +3185,12 @@ $(for i in $dname;do echo $i ;done)  \
             ;;
         c )
             freeMemory
+            ;;
+        d )
+            speedTest
+            ;;
+        e )
+            bbr
             ;;
         esac
     fi
