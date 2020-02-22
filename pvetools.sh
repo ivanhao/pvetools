@@ -1158,7 +1158,7 @@ Input MAX_SPEED(example: 1.6GHz type 1600000):
     if [ $exitstatus = 0 ]; then
         while [ true ]
         do
-            if [[ `echo "$x"|grep "[0-9][0-9][0-9][0-9][0-9][0-9][0-9]"|wc -l` = 0 ]] || [[ $x = "" ]];then
+            if [[ `echo "$x"|grep "^[0-9]*$"|wc -l` = 0 ]] || [[ $x = "" ]];then
                 whiptail --title "Warnning" --msgbox "
 example: 1.6GHz type 1600000
 retry
@@ -1186,7 +1186,7 @@ Input MIN_SPEED(example: 1.6GHz type 1600000):
     if [ $exitstatus = 0 ]; then
         while [ true ]
         do
-            if [[ `echo "$x"|grep "[0-9][0-9][0-9][0-9][0-9][0-9][0-9]"|wc -l` = 0 ]] || [[ $x = "" ]];then
+            if [[ `echo "$x"|grep "^[0-9]*$"|wc -l` = 0 ]] || [[ $x = "" ]];then
                 whiptail --title "Warnning" --msgbox "
 example: 1.6GHz type 1600000
 retry
