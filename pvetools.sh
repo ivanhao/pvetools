@@ -283,7 +283,7 @@ Input email adress:
     if [ $exitstatus = 0 ]; then
         while [ true ]
         do
-            if [ `echo $qqmail|grep '^[a-zA-Z0-9\_\-\.]*\@[A-Za-z\_\-\.]*\.[a-zA-Z\_\-\.]*$'` ];then
+            if [ `echo $qqmail|grep '^[a-zA-Z0-9\_\-\.]*\@[A-Za-z0-9\_\-\.]*\.[a-zA-Z\_\-\.]*$'` ];then
                     break
             else
                 whiptail --title "Warnning" --msgbox "
@@ -341,7 +341,7 @@ addMail
 chZfs(){
 #set max zfs ram
 setMen(){
-    x=$(whiptail --title "Config mail" --inputbox "
+    x=$(whiptail --title "Config ZFS" --inputbox "
 set max zfs ram 4(G) or 8(G) etc, just enter number or n?
 设置最大zfs内存（zfs_arc_max),比如4(G)或8(G)等, 只需要输入纯数字即可，比如4G输入4?
     " 20 60    3>&1 1>&2 2>&3)
