@@ -104,7 +104,7 @@ cd pvetools
 
 new feature:
 
-*  解决docker重启不能自动启动的问题。
+* 解决docker重启不能自动启动的问题。
  
 ##### v2.1.4
 
