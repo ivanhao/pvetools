@@ -2,7 +2,7 @@
 #############--proxmox tools--##########################
 #  Author : 龙天ivan
 #  Mail: ivanhao1984@qq.com
-#  Version: v2.1.4
+#  Version: v2.1.5
 #  Github: https://github.com/ivanhao/pvetools
 ########################################################
 
@@ -2705,6 +2705,11 @@ EOF
             done
         fi
         screen -dmS docker schroot -c alpine -d /root
+        if [ `cat /etc/crontab|grep schroot|wc -l` = 0 ];then
+            cat << EOF >> /etc/crontab
+@reboot  root  screen -dmS docker schroot -c alpine -d /root
+EOF
+        fi
         whiptail --title "Success" --msgbox "Chroot daemon done." 10 60
     }
     checkChrootDaemon(){
