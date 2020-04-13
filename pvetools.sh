@@ -1900,7 +1900,6 @@ getVideo(){
     do
         cards=`sed -n '/'$i'/ s/OFF/ON/p' cards`
     done
-    rm cards*
     DISTROS=$(whiptail --title "Video cards:" --checklist \
 "Choose cards to config(* mark means configed):
 选择显卡（标*号为已经配置过的）：
@@ -1911,6 +1910,7 @@ $(echo $cards) \
     if [ $exitstatus = 0 ];then
         #--config-id---
         if [ $DISTROS ];then
+	    rm cards*
             if(whiptail --title "Warnning" --yesno "
 Continue?
 请确认是否继续？
