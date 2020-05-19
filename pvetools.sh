@@ -1148,7 +1148,7 @@ fi
 chCpu(){
 maxCpu(){
     info=`cpufreq-info|grep -E "available|analyzing CPU|current"|sed -n "/analyz/,/analyz/p"|sed '$d'`
-    x=$(whiptail --title "cpufrequtils" --inputbox "
+    x=$(whiptail --title "Max cpufrequtils最大频率" --inputbox "
 $info
 --------------------------------------------
 Input MAX_SPEED(example: 1.6GHz type 1600000):
@@ -1176,7 +1176,7 @@ retry
     fi
 }
 minCpu(){
-    x=$(whiptail --title "cpufrequtils" --inputbox "
+    x=$(whiptail --title "Mini cpufrequtils最小频率" --inputbox "
 $info
 --------------------------------------------
 Input MIN_SPEED(example: 1.6GHz type 1600000):
@@ -1210,16 +1210,12 @@ if(whiptail --title "Yes/No Box" --yesno "
 Install cpufrequtils to save power?
 安装配置CPU省电?
 " --defaultno 10 60) then
-    if [ `dpkg -l|grep cpufrequtils|wc -l` = 0 ];then
-        apt -y install cpufrequtils
-    fi
+    apt -y install cpufrequtils
     if [ `grep "intel_pstate=disable" /etc/default/grub|wc -l` = 0 ];then
         sed -i.bak 's|quiet|quiet intel_pstate=disable|' /etc/default/grub 
         update-grub
     fi
-    if [ ! -f /etc/default/cpufrequtils ];then
-        cpufreq-info|grep -E "available|analyzing CPU|current"|sed -n "/analyz/,/analyz/p"|sed '$d'
-    fi
+    cpufreq-info|grep -E "available|analyzing CPU|current"|sed -n "/analyz/,/analyz/p"|sed '$d'
     maxCpu
     minCpu
     cat << EOF > /etc/default/cpufrequtils
