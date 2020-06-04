@@ -1570,7 +1570,7 @@ if [ $L = "en" ];then
     "b" "Uninstall." \
     3>&1 1>&2 2>&3)
 else
-    x=$(whiptail --title " PveTools   Version : 2.1.6 " --menu "配置samba:" 25 60 15 \
+    x=$(whiptail --title " PveTools   Version : 2.1.6 " --menu "配置Sensors:" 25 60 15 \
     "a" "安装配置温度显示" \
     "b" "删除配置" \
     3>&1 1>&2 2>&3)
