@@ -1269,13 +1269,20 @@ if [ $exitstatus = 0 ]; then
 continue?
 还原配置？
         " --defaultno 10 60 ) then
-            sed -i 's/ intel_pstate=disable//g' /etc/default/grub
-            rm -rf /etc/default/cpufrequtils
+            #sed -i 's/ intel_pstate=disable//g' /etc/default/grub
+            #rm -rf /etc/default/cpufrequtils
+    cat << EOF > /etc/default/cpufrequtils
+ENABLE="true"
+GOVERNOR="ondemand"
+EOF
+            systemctl restart cpufrequtils
             if (whiptail --title "Yes/No" --yesno "
 Uninstall cpufrequtils?
 卸载cpufrequtils?
                 " 10 60 ) then
                 apt -y remove cpufrequtils 2>&1 &
+                sed -i 's/ intel_pstate=disable//g' /etc/default/grub
+                rm -rf /etc/default/cpufrequtils
             fi
             whiptail --title "Success" --msgbox "
 Done
