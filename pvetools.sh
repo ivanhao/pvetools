@@ -3214,7 +3214,7 @@ $(for i in $dname;do echo $i ;done)  \
         "d" "net speedtest" \
         "e" "bbr\\bbr+" \
         "f" "config v2ray" \
-        "g" "Video Card vbios" \
+        "g" "Nvida Video Card vbios" \
         3>&1 1>&2 2>&3)
     else
         x=$(whiptail --title " PveTools   Version : 2.1.6 " --menu "常用的工具:" 25 60 15 \
@@ -3224,7 +3224,7 @@ $(for i in $dname;do echo $i ;done)  \
         "d" "speedtest测速" \
         "e" "安装bbr\\bbr+" \
         "f" "配置v2ray" \
-        "g" "显卡vbios提取" \
+        "g" "显(N)卡vbios提取" \
         3>&1 1>&2 2>&3)
     fi
     exitstatus=$?
