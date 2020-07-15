@@ -2,7 +2,7 @@
 #############--proxmox tools--##########################
 #  Author : 龙天ivan
 #  Mail: ivanhao1984@qq.com
-#  Version: v2.1.6
+#  Version: v2.1.9
 #  Github: https://github.com/ivanhao/pvetools
 ########################################################
 
@@ -3174,6 +3174,37 @@ $(for i in $dname;do echo $i ;done)  \
         cd $op
         read x
     }
+    vbios(){
+        echo "..."
+        if(whiptail --title "vbios tools" --yesno "get vbios?
+提取显卡？" 10 60 );then
+            cd ..
+            git clone https://github.com/ivanhao/envytools
+            cd envytools
+            apt-get install cmake flex libpciaccess-dev bison libx11-dev libxext-dev libxml2-dev libvdpau-dev python3-dev cython3 pkg-config
+            cmake .
+            make
+            make install
+            nvagetbios -s prom > vbios.bin
+            cd ..
+            git clone https://github.com/awilliam/rom-parser
+            cd rom-parser
+            make
+            ./rom-parser ../envytools/vbios.bin
+            sleep 5
+            if [ `rom-parser ../envytools/vbios.bin|grep Error|wc -l` = 0 ];then
+                cp vbios.bin /usr/share/kvm/
+                whiptail --title "Success" --msgbox "Done.see vbios in '/usr/share/kvm/vbios.bin'
+提取显卡vbios成功，文件在'/usr/share/kvm/vbios.bin',可以直接在配置文件中添加romfile=vbios.bin" 10 60
+            else
+                whiptail --title "Warnning" --msgbox "Room parse error.
+提取显卡vbios失败。" 10 60
+            fi
+
+        fi
+        manyTools
+
+    }
 
     if [ $L = "en" ];then
         x=$(whiptail --title " PveTools   Version : 2.1.6 " --menu "Many Tools:" 25 60 15 \
@@ -3183,6 +3214,7 @@ $(for i in $dname;do echo $i ;done)  \
         "d" "net speedtest" \
         "e" "bbr\\bbr+" \
         "f" "config v2ray" \
+        "g" "Video Card vbios" \
         3>&1 1>&2 2>&3)
     else
         x=$(whiptail --title " PveTools   Version : 2.1.6 " --menu "常用的工具:" 25 60 15 \
@@ -3192,6 +3224,7 @@ $(for i in $dname;do echo $i ;done)  \
         "d" "speedtest测速" \
         "e" "安装bbr\\bbr+" \
         "f" "配置v2ray" \
+        "g" "显卡vbios提取" \
         3>&1 1>&2 2>&3)
     fi
     exitstatus=$?
@@ -3214,6 +3247,9 @@ $(for i in $dname;do echo $i ;done)  \
             ;;
         f )
             v2ray
+            ;;
+        g )
+            vbios
             ;;
         esac
     fi
