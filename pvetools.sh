@@ -3193,7 +3193,7 @@ $(for i in $dname;do echo $i ;done)  \
             ./rom-parser ../envytools/vbios.bin
             sleep 5
             if [ `rom-parser ../envytools/vbios.bin|grep Error|wc -l` = 0 ];then
-                cp vbios.bin /usr/share/kvm/
+                cp ../envytools/vbios.bin /usr/share/kvm/
                 whiptail --title "Success" --msgbox "Done.see vbios in '/usr/share/kvm/vbios.bin'
 提取显卡vbios成功，文件在'/usr/share/kvm/vbios.bin',可以直接在配置文件中添加romfile=vbios.bin" 10 60
             else
