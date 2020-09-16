@@ -3289,7 +3289,7 @@ $(for i in $dname;do echo $i ;done)  \
         g )
             vbios
             ;;
-        H )
+        h|H )
             folder2ram
             ;;
         esac
