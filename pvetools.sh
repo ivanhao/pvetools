@@ -3419,7 +3419,7 @@ else
     OPTION=$(whiptail --title " PveTools   Version : 2.2.0 " --menu "
 Github: https://github.com/ivanhao/pvetools
 请选择相应的配置：" 25 60 15 \
-    "b" "配置apt源(更换为ustc.edu.cn,去除企业源等)" \
+    "b" "配置apt国内源(更换为ustc.edu.cn,去除企业源等)" \
     "c" "安装配置samba或NFS" \
     "d" "安装配置root邮件通知" \
     "e" "安装配置zfs最大内存及zed通知" \
