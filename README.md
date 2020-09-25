@@ -27,6 +27,13 @@ cd pvetools
 ./pvetools.sh
 ```
 
+### 一键无脑安装:
+
+```
+echo "nameserver  8.8.8.8" >> /etc/resolv.conf && rm /etc/apt/sources.list.d/pve-enterprise.list && export LC_ALL=en_US.UTF-8 && apt update && apt -y install git && git clone https://github.com/ivanhao/pvetools.git && cd pvetools && ./pvetools.sh
+
+```
+
 ###### 方式二：下载zip安装
 
 ![download](https://upload-images.jianshu.io/upload_images/4171480-49193f4b6f4040fc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
