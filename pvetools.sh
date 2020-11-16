@@ -1317,41 +1317,24 @@ if [ $exitstatus = 0 ]; then
 continue?
 是否去除订阅提示?
             " 10 60 )then
-            ppv=`/usr/bin/pveversion`
-            OS=`echo $ppv|awk -F'-' 'NR==1{print $1}'`
-            ver=`echo $ppv|awk -F'/' 'NR==1{print $2}'|awk -F'-' '{print $1}'`
-            bver=`echo $ver|awk -F'.' '{print $1}'`
-            cver=`echo $ver|awk -F'.' '{print $2}'`
-            dver=`echo $ppv|awk -F'/' 'NR==1{print $2}'|awk -F'-' '{print $2}'`
             #whiptail --title " in " --msgbox "$bver $cver  $dver" 10 60
-            if [[ "$bver" -ge "6" && "$cver" -ge "2" && "$dver" -ge "15" ]];then
-                whiptail --title " in " --msgbox "pve version: ""$bver"."$cver"-"$dver" 10 60
-                if [ `grep "data.status.toLowerCase() !== 'active'" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js|wc -l` = 1 ];then
-                    sed -i.bak "s/data.status.toLowerCase() !== 'active'/false/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
-                    whiptail --title "Success" --msgbox "
+            if [ `grep "data.status.toLowerCase() !== 'active'" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js|wc -l` = 1 ];then
+                sed -i.bak "s/data.status.toLowerCase() !== 'active'/false/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+                whiptail --title "Success" --msgbox "
 Done!!
 去除成功！
-                    " 10 60
-                else
-                    whiptail --title "Success" --msgbox "
-You already removed.
-已经去除过了，不需要再次去除。
-                    " 10 60
-                fi
-            else
-                whiptail --title " in " --msgbox "pve version: ""$bver"."$cver"-"$dver" 10 60
-                if [ `grep "data.status !== 'Active'" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js|wc -l` = 1 ];then
+                " 10 60
+            elif [ `grep "data.status !== 'Active'" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js|wc -l` = 1 ];then
                     sed -i.bak "s/data.status !== 'Active'/false/g" /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
                     whiptail --title "Success" --msgbox "
 Done!!
 去除成功！
                     " 10 60
-                else
-                    whiptail --title "Success" --msgbox "
+            else
+                whiptail --title "Success" --msgbox "
 You already removed.
 已经去除过了，不需要再次去除。
-                    " 10 60
-                fi
+                " 10 60
             fi
         fi
         ;;
