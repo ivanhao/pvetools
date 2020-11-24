@@ -3418,7 +3418,6 @@ Please choose:" 25 60 15 \
     "l" "Remove subscribe notice." \
     "m" "Config chroot & docker etc." \
     "n" "Many tools." \
-    "o" "Install Omv In Pve." \
     "u" "Upgrade this script to new version." \
     "L" "Change Language." \
     3>&1 1>&2 2>&3)
@@ -3439,7 +3438,6 @@ Github: https://github.com/ivanhao/pvetools
     "l" "去除订阅提示" \
     "m" "配置chroot环境和docker等" \
     "n" "常用的工具" \
-    "o" "直接安装Omv(OmvInPve)" \
     "u" "升级该pvetools脚本到最新版本" \
     "L" "Change Language" \
     3>&1 1>&2 2>&3)
