@@ -211,6 +211,8 @@ a | A )
         deb-src https://mirrors.$ss/debian-security/ $sver/updates main contrib non-free" > /etc/apt/sources.list
                     #修改 ceph镜像更新源
                     #echo "deb http://mirrors.$ss/proxmox/debian/ceph-luminous $sver main" > /etc/apt/sources.list.d/ceph.list
+                    #修改pve 更新源地址为非订阅更新源，不使用企业订阅更新源。
+                    echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/pve/ $sver pve-no-subscription" > /etc/apt/sources.list.d/pve-no-sub.list
                     whiptail --title "Success" --msgbox " apt source has been changed successfully!
                     软件源已更换成功！" 10 60
                     apt-get update

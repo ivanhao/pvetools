@@ -115,6 +115,16 @@ echo "nameserver  8.8.8.8" >> /etc/resolv.conf && rm /etc/apt/sources.list.d/pve
 *棘（来源支付宝）
 
 # [版本说明]
+##### v2.2.2
+
+发布时间：2020.11.30
+
+new feature:
+
+* 根据群友`嗨 我是奶酪`的建议，添加pve 更新源地址为非订阅更新源
+
+
+
 ##### v2.2.0
 
 发布时间：2020.08.17
