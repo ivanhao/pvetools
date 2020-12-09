@@ -115,6 +115,15 @@ echo "nameserver  8.8.8.8" >> /etc/resolv.conf && rm /etc/apt/sources.list.d/pve
 *棘（来源支付宝）
 
 # [版本说明]
+##### v2.2.3
+
+发布时间：2020.12.09
+
+new feature:
+
+* 增加对/etc/pve/qemu-server下的conf文件自动备份功能，可以选择备份路径和保留备份个数，建议备份到系统分区以外的虚拟机数据盘中，这样重装系统后方便直接恢复
+
+
 ##### v2.2.2
 
 发布时间：2020.11.30
