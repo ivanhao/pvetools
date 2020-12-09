@@ -2,7 +2,7 @@
 #############--proxmox tools--##########################
 #  Author : 龙天ivan
 #  Mail: ivanhao1984@qq.com
-#  Version: v2.2.1
+#  Version: v2.2.3
 #  Github: https://github.com/ivanhao/pvetools
 ########################################################
 
@@ -3380,6 +3380,106 @@ omvInPve(){
         main
     fi
 }
+
+
+
+ConfBackInstall(){
+    path(){
+x=$(whiptail --title "config path" --inputbox "Input backup path:
+输入备份路径:" 10 60 3>&1 1>&2 2>&3)
+exitstatus=$?
+if [ $exitstatus = 0 ];then
+    if [ ! -d $x ];then
+        whiptail --title "Warnning" --msgbox "Path not found." 10 60
+        path
+    fi
+else
+    main
+fi
+    }
+    count(){
+y=$(whiptail --title "config backup number" --inputbox "Input backup last number:
+输入保留备份数量:" 10 60 3>&1 1>&2 2>&3)
+exitstatus=$?
+if [ $exitstatus = 0 ];then
+    if [ ! `echo $y|grep '^[0-9]$'` ];then
+        whiptail --title "warnning" --msgbox "Invalid content,retry!" 10 60
+        count
+    fi
+else
+    main
+fi
+    }
+    path
+    count
+    x=$x'/pveConfBackup'
+    if [ ! -d $x ];then
+        mkdir $x
+    fi
+    if [ ! -d $x/`date '+%Y%m%d'` ];then
+        mkdir $x/`date '+%Y%m%d'`
+    fi
+    cp -rf /etc/pve/qemu-server/* $x/`date '+%Y%m%d'`/
+    d=`ls -l $x|awk 'NR>1{print $9}'|wc -l`
+    while [ $d -gt $y ]
+    do
+        rm -rf $x'/'`ls -l $x|awk 'NR>1{print $9}'|head -n 1`
+        d=`ls -l $x|awk 'NR>1{print $9}'|wc -l`
+    done
+    cat << EOF > /usr/bin/pveConfBackup
+#!/bin/bash
+x='$x'
+y=$y
+if [ ! -d $x/`date '+%Y%m%d'` ];then
+    mkdir $x/`date '+%Y%m%d'`
+fi
+cp -r /etc/pve/qemu-server/* $x/\`date '+%Y%m%d'\`/
+d=\`ls -l $x|awk 'NR>1{print \$9}'|wc -l\`
+while [ \$d -gt \$y ]
+do
+    rm -rf $x/\`ls -l $x|awk 'NR>1{print \$9}'|head -n 1\`
+    d=\`ls -l $x|awk 'NR>1{print \$9}'|wc -l\`
+done
+EOF
+    chmod +x /usr/bin/pveConfBackup
+    sed -i '/pveConfBackup/d' /etc/crontab
+    echo "0  0  *  *  *  root  /usr/bin/pveConfBackup" >> /etc/crontab
+    systemctl restart cron
+    whiptail --title "success" --msgbox "Install complete." 10 60
+    main
+}
+ConfBackUninstall(){
+    if [ `cat /etc/crontab|grep pveConfBackup|wc -l` -gt 0 ];then
+        sed -i '/pveConfBackup/d' /etc/crontab
+        rm -rf /usr/bin/pveConfBackup
+        whiptail --title "success" --msgbox "Uninstall complete." 10 60
+    else
+        whiptail --title "warnning" --msgbox "No installration found." 10 60
+    fi
+    main
+}
+ConfBack(){
+OPTION=$(whiptail --title " pve vm config backup " --menu "
+auto backup /etc/pve/qemu-server path's conf files.
+自动备份/etc/pve/qemu-server路径下的conf文件
+Select: " 25 60 15 \
+    "a" "Install. 安装" \
+    "b" "Uninstall. 卸载" \
+3>&1 1>&2 2>&3)
+exitstatus=$?
+if [ $exitstatus = 0 ]; then
+    case "$OPTION" in
+a | A )
+        ConfBackInstall
+        ;;
+b | B)
+        ConfBackUninstall
+        ;;
+* )
+        ConfBack
+    esac
+fi
+}
 #----------------------functions--end------------------#
 
 
@@ -3420,7 +3520,7 @@ Please choose:" 25 60 15 \
     "l" "Remove subscribe notice." \
     "m" "Config chroot & docker etc." \
     "n" "Many tools." \
-    "o" "Install Omv In Pve." \
+    "p" "Auto backup vm conf file." \
     "u" "Upgrade this script to new version." \
     "L" "Change Language." \
     3>&1 1>&2 2>&3)
@@ -3441,7 +3541,7 @@ Github: https://github.com/ivanhao/pvetools
     "l" "去除订阅提示" \
     "m" "配置chroot环境和docker等" \
     "n" "常用的工具" \
-    "o" "直接安装Omv(OmvInPve)" \
+    "p" "自动备份虚拟机conf文件" \
     "u" "升级该pvetools脚本到最新版本" \
     "L" "Change Language" \
     3>&1 1>&2 2>&3)
@@ -3535,6 +3635,9 @@ fi
             ;;
         o )
             omvInPve
+            ;;
+        p )
+            ConfBack
             ;;
         u )
             git pull 
