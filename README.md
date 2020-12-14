@@ -115,8 +115,6 @@ echo "nameserver  8.8.8.8" >> /etc/resolv.conf && rm /etc/apt/sources.list.d/pve
 *棘（来源支付宝）
 
 # [版本说明]
-<<<<<<< HEAD
-=======
 
 ##### v2.2.4
 
@@ -126,7 +124,6 @@ new feature:
 
 * 修复温度显示界面高度自适应。
 
->>>>>>> v2.2.4
 ##### v2.2.3
 
 发布时间：2020.12.09
