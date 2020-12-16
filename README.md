@@ -116,6 +116,14 @@ echo "nameserver  8.8.8.8" >> /etc/resolv.conf && rm /etc/apt/sources.list.d/pve
 
 # [版本说明]
 
+##### v2.2.5
+
+发布时间：2020.12.16
+
+new feature:
+
+* 优化pve升级后温度安装提示判断逻辑。
+
 ##### v2.2.4
 
 发布时间：2020.12.14
