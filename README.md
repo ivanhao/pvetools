@@ -116,6 +116,14 @@ echo "nameserver  8.8.8.8" >> /etc/resolv.conf && rm /etc/apt/sources.list.d/pve
 
 # [版本说明]
 
+##### v2.2.6
+
+发布时间：2021.09.09
+
+new feature:
+
+* 添加pve7的支持。
+
 ##### v2.2.5
 
 发布时间：2020.12.16

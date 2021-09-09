@@ -105,6 +105,9 @@ case "$sver" in
     6 )
         sver="squeeze"
         ;;
+    11 )
+        sver="bullseye"
+        ;;
     * )
         sver=""
 esac
@@ -1612,7 +1615,7 @@ Your OS：$pve, you will install sensors interface, continue?(y/n)
 您的系统不是Proxmox VE, 无法安装!
 Your OS is not Proxmox VE!
                 " 10 60
-                if [[ "$bver" != "5" || "$bver" != "6" ]];then
+                if [[ "$bver" != "5" || "$bver" != "6" || "$bver" != "7" ]];then
                     whiptail --title "Warnning" --msgbox "
 您的系统版本无法安装!
 Your Proxmox VE version can not install!
