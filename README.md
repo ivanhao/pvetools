@@ -18,7 +18,7 @@ for english user,please look the end of readme.
 
 在终端中按行分别执行以下内容：
 
->强烈建议先删除企业源：`rm /etc/apt/sources.list.d/pve-enterprise.list` 
+>强烈建议先删除企业源：`rm /etc/apt/sources.list.d/pve-enterprise.list`
 
 ```
 export LC_ALL=en_US.UTF-8
@@ -88,7 +88,7 @@ echo "nameserver  8.8.8.8" >> /etc/resolv.conf && rm /etc/apt/sources.list.d/pve
 
 捐赠列表：
 
-杨惠(来源qq)    
+杨惠(来源qq)
 
 蓝蓝的天空（来源qq）
 
@@ -116,6 +116,15 @@ echo "nameserver  8.8.8.8" >> /etc/resolv.conf && rm /etc/apt/sources.list.d/pve
 
 # [版本说明]
 
+##### v2.2.7
+
+发布时间：2021.10.14
+
+new feature:
+
+* 在常用的工具下添加pve界面黑暗模式
+* add proxmox ve darkmode interface to manyTools.
+
 ##### v2.2.6
 
 发布时间：2021.09.09
@@ -123,6 +132,7 @@ echo "nameserver  8.8.8.8" >> /etc/resolv.conf && rm /etc/apt/sources.list.d/pve
 new feature:
 
 * 添加pve7的支持。
+* add proxmox ve 7.x support.
 
 ##### v2.2.5
 
@@ -131,6 +141,7 @@ new feature:
 new feature:
 
 * 优化pve升级后温度安装提示判断逻辑。
+* update sensors data install.
 
 ##### v2.2.4
 
@@ -139,6 +150,7 @@ new feature:
 new feature:
 
 * 修复温度显示界面高度自适应。
+* fix sensors display interface.
 
 ##### v2.2.3
 
@@ -199,7 +211,7 @@ new feature:
 new feature:
 
 * 解决docker重启不能自动启动的问题。
- 
+
 ##### v2.1.4
 
 发布时间：2020.02.21
@@ -207,7 +219,7 @@ new feature:
 new feature:
 
 * 常用工具中增加释放内存、speedtest、bbr\bbr+、v2ray功能
- 
+
 ##### v2.1.3
 
 发布时间：2019.12.24
@@ -216,7 +228,7 @@ new feature:
 
 * 优化samba回收站配置,在设置共享文件夹时自动提示是否开启；可以单独增加和取消某个共享文件夹的回收站；
 * 优化web界面温度显示功能
- 
+
 ##### v2.1.2
 
 发布时间：2019.12.18
@@ -224,7 +236,7 @@ new feature:
 new feature:
 
 * 增加samba回收站配置
- 
+
 ##### v2.1.1
 
 发布时间：2019.12.16
@@ -232,7 +244,7 @@ new feature:
 new feature:
 
 * 常用工具中增加dns配置
- 
+
 ##### v2.1.0
 
 发布时间：2019.12.09
@@ -240,7 +252,7 @@ new feature:
 new feature:
 
 * 增加在pve中直接安装omv( [omvInPve](https://github.com/ivanhao/omvinpve))。
- 
+
 ##### v2.0.9
 
 发布时间：2019.12.04
@@ -249,7 +261,7 @@ new feature:
 
 * 增加samba共享文件夹权限自动配置，不再需要手工配置权限；同时删除共享文件夹会自动还原原来的用户组权限。
   建议之前已使用的用户可以先删除旧的共享文件夹，手工恢复权限后，再用工具配置添加。
- 
+
 ##### v2.0.8
 
 发布时间：2019.11.28
@@ -315,14 +327,14 @@ new feature:
 - 增加docker功能，默认安装在Alpine中
 - bug修复
 
-##### v2.0.1  
+##### v2.0.1
 发布时间：2019.10.24
 
 new feature:
 - 增加显卡直通的支持
 
 
-##### v2.0  
+##### v2.0
 发布时间：2019.10.01
 
 new feature:
@@ -358,7 +370,7 @@ cd pvetools
 
 
 
-### Uninstall 
+### Uninstall
 1. delete pvetools folder
 
 ### Run
