@@ -98,7 +98,7 @@ echo "nameserver  8.8.8.8" >> /etc/resolv.conf && rm /etc/apt/sources.list.d/pve
 
 *兴乐（来源支付宝）
 
-孤独的根号三 (来源qq)
+孤独的根号三 （来源qq）
 
 我心依旧丶(来源qq)
 
@@ -113,6 +113,8 @@ echo "nameserver  8.8.8.8" >> /etc/resolv.conf && rm /etc/apt/sources.list.d/pve
 *伟（来源支付宝）
 
 *棘（来源支付宝）
+
+zm （来源qq）
 
 # [版本说明]
 
