@@ -1671,7 +1671,7 @@ Sensors driver not found.
                 sensors
                 sleep 3
                 whiptail --title "Success" --msgbox "
-Install complete,if everything ok ,it\'s showed sensors.Next, restart you web.
+Install complete,if everything ok ,it's showed sensors.Next, restart you web.
 安装配置成功，如果没有意外，上面已经显示sensors。下一步会重启web界面，请不要惊慌。
                 " 20 60
             fi
