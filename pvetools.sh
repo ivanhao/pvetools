@@ -3329,7 +3329,7 @@ $(for i in $dname;do echo $i ;done)  \
                     whiptail --title "Success" --msgbox "Done. \
 配置完成
 $autoResizeLog
-                    " 10 60
+                    " 18 60
                 fi
                 ;;
             esac
