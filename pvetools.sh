@@ -3323,9 +3323,10 @@ $(for i in $dname;do echo $i ;done)  \
             a )
                 if(whiptail --title "autoResize" --yesno "run autoResize on /(only LVM partition)?
                     是否运行自动扩展ROOT分区(LVM)可用空间？
-                    注意：zfs等非LVM分区不可使用，即便运行也不产生影响。" 10 60 );then
+                    注意：zfs等非LVM分区不可使用，即便运行也不产生影响。" 15 60 );then
                     ./plugins/autoResize ivanhao/pvetools > ./autoResize.log 2>&1
                     autoResizeLog=`cat ./autoResize.log`
+                    rm ./autoResize.log
                     whiptail --title "Success" --msgbox "Done. \
 配置完成
 $autoResizeLog
