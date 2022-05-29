@@ -3326,11 +3326,11 @@ $(for i in $dname;do echo $i ;done)  \
                     注意：zfs等非LVM分区不可使用，即便运行也不产生影响。" 15 60 );then
                     ./plugins/autoResize ivanhao/pvetools > ./autoResize.log 2>&1
                     autoResizeLog=`cat ./autoResize.log`
-                    rm ./autoResize.log
                     whiptail --scrolltext "Success" --textbox "Done. \
 配置完成
 $autoResizeLog
                     " 18 60
+                    rm ./autoResize.log
                 fi
                 ;;
             esac
