@@ -3327,7 +3327,7 @@ $(for i in $dname;do echo $i ;done)  \
                     ./plugins/autoResize ivanhao/pvetools > ./autoResize.log 2>&1
                     autoResizeLog=`cat ./autoResize.log`
                     rm ./autoResize.log
-                    whiptail --title "Success" --msgbox "Done. \
+                    whiptail --scrolltext "Success" --textbox "Done. \
 配置完成
 $autoResizeLog
                     " 18 60
