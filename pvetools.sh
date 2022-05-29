@@ -3304,6 +3304,38 @@ $(for i in $dname;do echo $i ;done)  \
         manyTools
     }
 
+    autoResize(){
+        if [ $L = "en" ];then
+            d=$(whiptail --title " PveTools   Version : 2.2.8 " --menu "autoResize ROOT partition - Many Tools:
+            " 25 60 15 \
+            "a" "start." \
+            3>&1 1>&2 2>&3)
+        else
+#----------------- 请选择以下操作：----------------- \
+            d=$(whiptail --title " PveTools   Version : 2.2.8 " --menu "自动扩展ROOT分区可用空间 - 常用的工具:
+            " 25 60 15 \
+            "a" "运行." \
+            3>&1 1>&2 2>&3)
+        fi
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+            case "$d" in
+            a )
+                if(whiptail --title "autoResize" --yesno "run autoResize on /(only LVM partition)?
+                    是否运行自动扩展ROOT分区(LVM)可用空间？
+                    注意：zfs等非LVM分区不可使用，即便运行也不产生影响。" 10 60 );then
+                    ./plugins/autoResize ivanhao/pvetools > ./autoResize.log 2>&1
+                    autoResizeLog=`cat ./autoResize.log`
+                    whiptail --title "Success" --msgbox "Done. \
+配置完成
+$autoResizeLog
+                    " 10 60
+                fi
+                ;;
+            esac
+        fi
+        manyTools
+    }
 
     if [ $L = "en" ];then
         x=$(whiptail --title " PveTools   Version : 2.2.8 " --menu "Many Tools:" 25 60 15 \
@@ -3316,6 +3348,7 @@ $(for i in $dname;do echo $i ;done)  \
         "g" "Nvida Video Card vbios" \
         "h" "folder2ram" \
         "i" "DarkMode" \
+        "j" "autoResize ROOT partition" \
         3>&1 1>&2 2>&3)
     else
         x=$(whiptail --title " PveTools   Version : 2.2.8 " --menu "常用的工具:" 25 60 15 \
@@ -3328,6 +3361,7 @@ $(for i in $dname;do echo $i ;done)  \
         "g" "显(N)卡vbios提取" \
         "h" "USB设备做为系统盘的优化" \
         "i" "黑暗模式界面" \
+        "j" "自动扩展ROOT分区可用空间" \
         3>&1 1>&2 2>&3)
     fi
     exitstatus=$?
@@ -3359,6 +3393,9 @@ $(for i in $dname;do echo $i ;done)  \
             ;;
         i|I )
             darkMode
+            ;;
+        j|J )
+            autoResize
             ;;
         esac
     fi
