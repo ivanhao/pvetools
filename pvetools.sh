@@ -1251,6 +1251,29 @@ else
     main
 fi
 }
+doChCpu1(){
+if(whiptail --title "Yes/No Box" --yesno "
+continue?
+开始配置?
+" --defaultno 10 60) then
+    cpufreq-info|grep -E "available|analyzing CPU|current"|sed -n "/analyz/,/analyz/p"|sed '$d'
+    maxCpu
+    minCpu
+    cat << EOF > /etc/default/cpufrequtils
+ENABLE="true"
+GOVERNOR="performance"
+MAX_SPEED="$mx"
+MIN_SPEED="$mi"
+EOF
+    systemctl restart cpufrequtils
+    whiptail --title "Success" --msgbox "
+Done
+配置完成
+    " 10 60
+else
+    main
+fi
+}
 #-------------chCpu--main---------------
 if [ $L = "en" ];then
     OPTION=$(whiptail --title " PveTools   Version : 2.3.0 " --menu "Config Cpufrequtils:" 25 60 15 \
@@ -1283,7 +1306,7 @@ if [ $exitstatus = 0 ]; then
             fi
         fi
         ;;
-    b )
+    c )
         if(whiptail --title "Yes/No" --yesno "
 continue?
 还原配置？
@@ -1309,6 +1332,10 @@ Done
             " 10 60
         fi
         chCpu
+        ;;
+    b )
+        doChCpu1
+        ;;
     esac
 fi
 #-------------chCpu--main--end------------
