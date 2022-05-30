@@ -118,6 +118,24 @@ zm （来源qq）
 
 # [版本说明]
 
+##### v2.3.0
+
+发布时间：2022.05.30
+
+new feature:
+
+* 修复pve7（debian 11)后security更新源地址格式变动的影响。
+* fix pve7 (debian 11) security source address.
+
+* 添加pve7以上版本配置硬件直通里的参数`iommu=pt pcie_acs_override=downstream`
+* add pve7　grub config `iommu=pt pcie_acs_override=downstream`
+
+* 删除默认.vimrc中重复的`set termencoding=unix`
+* delete .vimrc duplicate termencoding setting `set termencoding=unix`
+
+* 增加去除订阅提示的修复
+* add reinstall proxmox-widget-toolkit to fix remove subscription failure.
+
 ##### v2.2.9
 
 发布时间：2022.05.29
