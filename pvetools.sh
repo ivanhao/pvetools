@@ -1321,13 +1321,13 @@ if [ $L = "en" ];then
     OPTION=$(whiptail --title " PveTools   Version : 2.3.0 " --menu "Config Cpufrequtils:" 25 60 15 \
     "a" "Remove subscribe notice." \
     "b" "Unset config." \
-    "c" "fix proxmox-widget-toolkit"
+    "c" "fix proxmox-widget-toolkit" \
     3>&1 1>&2 2>&3)
 else
     OPTION=$(whiptail --title " PveTools   Version : 2.3.0 " --menu "安装配置CPU省电" 25 60 15 \
     "a" "去除订阅提示" \
     "b" "还原配置" \
-    "c" "修复去除订阅失败"
+    "c" "修复去除订阅失败" \
     3>&1 1>&2 2>&3)
 fi
 exitstatus=$?
@@ -1394,7 +1394,7 @@ continue?
 是否修复订阅提示?
             " 10 60) then
             apt install --reinstall proxmox-widget-toolkit
-                whiptail --title "Success" --msgbox "
+            whiptail --title "Success" --msgbox "
 Done!!
 还原成功！
                 " 10 60
