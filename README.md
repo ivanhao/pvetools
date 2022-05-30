@@ -143,7 +143,7 @@ new feature:
 new feature:
 
 * 增加常用工具下的自动扩展ROOT分区可用空间，比如有些用户使用dd等方式克隆系统盘，更换大硬盘还原镜像后可以一键扩展分区
-* add auto expand / partition size. 
+* add auto expand / partition size.
 
 ##### v2.2.8
 
