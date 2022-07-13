@@ -116,7 +116,25 @@ echo "nameserver  8.8.8.8" >> /etc/resolv.conf && rm /etc/apt/sources.list.d/pve
 
 zm （来源qq）
 
+*阳 (来源支付宝)
+
+**鑫 (来源支付宝)
+
+**尧 (来源支付宝)
+
+*潋 (来源支付宝)
+
+**泽 (来源支付宝)
+
 # [版本说明]
+
+##### v2.3.1
+
+发布时间：2022.07.13
+
+* 调整省电模式powersave为conservative。
+* change cpufrequtils from 'powersave' to 'conservative'。
+
 
 ##### v2.3.0
 
