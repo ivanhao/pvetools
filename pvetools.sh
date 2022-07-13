@@ -1784,7 +1784,7 @@ EOF
                 h=400
             else
                 #let h=$h*9+320
-                let h=$itemC*24/2.3.1
+                let h=$itemC*24/2+360
             fi
             n=`sed '/widget.pveNodeStatus/,/height/=' $js -n|sed -n '$p'`
             sed -i ''$n'c \ \ \ \ height:\ '$h',' $js
