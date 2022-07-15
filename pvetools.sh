@@ -1715,8 +1715,50 @@ You already installed,Now quit!
             if [ `echo $drivers|wc -w` = 0 ];then
                 whiptail --title "Warnning" --msgbox "
 Sensors driver not found.
-没有找到任何驱动，似乎你的系统不支持。
+没有找到任何驱动，似乎你的系统没有温度传感器。
+继续配置CPU频率...
                 " 10 60
+                cat << EOF > /usr/bin/s.sh
+c=\`lscpu|grep MHz|sed 's/CPU\ /CPU-/g'|sed 's/\ MHz/-MHz/g'|sed 's/\ //g'|sed 's/^/"/g'|sed 's/$/"\,/g'|sed 's/\:/\"\:\"/g'|awk 'BEGIN{ORS=""}{print \$0}'|sed 's/\,\$//g'\`
+r="{"\$c"}"
+echo \$r
+EOF
+            chmod +x /usr/bin/s.sh
+            #--create the configs--
+            if [ -f ./p1 ];then rm ./p1;fi
+            #--这里插入cpu频率　add cpu MHz--
+            cat << EOF >> ./p1
+             ,{
+             itemId: 'MHz',
+             colspan: 2,
+             printBar: false,
+             title: gettext('CPU频率'),
+             textField: 'tdata',
+             renderer:function(value){
+                 var d = JSON.parse(value);
+                 f0 = d['CPU-MHz'];
+                 f1 = d['CPU-min-MHz'];
+                 f2 = d['CPU-max-MHz'];
+                 return  \`CPU实时(Cur): \${f0} MHz | 最小(min): \${f1} MHz | 最大(max): \${f2} MHz \`;
+         }
+ }
+EOF
+            #--插入cpu频率结束　add cpu MHz end--
+            cat << EOF >> ./p2
+\$res->{tdata} = \`/usr/bin/s.sh\`;
+EOF
+            n=`sed '/pveversion/,/\}/=' $js -n|sed -n '$p'`
+            sed -i ''$n' r ./p1' $js
+            n=`sed '/pveversion/,/version_text/=' $pm -n|sed -n '$p'`
+            sed -i ''$n' r ./p2' $pm
+            if [ -f ./p1 ];then rm ./p1;fi
+            if [ -f ./p2 ];then rm ./p2;fi
+            systemctl restart pveproxy
+            whiptail --title "Success" --msgbox "
+如果没有意外，已经安装完成！浏览器打开界面刷新看一下概要界面！
+Installation Complete! Go to websites and refresh to enjoy!
+            " 10 60
+
                 chSensors
             else
                 for i in $drivers
