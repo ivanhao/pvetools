@@ -1778,7 +1778,6 @@ Installation Complete! Go to websites and refresh to enjoy!
 Install complete,if everything ok ,it\'s showed sensors.Next, restart you web.
 安装配置成功，如果没有意外，上面已经显示sensors。下一步会重启web界面，请不要惊慌。
                 " 20 60
-            fi
             rm /tmp/sensors
             cat << EOF > /usr/bin/s.sh
 r=\`sensors|grep -E 'Package id 0|fan|Physical id 0|Core'|grep '^[a-zA-Z0-9].[[:print:]]*:.\s*\S*[0-9].\s*[A-Z].' -o|sed 's/:\ */:/g'|sed 's/:/":"/g'|sed 's/^/"/g' |sed 's/$/",/g'|sed 's/\ C\ /C/g'|sed 's/\ V\ /V/g'|sed 's/\ RP/RPM/g'|sed 's/\ //g'|awk 'BEGIN{ORS=""}{print \$0}'|sed 's/\,\$//g'|sed 's/°C/C/g'\`
@@ -1867,6 +1866,7 @@ EOF
 如果没有意外，已经安装完成！浏览器打开界面刷新看一下概要界面！
 Installation Complete! Go to websites and refresh to enjoy!
             " 10 60
+        fi
         else
             chSensors
         fi
