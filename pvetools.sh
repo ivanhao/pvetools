@@ -1879,17 +1879,10 @@ Uninstall?
             js='/usr/share/pve-manager/js/pvemanagerlib.js'
             pm='/usr/share/perl5/PVE/API2/Nodes.pm'
 
-            if [[ `cat $js|grep -E 'Sensors|CPU'|wc -l` -gt 0 ]];then
+            if [[ `cat $js|grep -E 'Sensors|CPU'|wc -l` = 0 ]];then
                 whiptail --title "Warnning" --msgbox "
-您已经安装过本软件，请不要重复安装！
-You already installed,Now quit!
-                " 10 60
-                chSensors
-            fi
-            if [[ ! -f $js.backup && ! -f /usr/bin/sensors ]];then
-                whiptail --title "Warnning" --msgbox "
-    No sensors found.
-    没有检测到安装，不需要卸载。
+No sensors found.
+没有检测到安装，不需要卸载。
                 " 10 60
             else
                 sensors-detect --auto > /tmp/sensors
