@@ -1676,8 +1676,12 @@ Your OS：$pve, you will install sensors interface, continue?(y/n)
             bver=`echo $ppv|awk -F'/' 'NR==1{print $2}'|awk -F'.' '{print $1}'`
             pve=$OS$ver
             mkdir /etc/pvetools/
-            cp $js /etc/pvetools/pvemanagerlib.js
-            cp $pm /etc/pvetools/Nodes.pm
+            if [ ! -f $js ];then
+                cp $js /etc/pvetools/pvemanagerlib.js
+            fi
+            if [ ! -f $pm ];then
+                cp $pm /etc/pvetools/Nodes.pm
+            fi
             if [[ "$OS" != "pve" ]];then
                 whiptail --title "Warnning" --msgbox "
 您的系统不是Proxmox VE, 无法安装!
@@ -1874,6 +1878,14 @@ Uninstall?
         " 10 60)then
             js='/usr/share/pve-manager/js/pvemanagerlib.js'
             pm='/usr/share/perl5/PVE/API2/Nodes.pm'
+
+            if [[ `cat $js|grep -E 'Sensors|CPU'|wc -l` -gt 0 ]];then
+                whiptail --title "Warnning" --msgbox "
+您已经安装过本软件，请不要重复安装！
+You already installed,Now quit!
+                " 10 60
+                chSensors
+            fi
             if [[ ! -f $js.backup && ! -f /usr/bin/sensors ]];then
                 whiptail --title "Warnning" --msgbox "
     No sensors found.
@@ -1896,6 +1908,7 @@ Uninstall?
                 #mv $pm.backup $pm
                 rm $js
                 rm $pm
+                rm /usr/bin/s.sh
                 cp /etc/pvetools/pvemanagerlib.js $js
                 cp /etc/pvetools/Nodes.pm $pm
                 echo 50
