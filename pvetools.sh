@@ -1899,8 +1899,8 @@ No sensors found.
             {
                 #mv $js.backup $js
                 #mv $pm.backup $pm
-                rm $js
-                rm $pm
+                #rm $js
+                #rm $pm
                 rm /usr/bin/s.sh
                 cp /etc/pvetools/pvemanagerlib.js $js
                 cp /etc/pvetools/Nodes.pm $pm
