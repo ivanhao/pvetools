@@ -1780,7 +1780,7 @@ Install complete,if everything ok ,it\'s showed sensors.Next, restart you web.
                 " 20 60
             rm /tmp/sensors
             cat << EOF > /usr/bin/s.sh
-r=\`sensors|grep -E 'Package id 0|fan|Physical id 0|Core'|grep '^[a-zA-Z0-9].[[:print:]]*:.\s*\S*[0-9].\s*[A-Z].' -o|sed 's/:\ */:/g'|sed 's/:/":"/g'|sed 's/^/"/g' |sed 's/$/",/g'|sed 's/\ C\ /C/g'|sed 's/\ V\ /V/g'|sed 's/\ RP/RPM/g'|sed 's/\ //g'|awk 'BEGIN{ORS=""}{print \$0}'|sed 's/\,\$//g'|sed 's/°C/C/g'\`
+r=\`sensors|grep -E 'Package id 0|fan|Physical id 0|Core'|grep '^[a-zA-Z0-9].[[:print:]]*:.\s*\S*[0-9].\s*[A-Z].' -o|sed 's/:\ */:/g'|sed 's/:/":"/g'|sed 's/^/"/g' |sed 's/$/",/g'|sed 's/\ C\ /C/g'|sed 's/\ V\ /V/g'|sed 's/\ RP/RPM/g'|sed 's/\ //g'|awk 'BEGIN{ORS=""}{print \$0}'|sed 's/\,\$//g'|sed 's/°C/\&degC/g'\`
 c=\`lscpu|grep MHz|sed 's/CPU\ /CPU-/g'|sed 's/\ MHz/-MHz/g'|sed 's/\ //g'|sed 's/^/"/g'|sed 's/$/"\,/g'|sed 's/\:/\"\:\"/g'|awk 'BEGIN{ORS=""}{print \$0}'|sed 's/\,\$//g'\`
 r="{"\$r","\$c"}"
 echo \$r
@@ -2675,7 +2675,9 @@ EOF
             if [ $L = "en" ];then
                 alpineUrl='http://dl-cdn.alpinelinux.org/alpine/v3.10/releases/x86_64'
             else
-                alpineUrl='https://mirrors.aliyun.com/alpine/v3.10/releases/x86_64'
+                #alpineUrl='https://mirrors.aliyun.com/alpine/v3.10/releases/x86_64'
+                #change url
+                alpineUrl='https://mirrors.ustc.edu.cn/alpine/v3.10/releases/x86_64/'
             fi
             version=`wget $alpineUrl/ -q -O -|grep minirootfs|grep -o '[0-9]*\.[0-9]*\.[0-9]*'|sort -u -r|awk 'NR==1{print $1}'`
             echo $alpineUrl
