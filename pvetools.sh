@@ -1920,6 +1920,21 @@ Uninstall complete.
 fi
 }
 
+getIommu(){
+    ppv=`/usr/bin/pveversion`
+    OS=`echo $ppv|awk -F'-' 'NR==1{print $1}'`
+    ver=`echo $ppv|awk -F'/' 'NR==1{print $2}'|awk -F'-' '{print $1}'`
+    bver=`echo $ppv|awk -F'/' 'NR==1{print $2}'|awk -F'.' '{print $1}'`
+    if [ `cat /proc/cpuinfo|grep Intel|wc -l` = 0 ];then
+        iommu="amd_iommu=on"
+    else
+        iommu="intel_iommu=on"
+    fi
+    if [ ${bver} -gt 6 ];then
+        iommu=$iommu" iommu=pt pcie_acs_override=downstream"
+    fi
+}
+
 chPassth(){
 
 #--------------funcs-start----------------
@@ -1935,20 +1950,9 @@ Your hardware do not support PCI Passthrough(No IOMMU)
 " 10 60
         chPassth
     fi
-    ppv=`/usr/bin/pveversion`
-    OS=`echo $ppv|awk -F'-' 'NR==1{print $1}'`
-    ver=`echo $ppv|awk -F'/' 'NR==1{print $2}'|awk -F'-' '{print $1}'`
-    bver=`echo $ppv|awk -F'/' 'NR==1{print $2}'|awk -F'.' '{print $1}'`
-    if [ `cat /proc/cpuinfo|grep Intel|wc -l` = 0 ];then
-        iommu="amd_iommu=on"
-    else
-        iommu="intel_iommu=on"
-    fi
-    if [ ${bver} -gt 6 ];then
-        iommu=$iommu" iommu=pt pcie_acs_override=downstream"
-    fi
-    if [ `grep $iommu /etc/default/grub|wc -l` = 0 ];then
-        sed -i.bak 's|quiet|quiet '$iommu'|' /etc/default/grub
+    getIommu
+    if [ `grep "$iommu" /etc/default/grub|wc -l` = 0 ];then
+        sed -i.bak "s|quiet|quiet $iommu|" /etc/default/grub
         update-grub
         if [ `grep "vfio" /etc/modules|wc -l` = 0 ];then
             cat <<EOF >> /etc/modules
@@ -1986,19 +1990,15 @@ Your hardware do not support PCI Passthrough(No IOMMU)
 " 10 60
         chPassth
     fi
-    if [ `cat /proc/cpuinfo|grep Intel|wc -l` = 0 ];then
-        iommu='amd_iommu=on'
-    else
-        iommu='intel_iommu=on'
-    fi
-    if [ `grep $iommu /etc/default/grub|wc -l` = 0 ];then
+    getIommu
+    if [ `grep "$iommu" /etc/default/grub|wc -l` = 0 ];then
         whiptail --title "Warnning" --msgbox "not config yet.
 您还没有配置过该项" 10 60
         chPassth
     else
         update-grub
     {
-        sed -i 's/ '$iommu'//g' /etc/default/grub
+        sed -i "s/ $iommu//g" /etc/default/grub
         echo 30
         echo 80
         sed -i '/vfio/d' /etc/modules
@@ -2112,7 +2112,8 @@ Continue?
             #--iommu-groups--
             if [ `find /sys/kernel/iommu_groups/ -type l|wc -l` = 0 ];then
                 if [ `grep 'pcie_acs_override=downstream' /etc/default/grub|wc -l` = 0 ];then
-                    sed -i.bak 's|iommu=on|iommu=on 'iommu=pt pcie_acs_override=downstream'|' /etc/default/grub
+                    getIommu
+                    sed -i.bak "s|iommu=on|$iommu|" /etc/default/grub
                     update-grub
                 fi
             fi
