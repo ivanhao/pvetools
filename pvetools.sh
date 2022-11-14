@@ -2062,13 +2062,13 @@ getVideo(){
     n=`for i in $id;do lspci -n -d $i|awk -F "." '{print $1}';done|sort -u`
     for i in $n
     do
-        cards=`sed -n '/'$i'/ s/OFF/ON/p' cards`
+        sed -i "$i/s/OFF/ON/" cards
     done
     DISTROS=$(whiptail --title "Video cards:" --checklist \
 "Choose cards to config(* mark means configed):
 选择显卡（标*号为已经配置过的）：
 " 15 90 4 \
-$(echo $cards) \
+$(cat cards) \
 3>&1 1>&2 2>&3)
     exitstatus=$?
     if [ $exitstatus = 0 ];then
@@ -2113,7 +2113,7 @@ Continue?
             if [ `find /sys/kernel/iommu_groups/ -type l|wc -l` = 0 ];then
                 if [ `grep 'pcie_acs_override=downstream' /etc/default/grub|wc -l` = 0 ];then
                     getIommu
-                    sed -i.bak "s|iommu=on|$iommu|" /etc/default/grub
+                    sed -i.bak "s|quiet|quiet $iommu|" /etc/default/grub
                     update-grub
                 fi
             fi
