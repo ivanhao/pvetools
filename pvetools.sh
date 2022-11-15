@@ -2073,7 +2073,7 @@ $(cat cards) \
     exitstatus=$?
     if [ $exitstatus = 0 ];then
         #--config-id---
-        if [ $DISTROS ];then
+        if [ -n "$DISTROS" ];then
 	    rm cards*
             if(whiptail --title "Warnning" --yesno "
 Continue?
