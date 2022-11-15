@@ -2062,7 +2062,7 @@ getVideo(){
     n=`for i in $id;do lspci -n -d $i|awk -F "." '{print $1}';done|sort -u`
     for i in $n
     do
-        sed -i "$i/s/OFF/ON/" cards
+        sed -i "/${i}/s/OFF/ON/" cards
     done
     DISTROS=$(whiptail --title "Video cards:" --checklist \
 "Choose cards to config(* mark means configed):
