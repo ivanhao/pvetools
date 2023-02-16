@@ -134,7 +134,6 @@ zm （来源qq）
 
 new feature:
 
-* 修复“您的Proxmox VE版本不支持此方式！” 的提示。
 * 合并网友“for5million”提交的关于pci直通的修复。
 
 ##### v2.3.5
