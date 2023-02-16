@@ -91,6 +91,9 @@ fi
 sver=`cat /etc/debian_version |awk -F"." '{print $1}'`
 currentDebianVersion=${sver}
 case "$sver" in
+    11 )
+        sver="bullseye"
+        ;;
     10 )
         sver="buster"
         ;;
