@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 #############--Proxmox VE Tools--##########################
 #  Author : 龙天ivan
 #  Mail: ivanhao1984@qq.com
