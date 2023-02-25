@@ -2681,7 +2681,7 @@ EOF
             else
                 #alpineUrl='https://mirrors.aliyun.com/alpine/v3.10/releases/x86_64'
                 #change url
-                alpineUrl='https://mirrors.ustc.edu.cn/alpine/v3.10/releases/x86_64/'
+                alpineUrl='https://mirrors.ustc.edu.cn/alpine/latest-stable/releases/x86_64/'
             fi
             version=`wget $alpineUrl/ -q -O -|grep minirootfs|grep -o '[0-9]*\.[0-9]*\.[0-9]*'|sort -u -r|awk 'NR==1{print $1}'`
             echo $alpineUrl
@@ -2703,8 +2703,8 @@ type=directory
 shell=/bin/sh
 EOF
             fi
-            echo "http://mirrors.aliyun.com/alpine/latest-stable/main/" > $chrootp/etc/apk/repositories \
-            && echo "http://mirrors.aliyun.com/alpine/latest-stable/community/"  >> $chrootp/etc/apk/repositories
+            echo "http://mirrors.ustc.edu.cn/alpine/latest-stable/main/" > $chrootp/etc/apk/repositories \
+            && echo "http://mirrors.ustc.edu.cn/alpine/latest-stable/community/"  >> $chrootp/etc/apk/repositories
             cat << EOF >> $chrootp/etc/profile
 echo "Welcome to alpine $version chroot."
 echo "Create by PveTools."
