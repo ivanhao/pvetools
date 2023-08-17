@@ -1726,8 +1726,10 @@ Sensors driver not found.
 继续配置CPU频率...
                 " 10 60
                 cat << EOF > /usr/bin/s.sh
-c=\`lscpu|grep MHz|sed 's/CPU\ /CPU-/g'|sed 's/\ MHz/-MHz/g'|sed 's/\ //g'|sed 's/^/"/g'|sed 's/$/"\,/g'|sed 's/\:/\"\:\"/g'|awk 'BEGIN{ORS=""}{print \$0}'|sed 's/\,\$//g'\`
+c=\`lscpu|grep MHz|sed 's/CPU\ /CPU-/g'|sed 's/\ MHz/-MHz/g'|sed 's/\ //g'|sed 's/^/"/g'|sed 's/$/"\,/g'|sed 's/\:/\"\:\"/g'|sed 's/(s)scaling//g'|awk 'BEGIN{ORS=""}{print \$0}'|sed 's/\,\$//g'\`
 r="{"\$c"}"
+cpufreq=\$(echo "scale=4; \$(cpufreq-info -f) / 1000" | bc -l)
+r=\$(echo "\$r" | sed 's/"CPU-MHz":"[^"]*"/"CPU-MHz":"'"\$cpufreq"'"/')
 echo \$r
 EOF
             chmod +x /usr/bin/s.sh
@@ -1784,8 +1786,10 @@ Install complete,if everything ok ,it\'s showed sensors.Next, restart you web.
             rm /tmp/sensors
             cat << EOF > /usr/bin/s.sh
 r=\`sensors|grep -E 'Package id 0|fan|Physical id 0|Core'|grep '^[a-zA-Z0-9].[[:print:]]*:.\s*\S*[0-9].\s*[A-Z].' -o|sed 's/:\ */:/g'|sed 's/:/":"/g'|sed 's/^/"/g' |sed 's/$/",/g'|sed 's/\ C\ /C/g'|sed 's/\ V\ /V/g'|sed 's/\ RP/RPM/g'|sed 's/\ //g'|awk 'BEGIN{ORS=""}{print \$0}'|sed 's/\,\$//g'|sed 's/°C/\&degC/g'\`
-c=\`lscpu|grep MHz|sed 's/CPU\ /CPU-/g'|sed 's/\ MHz/-MHz/g'|sed 's/\ //g'|sed 's/^/"/g'|sed 's/$/"\,/g'|sed 's/\:/\"\:\"/g'|awk 'BEGIN{ORS=""}{print \$0}'|sed 's/\,\$//g'\`
+c=\`lscpu|grep MHz|sed 's/CPU\ /CPU-/g'|sed 's/\ MHz/-MHz/g'|sed 's/\ //g'|sed 's/^/"/g'|sed 's/$/"\,/g'|sed 's/\:/\"\:\"/g'|sed 's/(s)scaling//g'|awk 'BEGIN{ORS=""}{print \$0}'|sed 's/\,\$//g'\`
 r="{"\$r","\$c"}"
+cpufreq=\$(echo "scale=4; \$(cpufreq-info -f) / 1000" | bc -l)
+r=\$(echo "\$r" | sed 's/"CPU-MHz":"[^"]*"/"CPU-MHz":"'"\$cpufreq"'"/')
 echo \$r
 EOF
             chmod +x /usr/bin/s.sh
