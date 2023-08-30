@@ -175,6 +175,10 @@ EOF
             sed -i 's|deb|#deb|' /etc/apt/sources.list.d/pve-enterprise.list
             #修改 ceph镜像更新源
             echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/ceph-luminous $sver main" > /etc/apt/sources.list.d/ceph.list
+
+            #针对debian 12的处理
+            su -c 'echo "APT::Get::Update::SourceListWarnings::NonFreeFirmware \"false\";" > /etc/apt/apt.conf.d/no-bookworm-firmware.conf'
+
             whiptail --title "Success" --msgbox " apt source has been changed successfully!
             软件源已更换成功！" 10 60
             apt-get update
@@ -1725,11 +1729,21 @@ Sensors driver not found.
 没有找到任何驱动，似乎你的系统没有温度传感器。
 继续配置CPU频率...
                 " 10 60
-                cat << EOF > /usr/bin/s.sh
+                if [ $sver == 'bookworm' ];then
+                    cat << EOF > /usr/bin/s.sh
+c=\`lscpu|grep MHz|sed 's/CPU\ /CPU-/g'|sed 's/\ MHz/-MHz/g'|sed 's/\ //g'|sed 's/^/"/g'|sed 's/$/"\,/g'|sed 's/\:/\"\:\"/g'|sed 's/(s)scaling//g'|awk 'BEGIN{ORS=""}{print \$0}'|sed 's/\,\$//g'\`
+r="{"\$c"}"
+cpufreq=\$(echo "scale=4; \$(cpufreq-info -f) / 1000" | bc -l)
+r=\$(echo "\$r" | sed 's/"CPU-MHz":"[^"]*"/"CPU-MHz":"'"\$cpufreq"'"/')
+echo \$r
+EOF
+                else
+                    cat << EOF > /usr/bin/s.sh
 c=\`lscpu|grep MHz|sed 's/CPU\ /CPU-/g'|sed 's/\ MHz/-MHz/g'|sed 's/\ //g'|sed 's/^/"/g'|sed 's/$/"\,/g'|sed 's/\:/\"\:\"/g'|awk 'BEGIN{ORS=""}{print \$0}'|sed 's/\,\$//g'\`
 r="{"\$c"}"
 echo \$r
 EOF
+                fi
             chmod +x /usr/bin/s.sh
             #--create the configs--
             if [ -f ./p1 ];then rm ./p1;fi
@@ -1782,12 +1796,24 @@ Install complete,if everything ok ,it\'s showed sensors.Next, restart you web.
 安装配置成功，如果没有意外，上面已经显示sensors。下一步会重启web界面，请不要惊慌。
                 " 20 60
             rm /tmp/sensors
-            cat << EOF > /usr/bin/s.sh
+            #debian 12 fixbug
+            if [ $sver == 'bookworm' ];then
+                cat << EOF > /usr/bin/s.sh
+r=\`sensors|grep -E 'Package id 0|fan|Physical id 0|Core'|grep '^[a-zA-Z0-9].[[:print:]]*:.\s*\S*[0-9].\s*[A-Z].' -o|sed 's/:\ */:/g'|sed 's/:/":"/g'|sed 's/^/"/g' |sed 's/$/",/g'|sed 's/\ C\ /C/g'|sed 's/\ V\ /V/g'|sed 's/\ RP/RPM/g'|sed 's/\ //g'|awk 'BEGIN{ORS=""}{print \$0}'|sed 's/\,\$//g'|sed 's/°C/\&degC/g'\`
+c=\`lscpu|grep MHz|sed 's/CPU\ /CPU-/g'|sed 's/\ MHz/-MHz/g'|sed 's/\ //g'|sed 's/^/"/g'|sed 's/$/"\,/g'|sed 's/\:/\"\:\"/g'|sed 's/(s)scaling//g'|awk 'BEGIN{ORS=""}{print \$0}'|sed 's/\,\$//g'\`
+r="{"\$c"}"
+cpufreq=\$(echo "scale=4; \$(cpufreq-info -f) / 1000" | bc -l)
+r=\$(echo "\$r" | sed 's/"CPU-MHz":"[^"]*"/"CPU-MHz":"'"\$cpufreq"'"/')
+echo \$r
+EOF
+            else
+                cat << EOF > /usr/bin/s.sh
 r=\`sensors|grep -E 'Package id 0|fan|Physical id 0|Core'|grep '^[a-zA-Z0-9].[[:print:]]*:.\s*\S*[0-9].\s*[A-Z].' -o|sed 's/:\ */:/g'|sed 's/:/":"/g'|sed 's/^/"/g' |sed 's/$/",/g'|sed 's/\ C\ /C/g'|sed 's/\ V\ /V/g'|sed 's/\ RP/RPM/g'|sed 's/\ //g'|awk 'BEGIN{ORS=""}{print \$0}'|sed 's/\,\$//g'|sed 's/°C/\&degC/g'\`
 c=\`lscpu|grep MHz|sed 's/CPU\ /CPU-/g'|sed 's/\ MHz/-MHz/g'|sed 's/\ //g'|sed 's/^/"/g'|sed 's/$/"\,/g'|sed 's/\:/\"\:\"/g'|awk 'BEGIN{ORS=""}{print \$0}'|sed 's/\,\$//g'\`
 r="{"\$r","\$c"}"
 echo \$r
 EOF
+            fi
             chmod +x /usr/bin/s.sh
             #--create the configs--
             #--filter for sensors 过滤sensors项目--
