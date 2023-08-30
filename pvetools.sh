@@ -1733,10 +1733,11 @@ Sensors driver not found.
                 " 10 60
                 if [ $bver -gt 11 ];then
                     cat << EOF > /usr/bin/s.sh
-c=\`lscpu|grep MHz|sed 's/CPU\ /CPU-/g'|sed 's/\ MHz/-MHz/g'|sed 's/\ //g'|sed 's/^/"/g'|sed 's/$/"\,/g'|sed 's/\:/\"\:\"/g'|sed 's/(s)scaling//g'|awk 'BEGIN{ORS=""}{print \$0}'|sed 's/\,\$//g'\`
+curC=\`cat /proc/cpuinfo|grep MHz|awk 'NR==1{print \$4}'\`
+max=\`cat /proc/cpuinfo|grep GHz|awk -F "@" 'NR==1{print \$2}'|sed 's/GHz//g'|sed 's/\ //g'\`
+maxC=\`echo "\$max * 1000"|bc -l\`
+c='\"CPU-MHz\:\"'\$curC'\,\"CPU-max-MHz\"\:\"'\$maxC"\"\"
 r="{"\$c"}"
-cpufreq=\$(echo "scale=4; \$(cpufreq-info -f) / 1000" | bc -l)
-r=\$(echo "\$r" | sed 's/"CPU-MHz":"[^"]*"/"CPU-MHz":"'"\$cpufreq"'"/')
 echo \$r
 EOF
                 else
