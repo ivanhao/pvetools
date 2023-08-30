@@ -177,7 +177,9 @@ EOF
             echo "deb http://mirrors.ustc.edu.cn/proxmox/debian/ceph-luminous $sver main" > /etc/apt/sources.list.d/ceph.list
 
             #针对debian 12的处理
-            su -c 'echo "APT::Get::Update::SourceListWarnings::NonFreeFirmware \"false\";" > /etc/apt/apt.conf.d/no-bookworm-firmware.conf'
+            if [ $sver = "bookworm" ];then
+                su -c 'echo "APT::Get::Update::SourceListWarnings::NonFreeFirmware \"false\";" > /etc/apt/apt.conf.d/no-bookworm-firmware.conf'
+            fi
 
             whiptail --title "Success" --msgbox " apt source has been changed successfully!
             软件源已更换成功！" 10 60
@@ -1729,7 +1731,7 @@ Sensors driver not found.
 没有找到任何驱动，似乎你的系统没有温度传感器。
 继续配置CPU频率...
                 " 10 60
-                if [ $sver = 'bookworm' ];then
+                if [ $sver = "bookworm" ];then
                     cat << EOF > /usr/bin/s.sh
 c=\`lscpu|grep MHz|sed 's/CPU\ /CPU-/g'|sed 's/\ MHz/-MHz/g'|sed 's/\ //g'|sed 's/^/"/g'|sed 's/$/"\,/g'|sed 's/\:/\"\:\"/g'|sed 's/(s)scaling//g'|awk 'BEGIN{ORS=""}{print \$0}'|sed 's/\,\$//g'\`
 r="{"\$c"}"
