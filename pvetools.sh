@@ -1732,7 +1732,7 @@ Sensors driver not found.
 继续配置CPU频率...
                 " 10 60
                 echo $bver
-                if [ $bver -gt 11 ];then
+                if [ $bver -gt 7 ];then
                     cat << EOF > /usr/bin/s.sh
 curC=\`cat /proc/cpuinfo|grep MHz|awk 'NR==1{print \$4}'\`
 max=\`cat /proc/cpuinfo|grep GHz|awk -F "@" 'NR==1{print \$2}'|sed 's/GHz//g'|sed 's/\ //g'\`
@@ -1801,7 +1801,7 @@ Install complete,if everything ok ,it\'s showed sensors.Next, restart you web.
                 " 20 60
             rm /tmp/sensors
             #debian 12 fixbug
-            if [ $bver -gt 11 ];then
+            if [ $bver -gt 7 ];then
                 cat << EOF > /usr/bin/s.sh
 r=\`sensors|grep -E 'Package id 0|fan|Physical id 0|Core'|grep '^[a-zA-Z0-9].[[:print:]]*:.\s*\S*[0-9].\s*[A-Z].' -o|sed 's/:\ */:/g'|sed 's/:/":"/g'|sed 's/^/"/g' |sed 's/$/",/g'|sed 's/\ C\ /C/g'|sed 's/\ V\ /V/g'|sed 's/\ RP/RPM/g'|sed 's/\ //g'|awk 'BEGIN{ORS=""}{print \$0}'|sed 's/\,\$//g'|sed 's/°C/\&degC/g'\`
 curC=\`cat /proc/cpuinfo|grep MHz|awk 'NR==1{print \$4}'\`
