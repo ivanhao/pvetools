@@ -1737,7 +1737,7 @@ Sensors driver not found.
 curC=\`cat /proc/cpuinfo|grep MHz|awk 'NR==1{print \$4}'\`
 max=\`cat /proc/cpuinfo|grep GHz|awk -F "@" 'NR==1{print \$2}'|sed 's/GHz//g'|sed 's/\ //g'\`
 maxC=\`echo "\$max * 1000"|bc -l\`
-c="\"CPU-MHz\:\""\$curC"\"\,\"CPU-max-MHz\"\:\""\$maxC"\"\"
+c="\"CPU-MHz:\""\$curC"\"\,\"CPU-max-MHz\":\""\$maxC"\""
 r="{"\$c"}"
 echo \$r
 EOF
@@ -1807,7 +1807,7 @@ r=\`sensors|grep -E 'Package id 0|fan|Physical id 0|Core'|grep '^[a-zA-Z0-9].[[:
 curC=\`cat /proc/cpuinfo|grep MHz|awk 'NR==1{print \$4}'\`
 max=\`cat /proc/cpuinfo|grep GHz|awk -F "@" 'NR==1{print \$2}'|sed 's/GHz//g'|sed 's/\ //g'\`
 maxC=\`echo "\$max * 1000"|bc -l\`
-c="\"CPU-MHz\:\""\$curC"\"\,\"CPU-max-MHz\"\:\""\$maxC"\"\"
+c="\"CPU-MHz:\""\$curC"\"\,\"CPU-max-MHz\":\""\$maxC"\""
 r="{"\$r","\$c"}"
 echo \$r
 EOF
