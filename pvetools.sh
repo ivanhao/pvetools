@@ -3420,7 +3420,7 @@ $(for i in $dname;do echo $i ;done)  \
             cd ..
             git clone https://github.com/ivanhao/envytools
             cd envytools
-            apt-get install cmake flex libpciaccess-dev bison libx11-dev libxext-dev libxml2-dev libvdpau-dev python3-dev cython3 pkg-config
+            apt-get install cmake flex libpciaccess-dev bison libx11-dev libxext-dev libxml2-dev libvdpau-dev python3-dev cython3 pkg-config gcc g++
             cmake .
             make
             make install
