@@ -88,38 +88,9 @@ if [ $1 ];then
     不支持该模式。" 10 60
     chSource
 fi
-sver=`cat /etc/debian_version |awk -F"." '{print $1}'`
-currentDebianVersion=${sver}
-case "$sver" in
-    12 )
-        sver="bookworm"
-        ;;
-    11 )
-        sver="bullseye"
-        ;;
-    10 )
-        sver="buster"
-        ;;
-    9 )
-        sver="stretch"
-        ;;
-    8 )
-        sver="jessie"
-        ;;
-    7 )
-        sver="wheezy"
-        ;;
-    6 )
-        sver="squeeze"
-        ;;
-    * )
-        sver=""
-esac
-if [ ! $sver ];then
-    whiptail --title "Warnning" --msgbox "Not supported!
-    您的版本不支持！无法继续。" 10 60
-    main
-fi
+verno=`cat /etc/debian_version |awk -F"." '{print $1}'`
+sver=`cat /etc/os-release|grep VERSION_CODENAME|awk -F '=' '{print $2}'`
+currentDebianVersion=${verno}
 # debian 11 change security source rule
 if [ $currentDebianVersion -gt 10 ];then
     securitySource="
