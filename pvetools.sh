@@ -1705,8 +1705,7 @@ Sensors driver not found.
                 if [ $bver -gt 7 ];then
                     cat << EOF > /usr/bin/s.sh
 curC=\`cat /proc/cpuinfo|grep MHz|awk 'NR==1{print \$4}'\`
-max=\`cat /proc/cpuinfo|grep GHz|awk -F "@" 'NR==1{print \$2}'|sed 's/GHz//g'|sed 's/\ //g'\`
-maxC=\`echo "\$max * 1000"|bc -l\`
+maxC=\$(lscpu | grep 'max MHz' | awk '{print\$4}')
 minC=\`lscpu|grep 'min MHz'|awk '{print \$4}'\`
 c="\"CPU-MHz\":\""\$curC"\",\"CPU-max-MHz\":\""\$maxC"\",\"CPU-min-MHz\":\""\$minC"\""
 r="{"\$c"}"
@@ -1910,7 +1909,7 @@ No sensors found.
                 rm /usr/bin/s.sh
                 #cp /etc/pvetools/pvemanagerlib.js $js
                 #cp /etc/pvetools/Nodes.pm $pm
-                apt install --reinstall pve-manager
+                apt-get install --reinstall pve-manager -y
                 systemctl restart pveproxy
                 echo 50
                 echo 100
